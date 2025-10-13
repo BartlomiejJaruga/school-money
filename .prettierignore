@@ -1,0 +1,8 @@
+node_modules/
+public/
+/build
+/dist
+/src/assets
+.gitignore
+.react-router
+.env

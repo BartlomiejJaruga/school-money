@@ -1,0 +1,9 @@
+@use './variables' as *;
+
+// All app mixins are placed here
+
+@mixin respond-above($breakpoint) {
+  @media (min-width: $breakpoint) {
+    @content;
+  }
+}
