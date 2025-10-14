@@ -1,3 +1,4 @@
+import { AuthenticationAside } from './AuthenticationAside';
 import styles from './AuthenticationPage.module.scss';
 import logoWhite from '@assets/logo-white.svg';
 
@@ -18,6 +19,7 @@ export function AuthenticationPage() {
             class fundraisers - all in one place
           </h1>
         </div>
+        <AuthenticationAside />
       </div>
     </>
   );

@@ -3,30 +3,30 @@
   height: 100vh;
   position: relative;
   background-image: $gradient-primary-diagonal;
-  z-index: 0;
+  display: flex;
+  justify-content: space-between;
 
   &__overlay {
     position: absolute;
     top: 0;
     left: 0;
-    z-index: 1;
     width: 100%;
     height: 100%;
     background-image: url('../../assets/authentication-overlay.svg');
     background-repeat: no-repeat;
     background-position: center;
     background-size: cover;
+    z-index: 1;
   }
 }
 
 .hero {
-  position: absolute;
-  top: 10%;
-  left: 5%;
-  z-index: 2;
+  margin: 5rem 0 0 3rem;
+  max-width: 45%;
   display: flex;
   flex-direction: column;
   gap: 4rem;
+  z-index: 2;
 
   &__logo {
     width: 15rem;
@@ -35,6 +35,7 @@
 
   &__text {
     font-size: 4rem;
+    line-height: 1.25;
     color: $color-text-white;
     @include apply-font($font-heading-primary);
 
