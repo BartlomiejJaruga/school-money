@@ -7,3 +7,9 @@
     @content;
   }
 }
+
+@mixin apply-font($font-map) {
+  @each $prop, $value in $font-map {
+    #{$prop}: #{$value};
+  }
+}

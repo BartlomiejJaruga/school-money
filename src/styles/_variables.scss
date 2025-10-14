@@ -4,6 +4,61 @@
 
 /* ================= COLORS PALLETE ================= */
 
+$color-background-primary: #f5f5f5;
+$color-background-primary-hover: #f2f2f2;
+
+$color-accent-primary: #6bd3ad;
+$color-accent-primary-hover: color.adjust(
+  $color-accent-primary,
+  $lightness: -10%
+);
+$color-accent-secondary: #f9e49e;
+$color-accent-secondary-hover: color.adjust(
+  $color-accent-secondary,
+  $lightness: -10%
+);
+
+$color-buttons-black: #000000;
+$color-gray-lines: #d4d4d4;
+
+$color-success: #198754;
+$color-error: #dc3545;
+$color-warning: #ffc107;
+$color-info: #0dcaf0;
+$color-rejected: #7c7c7c;
+
+$color-text-white: #ffffff;
+$color-subtext-white: #f8f8f8;
+$color-text-black: #000000;
+$color-subtext-black: #101010;
+$color-text-gray: #616161;
+$color-subtext-gray: #767676;
+
+/* ================= GRADIENTS ================= */
+
+$gradient-primary-horizontal: linear-gradient(0deg, #273247 0%, #6bd3ad 100%);
+$gradient-primary-diagonal: linear-gradient(
+  113deg,
+  #273247 0%,
+  #6bd3ad 100.33%
+);
+
 /* ================= FONTS ================= */
+
+$font-general: (
+  font-family: (
+    'Inter',
+    sans-serif,
+  ),
+  font-weight: 300,
+);
+
+$font-heading-primary: (
+  font-family: (
+    'Inter',
+    sans-serif,
+  ),
+  font-weight: 500,
+);
 
 /* ================= SHADOWS ================= */
