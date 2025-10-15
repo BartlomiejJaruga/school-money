@@ -1,4 +1,12 @@
+import { useFetcher } from 'react-router-dom';
 import styles from './AuthenticationAside.module.scss';
+import { FormProvider, useForm } from 'react-hook-form';
+import {
+  type RegisterValues,
+  RegisterSchema,
+} from '@schemas/auth/register.schema';
+import { zodResolver } from '@hookform/resolvers/zod';
+import type { AuthenticationResponse } from '@routes/root.route';
 
 export function AuthenticationAside() {
   return (
@@ -12,17 +20,65 @@ export function AuthenticationAside() {
 }
 
 function RegisterAside() {
+  const fetcher = useFetcher<AuthenticationResponse>();
+  const formMethods = useForm<RegisterValues>({
+    resolver: zodResolver(RegisterSchema),
+    mode: 'onChange',
+  });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: RegisterValues) => {
+    fetcher.submit(
+      { ...values, formType: 'register' },
+      { method: 'post', action: '/' }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state !== 'idle';
+
   return (
     <>
       <h2 className={styles['title']}>Create an account</h2>
-      <form className={styles['form']}>
-        <input name="firstName" />
-        <input name="lastName" />
-        <input name="email" />
-        <input name="password" />
-        <input name="rPassword" />
-        <button className={styles['form__submit']}>Sign up</button>
-      </form>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['form']}
+        >
+          <input {...register('firstName')} placeholder="First name" />
+          {errors.firstName && <span>{errors.firstName.message}</span>}
+
+          <input {...register('lastName')} placeholder="Last name" />
+          {errors.lastName && <span>{errors.lastName.message}</span>}
+
+          <input {...register('email')} placeholder="Email" />
+          {errors.email && <span>{errors.email.message}</span>}
+
+          <input
+            {...register('password')}
+            type="password"
+            placeholder="Password"
+          />
+          {errors.password && <span>{errors.password.message}</span>}
+
+          <input
+            {...register('repeatPassword')}
+            type="password"
+            placeholder="Repeat password"
+          />
+          {errors.repeatPassword && (
+            <span>{errors.repeatPassword.message}</span>
+          )}
+          <button className={styles['form__submit']} disabled={busy}>
+            Sign up
+          </button>
+        </form>
+      </FormProvider>
       <div className={styles['auth-switch']}>
         <span className={styles['auth-switch__text']}>
           Already have an account?

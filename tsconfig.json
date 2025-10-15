@@ -31,7 +31,9 @@
       "@pages/*": ["pages/*"],
       "@styles/*": ["styles/*"],
       "@assets/*": ["assets/*"],
-      "@routes/*": ["routes/*"]
+      "@routes/*": ["routes/*"],
+      "@lib/*": ["lib/*"],
+      "@schemas/*": ["schemas/*"]
     }
   },
   "include": ["src"],
