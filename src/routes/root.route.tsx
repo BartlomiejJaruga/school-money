@@ -19,6 +19,8 @@ export const action: ActionFunction = async ({
 
   if (formType == 'register') {
     return registerUser(formData);
+  } else if (formType == 'login') {
+    return loginUser(formData);
   }
 
   return {
@@ -28,7 +30,7 @@ export const action: ActionFunction = async ({
   };
 };
 
-function registerUser(formData: FormData) {
+function registerUser(formData: FormData): AuthenticationResponse {
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
   const firstName = String(formData.get('firstName') ?? '');
@@ -40,6 +42,19 @@ function registerUser(formData: FormData) {
     ok: true,
     status: 200,
     message: 'User created successfully',
+  };
+}
+
+function loginUser(formData: FormData): AuthenticationResponse {
+  const email = String(formData.get('email') ?? '');
+  const password = String(formData.get('password') ?? '');
+
+  console.log({ email, password });
+
+  return {
+    ok: true,
+    status: 200,
+    message: 'User logged in successfully',
   };
 }
 
