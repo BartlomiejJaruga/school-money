@@ -30,8 +30,9 @@ $aside-padding-left-right: 10rem;
   gap: 1rem;
 
   &__submit {
-    background-color: $color-buttons-black;
-    color: $color-text-white;
+    @include default-button-with-spinner();
+    height: 3.5rem;
+    font-size: 1.25rem;
   }
 }
 

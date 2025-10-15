@@ -1,4 +1,4 @@
-@use './variables' as *;
+@use './_variables' as *;
 
 // All app mixins are placed here
 
@@ -11,5 +11,63 @@
 @mixin apply-font($font-map) {
   @each $prop, $value in $font-map {
     #{$prop}: #{$value};
+  }
+}
+
+// buttons templates
+
+@mixin default-button(
+  $background-color: $color-buttons-black,
+  $background-color-hover: $color-buttons-black-hover,
+  $text-color: $color-text-white
+) {
+  background-color: $background-color;
+  color: $text-color;
+  border-radius: 0.5em;
+  border: 0;
+  padding: 0.5em 0;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $background-color-hover;
+  }
+}
+
+@mixin default-button-with-spinner(
+  $background-color: $color-buttons-black,
+  $background-color-hover: $color-buttons-black-hover,
+  $text-color: $color-text-white
+) {
+  @include default-button(
+    $background-color,
+    $background-color-hover,
+    $text-color
+  );
+
+  &:disabled {
+    color: transparent;
+    position: relative;
+    cursor: not-allowed;
+
+    &::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      height: 1em;
+      width: 1em;
+      border: 0.15em solid rgba($background-color, 0.1);
+      border-top-color: $text-color;
+      border-radius: 50%;
+      animation: spin360 1s linear infinite;
+    }
+  }
+}
+
+@keyframes spin360 {
+  to {
+    transform: translate(-50%, -50%) rotate(360deg);
   }
 }
