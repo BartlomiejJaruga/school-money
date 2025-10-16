@@ -21,13 +21,13 @@
   $background-color-hover: $color-buttons-black-hover,
   $text-color: $color-text-white
 ) {
-  background-color: $background-color;
-  color: $text-color;
-  border-radius: 0.5em;
-  border: 0;
-  padding: 0.5em 0;
-  cursor: pointer;
   transition: background-color 0.2s ease;
+  cursor: pointer;
+  border: 0;
+  border-radius: 0.5em;
+  background-color: $background-color;
+  padding: 0.5em 0;
+  color: $text-color;
 
   &:hover {
     background-color: $background-color-hover;
@@ -46,22 +46,22 @@
   );
 
   &:disabled {
-    color: transparent;
     position: relative;
     cursor: not-allowed;
+    color: transparent;
 
     &::after {
-      content: '';
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      height: 1em;
-      width: 1em;
+      animation: spin360 1s linear infinite;
       border: 0.15em solid rgba($background-color, 0.1);
       border-top-color: $text-color;
       border-radius: 50%;
-      animation: spin360 1s linear infinite;
+      width: 1em;
+      height: 1em;
+      content: '';
     }
   }
 }

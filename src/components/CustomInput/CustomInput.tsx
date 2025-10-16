@@ -42,7 +42,12 @@ export function CustomInput({
   return (
     <>
       <div className={clsx(styles['wrapper'], className ?? '')}>
-        <div className={styles['field']}>
+        <div
+          className={clsx(
+            styles['field'],
+            errorMessage && styles['field--error']
+          )}
+        >
           <input
             className={styles['field__input']}
             type={currentType}
@@ -51,10 +56,22 @@ export function CustomInput({
             {...rest}
           />
           {type == 'password' && passwordRevealed && (
-            <Eye onClick={() => setPasswordRevealed(false)} />
+            <Eye
+              className={clsx(
+                styles['field__icon'],
+                styles['field__icon--password-shown']
+              )}
+              onClick={() => setPasswordRevealed(false)}
+            />
           )}
           {type == 'password' && !passwordRevealed && (
-            <EyeClosed onClick={() => setPasswordRevealed(true)} />
+            <EyeClosed
+              className={clsx(
+                styles['field__icon'],
+                styles['field__icon--password-hidden']
+              )}
+              onClick={() => setPasswordRevealed(true)}
+            />
           )}
         </div>
 

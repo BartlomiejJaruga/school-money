@@ -1,18 +1,71 @@
+$input-padding: 1rem;
+$field-border-radius: 0.5rem;
+$field-height: 3rem;
+$password-icon-size: 1.5rem;
+
 .wrapper {
   width: 100%;
 }
 
 .field {
-  width: inherit;
   display: flex;
+  align-items: center;
+  border-radius: $field-border-radius;
+  background-color: $color-inputs;
+  width: inherit;
+  height: $field-height;
+
+  &--error {
+    box-shadow: inset 0 0 0 1px $color-error;
+  }
 
   &__input {
     box-sizing: border-box;
+    border: 0;
+    border-radius: $field-border-radius;
+    background-color: transparent;
+    padding: 0 $input-padding;
     width: inherit;
+    height: $field-height;
+    font-size: 1rem;
+
+    &:focus {
+      border-radius: $field-border-radius;
+    }
+
+    &::placeholder {
+      opacity: 1;
+      color: $color-subtext-gray;
+    }
+
+    &:-webkit-autofill {
+      -webkit-box-shadow: 0 0 0 $field-height $color-inputs inset;
+    }
+  }
+
+  &__icon {
+    cursor: pointer;
+    padding: calc((#{$field-height} - #{$password-icon-size}) / 2)
+      $input-padding;
+    width: $password-icon-size;
+    height: $password-icon-size;
+
+    &--password-shown {
+      color: $color-text-black;
+    }
+
+    &--password-hidden {
+      color: $color-subtext-gray;
+    }
   }
 }
 
 .error {
+  display: flex;
+  margin-top: 0.5rem;
   min-height: 1rem;
+  color: $color-error;
+  font-weight: 400;
+  font-size: 0.85rem;
   user-select: none;
 }
