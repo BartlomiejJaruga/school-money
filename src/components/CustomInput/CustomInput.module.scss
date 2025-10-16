@@ -1,0 +1,18 @@
+.wrapper {
+  width: 100%;
+}
+
+.field {
+  width: inherit;
+  display: flex;
+
+  &__input {
+    box-sizing: border-box;
+    width: inherit;
+  }
+}
+
+.error {
+  min-height: 1rem;
+  user-select: none;
+}

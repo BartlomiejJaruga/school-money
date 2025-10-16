@@ -8,6 +8,7 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import type { AuthenticationResponse } from '@routes/root.route';
 import { LoginSchema, type LoginValues } from '@schemas/auth/login.schema';
+import { CustomInput } from '@components/CustomInput';
 
 export function AuthenticationAside() {
   return (
@@ -28,9 +29,8 @@ function RegisterAside() {
   });
 
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = formMethods;
 
   const onSubmit = (values: RegisterValues) => {
@@ -51,30 +51,15 @@ function RegisterAside() {
           onSubmit={handleSubmit(onSubmit)}
           className={styles['form']}
         >
-          <input {...register('firstName')} placeholder="First name" />
-          {errors.firstName && <span>{errors.firstName.message}</span>}
-
-          <input {...register('lastName')} placeholder="Last name" />
-          {errors.lastName && <span>{errors.lastName.message}</span>}
-
-          <input {...register('email')} placeholder="Email" />
-          {errors.email && <span>{errors.email.message}</span>}
-
-          <input
-            {...register('password')}
-            type="password"
-            placeholder="Password"
-          />
-          {errors.password && <span>{errors.password.message}</span>}
-
-          <input
-            {...register('repeatPassword')}
+          <CustomInput name="firstName" placeholder="First name" />
+          <CustomInput name="lastName" placeholder="Last name" />
+          <CustomInput name="email" placeholder="Email" />
+          <CustomInput name="password" type="password" placeholder="Password" />
+          <CustomInput
+            name="repeatPassword"
             type="password"
             placeholder="Repeat password"
           />
-          {errors.repeatPassword && (
-            <span>{errors.repeatPassword.message}</span>
-          )}
           <button className={styles['form__submit']} disabled={busy}>
             Sign up
           </button>
@@ -98,9 +83,8 @@ function LoginAside() {
   });
 
   const {
-    register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting },
   } = formMethods;
 
   const onSubmit = (values: LoginValues) => {
@@ -121,16 +105,8 @@ function LoginAside() {
           onSubmit={handleSubmit(onSubmit)}
           className={styles['form']}
         >
-          <input {...register('email')} placeholder="Email" />
-          {errors.email && <span>{errors.email.message}</span>}
-
-          <input
-            {...register('password')}
-            type="password"
-            placeholder="Password"
-          />
-          {errors.password && <span>{errors.password.message}</span>}
-
+          <CustomInput name="email" placeholder="Email" />
+          <CustomInput name="password" type="password" placeholder="Password" />
           <button className={styles['form__submit']} disabled={busy}>
             Log in
           </button>
