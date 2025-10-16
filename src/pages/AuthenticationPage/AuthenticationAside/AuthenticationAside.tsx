@@ -9,19 +9,41 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { AuthenticationResponse } from '@routes/root.route';
 import { LoginSchema, type LoginValues } from '@schemas/auth/login.schema';
 import { CustomInput } from '@components/CustomInput';
+import { useState } from 'react';
+import {
+  AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM,
+  type AuthenticationPageAsideType,
+} from '@lib/constants';
 
 export function AuthenticationAside() {
+  const [currentAsideType, setCurrentAsideType] =
+    useState<AuthenticationPageAsideType>(
+      AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login
+    );
+
+  const handleChangeAside = (newAsideType: AuthenticationPageAsideType) => {
+    setCurrentAsideType(newAsideType);
+  };
+
   return (
     <>
       <aside className={styles['aside']}>
-        <RegisterAside />
-        <LoginAside />
+        {currentAsideType == AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login && (
+          <LoginAside handleChangeAside={handleChangeAside} />
+        )}
+        {currentAsideType == AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Register && (
+          <RegisterAside handleChangeAside={handleChangeAside} />
+        )}
       </aside>
     </>
   );
 }
 
-function RegisterAside() {
+type AsideProps = {
+  handleChangeAside: (newAsideType: AuthenticationPageAsideType) => void;
+};
+
+function RegisterAside({ handleChangeAside }: AsideProps) {
   const fetcher = useFetcher<AuthenticationResponse>();
   const formMethods = useForm<RegisterValues>({
     resolver: zodResolver(RegisterSchema),
@@ -53,7 +75,7 @@ function RegisterAside() {
         >
           <CustomInput name="firstName" placeholder="First name" />
           <CustomInput name="lastName" placeholder="Last name" />
-          <CustomInput name="email" placeholder="Email" />
+          <CustomInput name="email" placeholder="Email" autoComplete="on" />
           <CustomInput name="password" type="password" placeholder="Password" />
           <CustomInput
             name="repeatPassword"
@@ -69,13 +91,20 @@ function RegisterAside() {
         <span className={styles['auth-switch__text']}>
           Already have an account?
         </span>
-        <button className={styles['auth-switch__button']}>Log in</button>
+        <button
+          className={styles['auth-switch__button']}
+          onClick={() => {
+            handleChangeAside(AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login);
+          }}
+        >
+          Log in
+        </button>
       </div>
     </>
   );
 }
 
-function LoginAside() {
+function LoginAside({ handleChangeAside }: AsideProps) {
   const fetcher = useFetcher<AuthenticationResponse>();
   const formMethods = useForm<LoginValues>({
     resolver: zodResolver(LoginSchema),
@@ -105,7 +134,7 @@ function LoginAside() {
           onSubmit={handleSubmit(onSubmit)}
           className={styles['form']}
         >
-          <CustomInput name="email" placeholder="Email" />
+          <CustomInput name="email" placeholder="Email" autoComplete="on" />
           <CustomInput name="password" type="password" placeholder="Password" />
           <button className={styles['form__submit']} disabled={busy}>
             Log in
@@ -116,7 +145,14 @@ function LoginAside() {
         <span className={styles['auth-switch__text']}>
           Don't have an account?
         </span>
-        <button className={styles['auth-switch__button']}>Create one</button>
+        <button
+          className={styles['auth-switch__button']}
+          onClick={() => {
+            handleChangeAside(AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Register);
+          }}
+        >
+          Create one
+        </button>
       </div>
     </>
   );
