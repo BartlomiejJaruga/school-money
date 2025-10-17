@@ -1,6 +1,6 @@
 $aside-border-radius: 5rem;
 $aside-padding-top-bottom: 5rem;
-$aside-padding-left-right: 10rem;
+$aside-padding-left-right: 7.5rem;
 
 .aside {
   display: flex;
@@ -33,7 +33,7 @@ $aside-padding-left-right: 10rem;
   &__submit {
     @include default-button-with-spinner();
     margin-top: 1rem;
-    height: 3.5rem;
+    height: 3rem;
     font-size: 1.25rem;
   }
 }
