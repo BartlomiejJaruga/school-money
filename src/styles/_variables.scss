@@ -7,10 +7,10 @@
 $color-background-primary: #f5f5f5;
 $color-background-primary-hover: #f2f2f2;
 
-$color-accent-primary: #6bd3ad;
+$color-accent-primary: #44c797;
 $color-accent-primary-hover: color.adjust(
   $color-accent-primary,
-  $lightness: -10%
+  $lightness: 10%
 );
 $color-accent-secondary: #f9e49e;
 $color-accent-secondary-hover: color.adjust(
@@ -31,6 +31,7 @@ $color-subtext-black: #101010;
 $color-text-gray: #616161;
 $color-subtext-gray: #767676;
 
+$color-aside-background: #3b6861;
 $color-modal-background: #f2f2f2;
 $color-buttons-black: #000000;
 $color-buttons-black-hover: color.adjust(

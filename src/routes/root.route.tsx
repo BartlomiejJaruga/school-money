@@ -1,7 +1,8 @@
-import type {
-  ActionFunction,
-  ActionFunctionArgs,
-  RouteObject,
+import {
+  redirect,
+  type ActionFunction,
+  type ActionFunctionArgs,
+  type RouteObject,
 } from 'react-router-dom';
 import { AuthenticationPage } from '@pages/AuthenticationPage';
 
@@ -51,11 +52,7 @@ function loginUser(formData: FormData): AuthenticationResponse {
 
   console.log({ email, password });
 
-  return {
-    ok: true,
-    status: 200,
-    message: 'User logged in successfully',
-  };
+  return redirect('/funds');
 }
 
 const RootRoute: RouteObject = {

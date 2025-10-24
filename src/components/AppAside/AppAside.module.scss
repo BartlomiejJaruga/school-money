@@ -1,0 +1,25 @@
+$aside-padding-top-bottom: 2rem;
+
+.aside {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0.25rem 0 0.25rem rgba(0, 0, 0, 0.2);
+  background-color: $color-aside-background;
+  padding: $aside-padding-top-bottom 1.5rem;
+  min-width: 16rem;
+  min-height: calc(100vh - 2 * $aside-padding-top-bottom);
+}
+
+.aside__top-side {
+  &__logo {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.aside__bottom-side {
+  display: flex;
+  width: 100%;
+}

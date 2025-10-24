@@ -4,8 +4,16 @@ export function FundsPage() {
   return (
     <>
       <div className={styles['page']}>
-        <aside>Aside</aside>
-        <h1>Funds Page</h1>
+        <div className={styles['first-col']}>
+          <h1>Hello</h1>
+          <h1>Hello</h1>
+          <h1>Hello</h1>
+        </div>
+        <div className={styles['second-col']}>
+          <h2>World</h2>
+          <h2>World</h2>
+          <h2>World</h2>
+        </div>
       </div>
     </>
   );
