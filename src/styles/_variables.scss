@@ -50,6 +50,17 @@ $gradient-primary-diagonal: linear-gradient(
   #6bd3ad 100.33%
 );
 
+$gradient-secondary-horizontal: linear-gradient(
+  0deg,
+  $color-aside-background 0%,
+  $color-accent-secondary 100%
+);
+$gradient-secondary-diagonal: linear-gradient(
+  113deg,
+  $color-aside-background 0%,
+  $color-accent-secondary 100.33%
+);
+
 /* ================= FONTS ================= */
 
 $font-general: (
