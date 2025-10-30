@@ -17,12 +17,19 @@ $aside-width: 16rem;
 .aside__top-side {
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1rem;
   width: 100%;
 
-  &__logo {
+  .top-side__logo {
     width: 100%;
     height: auto;
+  }
+
+  .top-side__divider {
+    margin: 0;
+    border: none;
+    background-color: $color-text-white;
+    height: 1px;
   }
 }
 
@@ -88,6 +95,19 @@ $aside-width: 16rem;
         color: inherit;
       }
     }
+  }
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: $color-text-white;
+  text-decoration: none;
+  @include apply-font($font-general);
+
+  &--active {
+    color: $color-accent-secondary-hover;
   }
 }
 
