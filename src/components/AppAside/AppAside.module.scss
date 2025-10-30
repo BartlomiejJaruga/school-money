@@ -57,15 +57,36 @@ $aside-width: 16rem;
 
   &__operations {
     display: flex;
+    flex-wrap: wrap;
     justify-content: space-between;
+    gap: 0.5rem;
+    width: 100%;
+    max-width: 100%;
 
     .operations__button {
-      color: $color-text-white;
       display: flex;
       align-items: center;
-      white-space: nowrap;
-      background-color: transparent;
+      gap: 0.5rem;
       border: 0;
+      background: transparent;
+      padding: 0.25rem;
+      overflow: hidden;
+      color: $color-text-white;
+      white-space: nowrap;
+      @include apply-font($font-general);
+      transition: color 0.2s ease;
+      cursor: pointer;
+      font-weight: 200;
+      font-size: 1rem;
+
+      &:hover {
+        color: $color-accent-secondary-hover;
+      }
+
+      .button__icon {
+        stroke-width: 1.25 !important;
+        color: inherit;
+      }
     }
   }
 }

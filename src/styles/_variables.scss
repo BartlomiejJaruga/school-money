@@ -43,7 +43,7 @@ $color-gray-lines: #d4d4d4;
 
 /* ================= GRADIENTS ================= */
 
-$gradient-primary-horizontal: linear-gradient(0deg, #273247 0%, #6bd3ad 100%);
+$gradient-primary-horizontal: linear-gradient(90deg, #273247 0%, #6bd3ad 100%);
 $gradient-primary-diagonal: linear-gradient(
   113deg,
   #273247 0%,
@@ -51,7 +51,7 @@ $gradient-primary-diagonal: linear-gradient(
 );
 
 $gradient-secondary-horizontal: linear-gradient(
-  0deg,
+  90deg,
   $color-aside-background 0%,
   $color-accent-secondary 100%
 );

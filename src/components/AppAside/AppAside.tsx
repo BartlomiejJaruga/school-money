@@ -40,15 +40,15 @@ function Wallet() {
       </div>
       <div className={styles['wallet__operations']}>
         <button className={styles['operations__button']}>
-          <BanknoteArrowUp />
+          <BanknoteArrowUp className={styles['button__icon']} />
           Top up
         </button>
         <button className={styles['operations__button']}>
-          <BanknoteArrowDown />
-          Withdrawal
+          <BanknoteArrowDown className={styles['button__icon']} />
+          Withdraw
         </button>
         <button className={styles['operations__button']}>
-          <History />
+          <History className={styles['button__icon']} />
           Payment history
         </button>
       </div>
