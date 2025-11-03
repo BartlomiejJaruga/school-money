@@ -38,6 +38,7 @@ $color-buttons-black-hover: color.adjust(
   $color-buttons-black,
   $lightness: +15%
 );
+$color-logout-button: #d92033;
 $color-inputs: #e2e2e2;
 $color-gray-lines: #d4d4d4;
 
@@ -59,6 +60,12 @@ $gradient-secondary-diagonal: linear-gradient(
   113deg,
   $color-aside-background 0%,
   $color-accent-secondary 100.33%
+);
+
+$gradient-logout-horizontal: linear-gradient(
+  90deg,
+  $color-aside-background 0%,
+  $color-logout-button 100%
 );
 
 /* ================= FONTS ================= */

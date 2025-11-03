@@ -102,16 +102,57 @@ $aside-width: 16rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  padding: 0.25rem;
   color: $color-text-white;
   text-decoration: none;
   @include apply-font($font-general);
+  position: relative;
+  cursor: pointer;
+  isolation: isolate;
+  font-weight: 200;
+  font-size: 1rem;
 
-  &--active {
-    color: $color-accent-secondary-hover;
+  &::after {
+    position: absolute;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 0.3s ease;
+    inset: 0;
+    border-radius: 0.5rem;
+    content: '';
+  }
+
+  &--tab::after {
+    background: $gradient-secondary-horizontal;
+  }
+
+  &--logout::after {
+    background: $gradient-logout-horizontal;
+  }
+
+  &--disabled {
+    pointer-events: none;
+  }
+
+  &:hover::after,
+  &--active::after {
+    opacity: 1;
+  }
+
+  & > * {
+    position: relative;
+    z-index: 1;
+  }
+
+  & > svg {
+    stroke-width: 1.25 !important;
+    color: inherit;
   }
 }
 
 .aside__bottom-side {
   display: flex;
+  flex-direction: column;
+  gap: 1rem;
   width: 100%;
 }

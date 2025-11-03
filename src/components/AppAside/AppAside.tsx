@@ -1,4 +1,4 @@
-import { NavLink, useFetcher } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import styles from './AppAside.module.scss';
 import logoWhite from '@assets/logo-white.svg';
 import {
@@ -9,16 +9,12 @@ import {
   Blocks,
   Baby,
   GraduationCap,
+  UserPen,
+  LogOut,
 } from 'lucide-react';
 import clsx from 'clsx';
 
 export function AppAside() {
-  const fetcher = useFetcher();
-
-  const handleLogout = () => {
-    fetcher.submit({}, { method: 'post', action: 'logout' });
-  };
-
   return (
     <>
       <aside className={styles['aside']}>
@@ -33,9 +29,14 @@ export function AppAside() {
           <NavList />
         </div>
         <div className={styles['aside__bottom-side']}>
-          <button onClick={handleLogout} disabled={fetcher.state !== 'idle'}>
-            Logout
-          </button>
+          <SingleNavLink to="/profile" type="tab">
+            <UserPen />
+            <span>Profile</span>
+          </SingleNavLink>
+          <SingleNavLink to="/logout" type="logout">
+            <LogOut />
+            <span>Logout</span>
+          </SingleNavLink>
         </div>
       </aside>
     </>
@@ -70,21 +71,21 @@ function Wallet() {
 function NavList() {
   return (
     <>
-      <SingleNavLink to="/funds">
+      <SingleNavLink to="/funds" type="tab">
         <HeartHandshake />
-        Funds
+        <span>Funds</span>
       </SingleNavLink>
-      <SingleNavLink to="/created-funds">
+      <SingleNavLink to="/created-funds" type="tab">
         <Blocks />
-        Created Funds
+        <span>Created Funds</span>
       </SingleNavLink>
-      <SingleNavLink to="/kids">
+      <SingleNavLink to="/kids" type="tab">
         <Baby />
-        Kids
+        <span>Kids</span>
       </SingleNavLink>
-      <SingleNavLink to="/classes">
+      <SingleNavLink to="/classes" type="tab">
         <GraduationCap />
-        Classes
+        <span>Classes</span>
       </SingleNavLink>
     </>
   );
@@ -92,15 +93,23 @@ function NavList() {
 
 type SingleNavLinkProps = {
   to: string;
+  type: 'tab' | 'logout';
   children?: React.ReactNode;
 };
 
-function SingleNavLink({ to, children }: SingleNavLinkProps) {
+function SingleNavLink({ to, type, children }: SingleNavLinkProps) {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) =>
-        clsx(isActive && styles['nav-link--active'], styles['nav-link'])
+      prefetch="intent"
+      className={({ isActive, isPending }) =>
+        clsx(
+          isActive && styles['nav-link--active'],
+          styles['nav-link'],
+          type == 'tab' && styles['nav-link--tab'],
+          type == 'logout' && styles['nav-link--logout'],
+          isPending && type == 'logout' && styles['nav-link--disabled']
+        )
       }
     >
       {children}

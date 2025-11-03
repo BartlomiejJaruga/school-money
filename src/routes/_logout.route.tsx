@@ -6,13 +6,13 @@ import {
 } from 'react-router-dom';
 
 export const loader: LoaderFunction = async () => {
-  // checking if user logged in here and redirecting
+  // checking if user logged in here and removing user data and tokens here
 
   return redirect('/');
 };
 
 export const action: ActionFunction = async () => {
-  // removing user data and tokens here
+  // checking if user logged in here and removing user data and tokens here
 
   return redirect('/');
 };
