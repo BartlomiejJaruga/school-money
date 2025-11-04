@@ -1,6 +1,7 @@
 import { NavLink } from 'react-router-dom';
 import styles from './AppAside.module.scss';
 import logoWhite from '@assets/logo-white.svg';
+import defaultUser from '@assets/default-user.png';
 import {
   BanknoteArrowUp,
   BanknoteArrowDown,
@@ -24,6 +25,7 @@ export function AppAside() {
             alt="SchoolMoney logo"
             className={styles['top-side__logo']}
           />
+          <UserInfo />
           <Wallet />
           <hr className={styles['top-side__divider']} />
           <NavList />
@@ -40,6 +42,22 @@ export function AppAside() {
         </div>
       </aside>
     </>
+  );
+}
+
+function UserInfo() {
+  return (
+    <div className={styles['user-info']}>
+      <img
+        src={defaultUser}
+        alt="avatar"
+        className={styles['user-info__avatar']}
+      />
+      <div className={styles['user-info__info']}>
+        <span className={styles['info__names']}>Andrew Smith</span>
+        <span className={styles['info__email']}>andrew.smith@gmail.com</span>
+      </div>
+    </div>
   );
 }
 

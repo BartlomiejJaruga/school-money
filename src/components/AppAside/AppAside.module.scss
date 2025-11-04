@@ -33,6 +33,37 @@ $aside-width: 16rem;
   }
 }
 
+.user-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin: 1rem 0;
+
+  &__avatar {
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    width: 3.5rem;
+    font-style: italic;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    @include apply-font($font-general);
+
+    .info__names {
+      color: $color-text-white;
+      font-size: 1.25rem;
+    }
+
+    .info__email {
+      color: $color-text-light-gray;
+      font-size: 0.9rem;
+    }
+  }
+}
+
 .wallet {
   display: flex;
   flex-direction: column;
