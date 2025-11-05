@@ -1,0 +1,145 @@
+$kid-tile-size: 300px;
+$new-kid-tile-transition: 0.25s ease;
+$new-kid-tile-hover-color: $color-accent-primary;
+
+.page {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: start;
+  gap: 4rem;
+  padding: 10vh 5%;
+}
+
+.kid-tile {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  box-sizing: border-box;
+  box-shadow: $shadow-light;
+  border-radius: 1rem;
+  background-color: $color-bento-background;
+  padding: 1rem;
+  width: $kid-tile-size;
+  height: $kid-tile-size;
+  @include apply-font($font-general);
+
+  &__ellipsis {
+    position: absolute;
+    top: 0.5rem;
+    right: 1rem;
+    cursor: pointer;
+    width: 2rem;
+    height: auto;
+    color: $color-text-black;
+  }
+
+  &__action-menu {
+    display: flex;
+    position: absolute;
+    top: 2.5rem;
+    right: 1rem;
+    flex-direction: column;
+    box-shadow: $shadow-medium;
+    border-radius: 0.5rem;
+    background-color: $color-bento-background;
+    padding: 0.5rem 0;
+
+    .action-menu__button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border: 0;
+      background: transparent;
+      padding: 0.35rem 1.25rem 0.35rem 1rem;
+      @include apply-font($font-general);
+      cursor: pointer;
+      font-weight: 400;
+      font-size: 1rem;
+      line-height: 1;
+
+      &--red {
+        color: $color-logout-button;
+      }
+
+      &:hover {
+        background-color: $color-background-primary-hover;
+      }
+
+      & > svg {
+        width: auto;
+        height: 1.25rem;
+        color: inherit;
+      }
+    }
+  }
+
+  &__photo {
+    border-radius: 50%;
+    aspect-ratio: 1/1;
+    height: 8rem;
+    user-select: none;
+  }
+
+  &__names {
+    margin-top: 1rem;
+    font-weight: 400;
+    font-size: 1.5rem;
+  }
+
+  &__class {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .class__icon {
+      stroke-width: 1px !important;
+      width: auto;
+      height: 1.5rem;
+    }
+
+    .class__name {
+      font-size: 1.25rem;
+    }
+  }
+}
+
+.new-kid-tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  transition: border-color $new-kid-tile-transition;
+  cursor: pointer;
+  border: 2px dashed $color-subtext-gray;
+  border-radius: 1rem;
+  width: $kid-tile-size;
+  height: $kid-tile-size;
+  user-select: none;
+
+  &:hover {
+    border-color: $new-kid-tile-hover-color;
+  }
+
+  &:hover > &__icon,
+  &:hover > &__text {
+    color: $new-kid-tile-hover-color;
+  }
+
+  &__icon {
+    transition: color $new-kid-tile-transition;
+    stroke-width: 1px !important;
+    width: 3rem;
+    height: auto;
+    color: $color-subtext-gray;
+  }
+
+  &__text {
+    transition: color $new-kid-tile-transition;
+    color: $color-subtext-gray;
+    font-size: 1.75rem;
+  }
+}
