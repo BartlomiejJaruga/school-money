@@ -97,7 +97,7 @@ $aside-width: 16rem;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    gap: 0.5rem;
+    gap: 1rem;
     width: 100%;
     max-width: 100%;
 
@@ -133,7 +133,9 @@ $aside-width: 16rem;
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  box-sizing: border-box;
   padding: 0.25rem;
+  width: 100%;
   color: $color-text-white;
   text-decoration: none;
   @include apply-font($font-general);

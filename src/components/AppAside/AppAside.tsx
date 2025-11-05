@@ -77,10 +77,10 @@ function Wallet() {
           <BanknoteArrowDown className={styles['button__icon']} />
           Withdraw
         </button>
-        <button className={styles['operations__button']}>
+        <SingleNavLink to="/payment-history" type="tab">
           <History className={styles['button__icon']} />
-          Payment history
-        </button>
+          <span>Payment History</span>
+        </SingleNavLink>
       </div>
     </div>
   );
