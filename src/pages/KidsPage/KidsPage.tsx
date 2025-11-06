@@ -1,17 +1,42 @@
 import styles from './KidsPage.module.scss';
 import defaultImage from '@assets/default-user.png';
-import { School, Ellipsis, Plus, Pencil, Trash2 } from 'lucide-react';
+import { School, Ellipsis, Plus, Pencil, Trash2, X } from 'lucide-react';
 import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
+import { ModalTemplate } from '@components/ModalTemplate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { useFetcher } from 'react-router-dom';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  NewChildSchema,
+  type NewChildValues,
+} from '@schemas/kids/newChild.schema';
+import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
 
 export function KidsPage() {
+  const [isAddNewChildModalOpen, setIsAddNewChildModalOpen] = useState(false);
+
+  const handleModalClose = () => {
+    setIsAddNewChildModalOpen(false);
+  };
+
+  const handleModalOpen = () => {
+    setIsAddNewChildModalOpen(true);
+  };
+
   return (
     <>
       <div className={styles['page']}>
         <KidTile />
         <KidTile />
-        <NewKidTile />
+        <NewKidTile handleModalOpen={handleModalOpen} />
       </div>
+      <ModalTemplate
+        isOpen={isAddNewChildModalOpen}
+        onOverlayClick={handleModalClose}
+      >
+        <AddNewChildModal handleClose={handleModalClose} />
+      </ModalTemplate>
     </>
   );
 }
@@ -75,11 +100,81 @@ function KidTile() {
   );
 }
 
-function NewKidTile() {
+type NewKidTileProps = {
+  handleModalOpen: React.MouseEventHandler<HTMLDivElement>;
+};
+
+function NewKidTile({ handleModalOpen }: NewKidTileProps) {
   return (
-    <div className={styles['new-kid-tile']}>
+    <div onClick={handleModalOpen} className={styles['new-kid-tile']}>
       <Plus className={styles['new-kid-tile__icon']} />
       <h2 className={styles['new-kid-tile__text']}>Add Child</h2>
+    </div>
+  );
+}
+
+type AddNewChildModalProps = {
+  handleClose: React.MouseEventHandler<HTMLElement | SVGSVGElement>;
+};
+
+function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<NewChildValues>({
+    resolver: zodResolver(NewChildSchema),
+    mode: 'onChange',
+  });
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: NewChildValues) => {
+    fetcher.submit(values, { method: 'post', action: '/kids' });
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['new-child-modal']}>
+      <div className={styles['new-child-modal__top']}>
+        <h2 className={styles['top__title']}>ADD NEW CHILD</h2>
+        <X onClick={handleClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['new-child-modal__form']}
+        >
+          <CustomInputWithLabel
+            label="First name"
+            name="firstName"
+            placeholder="First name"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            label="Last name"
+            name="lastName"
+            placeholder="Last name"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel label="Birthday" type="date" name="birthday" />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={handleClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

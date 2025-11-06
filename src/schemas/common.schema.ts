@@ -20,6 +20,20 @@ export const FirstName = z.string().trim().min(1, 'This field is required');
 
 export const LastName = z.string().trim().min(1, 'This field is required');
 
+export const Birthday = z
+  .string()
+  .min(1, 'This field is required')
+  .refine((val) => {
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, 'Invalid date format')
+  .refine((val) => {
+    const date = new Date(val);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return date <= today;
+  }, "Birthday can't be a future date");
+
 export function checkFieldsEquality<
   T extends ZodRawShape,
   L extends keyof z.infer<ZodObject<T>>,

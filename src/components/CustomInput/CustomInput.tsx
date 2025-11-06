@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { useFormContext } from 'react-hook-form';
 import { Eye, EyeClosed } from 'lucide-react';
 
-type CustomInputProps = Omit<
+export type CustomInputProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
   'name' | 'id'
 > & {
