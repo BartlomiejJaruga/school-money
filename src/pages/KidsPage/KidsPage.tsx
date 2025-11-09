@@ -160,6 +160,7 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
             autoComplete="off"
           />
           <CustomInputWithLabel label="Birthday" type="date" name="birthday" />
+          <DragAndDropPhotoInput />
           <div className={styles['form__actions']}>
             <button
               type="button"
@@ -175,6 +176,62 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
           </div>
         </form>
       </FormProvider>
+    </div>
+  );
+}
+
+function DragAndDropPhotoInput() {
+  const [isDragging, setIsDragging] = useState(false);
+  const [preview, setPreview] = useState<string | null>(null);
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = e.dataTransfer.files;
+
+    const url = URL.createObjectURL(files[0]);
+    setPreview(url);
+
+    console.log([...files]);
+  };
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = () => setIsDragging(false);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    handlePhotoPreview(file);
+  };
+
+  const handlePhotoPreview = (file: File) => {
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+  };
+
+  return (
+    <div
+      onDrop={handleDrop}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      className={clsx(styles['dropzone'], isDragging && styles['dragging'])}
+    >
+      <label htmlFor="file-input">
+        Drag & drop file here or click to choose from disk
+      </label>
+      <input
+        type="file"
+        id="file-input"
+        accept=".png, .jpeg, .jpg"
+        onChange={handleFileChange}
+        style={{ display: 'none' }}
+      />
+      {preview && <img src={preview} alt="preview" style={{ width: 200 }} />}
     </div>
   );
 }

@@ -209,3 +209,19 @@ $new-kid-tile-hover-color: $color-accent-primary;
     }
   }
 }
+
+.dropzone {
+  transition: background-color 0.2s;
+  cursor: pointer;
+  border: 2px dashed #aaa;
+  border-radius: 1rem;
+  padding: 2rem;
+  color: #666;
+  text-align: center;
+}
+
+.dragging {
+  border-color: #007bff;
+  background-color: #eef;
+  color: #007bff;
+}
