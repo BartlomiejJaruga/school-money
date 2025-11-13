@@ -180,19 +180,35 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
   );
 }
 
-function DragAndDropPhotoInput() {
+type DragAndDropPhotoInputProps = {
+  className?: string;
+};
+
+function DragAndDropPhotoInput({ className }: DragAndDropPhotoInputProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const isFileTypeValid = (file: File) => {
+    const allowedTypes = ['image/png', 'image/jpeg'];
+    if (!allowedTypes.includes(file.type)) {
+      alert('Accepted file types: .png, .jpg');
+      return false;
+    }
+
+    return true;
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
-    const files = e.dataTransfer.files;
+    const file = e.dataTransfer.files[0];
 
-    const url = URL.createObjectURL(files[0]);
-    setPreview(url);
+    if (!isFileTypeValid(file)) return;
 
-    console.log([...files]);
+    handlePhotoPreview(file);
+
+    console.log(file); // TO DO handle file saving in form
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -206,7 +222,11 @@ function DragAndDropPhotoInput() {
     const file = e.target.files?.[0];
     if (!file) return;
 
+    if (!isFileTypeValid(file)) return;
+
     handlePhotoPreview(file);
+
+    console.log(file); // TO DO handle file saving in form
   };
 
   const handlePhotoPreview = (file: File) => {
@@ -215,23 +235,48 @@ function DragAndDropPhotoInput() {
   };
 
   return (
-    <div
-      onDrop={handleDrop}
-      onDragOver={handleDragOver}
-      onDragLeave={handleDragLeave}
-      className={clsx(styles['dropzone'], isDragging && styles['dragging'])}
-    >
-      <label htmlFor="file-input">
-        Drag & drop file here or click to choose from disk
-      </label>
-      <input
-        type="file"
-        id="file-input"
-        accept=".png, .jpeg, .jpg"
-        onChange={handleFileChange}
-        style={{ display: 'none' }}
-      />
-      {preview && <img src={preview} alt="preview" style={{ width: 200 }} />}
+    <div className={clsx(styles['photo-input-wrapper'], className ?? '')}>
+      <h3 className={styles['photo-input-wrapper__title']}>Photo</h3>
+
+      {!preview && (
+        <div
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
+          onClick={() => {
+            inputRef.current?.click();
+          }}
+          className={clsx(
+            styles['photo-input-wrapper__dropzone'],
+            isDragging && styles['photo-input-wrapper__dropzone--dragging']
+          )}
+        >
+          <label htmlFor="file-input">
+            Drag & drop file here or click to choose from disk
+          </label>
+          <input
+            type="file"
+            id="file-input"
+            ref={inputRef}
+            accept=".png, .jpeg, .jpg"
+            onChange={handleFileChange}
+          />
+        </div>
+      )}
+
+      {preview && (
+        <div className={styles['photo-input-wrapper__preview']}>
+          <img
+            src={preview}
+            alt="preview"
+            className={styles['preview__photo']}
+          />
+          <X
+            className={styles['preview__delete']}
+            onClick={() => setPreview(null)}
+          />
+        </div>
+      )}
     </div>
   );
 }
