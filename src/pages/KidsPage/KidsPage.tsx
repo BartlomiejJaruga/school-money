@@ -12,6 +12,7 @@ import {
   type NewChildValues,
 } from '@schemas/kids/newChild.schema';
 import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
+import { ConfirmationModal } from '@components/ConfirmationModal';
 
 export function KidsPage() {
   const [isAddNewChildModalOpen, setIsAddNewChildModalOpen] = useState(false);
@@ -44,6 +45,8 @@ export function KidsPage() {
 function KidTile() {
   const actionMenuRef = useRef<HTMLDivElement | null>(null);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
+  const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
+    useState(false);
 
   useEffect(() => {
     function handleClickOutsideActionMenu(event: MouseEvent) {
@@ -61,42 +64,67 @@ function KidTile() {
       document.removeEventListener('mousedown', handleClickOutsideActionMenu);
   }, []);
 
+  const handleDeleteConfirm = () => {
+    console.log('child deleted');
+    setIsDeleteConfirmationOpen(false);
+  };
+
+  const handleDeleteCancel = () => {
+    console.log('delete child operation canceled');
+    setIsDeleteConfirmationOpen(false);
+  };
+
   return (
-    <div className={styles['kid-tile']}>
-      <Ellipsis
-        onClick={() => {
-          setIsActionMenuOpen(true);
-        }}
-        className={styles['kid-tile__ellipsis']}
-      />
-      {isActionMenuOpen && (
-        <div ref={actionMenuRef} className={styles['kid-tile__action-menu']}>
-          <button className={styles['action-menu__button']}>
-            <Pencil />
-            Edit
-          </button>
-          <button
-            className={clsx(
-              styles['action-menu__button'],
-              styles['action-menu__button--red']
-            )}
-          >
-            <Trash2 />
-            Delete
-          </button>
+    <>
+      <div className={styles['kid-tile']}>
+        <Ellipsis
+          onClick={() => {
+            setIsActionMenuOpen(true);
+          }}
+          className={styles['kid-tile__ellipsis']}
+        />
+        {isActionMenuOpen && (
+          <div ref={actionMenuRef} className={styles['kid-tile__action-menu']}>
+            <button className={styles['action-menu__button']}>
+              <Pencil />
+              Edit
+            </button>
+            <button
+              className={clsx(
+                styles['action-menu__button'],
+                styles['action-menu__button--red']
+              )}
+              onClick={() => {
+                setIsDeleteConfirmationOpen(true);
+                setIsActionMenuOpen(false);
+              }}
+            >
+              <Trash2 />
+              Delete
+            </button>
+          </div>
+        )}
+        <img
+          src={defaultImage}
+          alt={`Kid Name photo`}
+          className={styles['kid-tile__photo']}
+        />
+        <h3 className={styles['kid-tile__names']}>FirstName LastName</h3>
+        <div className={styles['kid-tile__class']}>
+          <School className={styles['class__icon']} />
+          <h4 className={styles['class__name']}>{`Class (16/17)`}</h4>
         </div>
-      )}
-      <img
-        src={defaultImage}
-        alt={`Kid Name photo`}
-        className={styles['kid-tile__photo']}
-      />
-      <h3 className={styles['kid-tile__names']}>FirstName LastName</h3>
-      <div className={styles['kid-tile__class']}>
-        <School className={styles['class__icon']} />
-        <h4 className={styles['class__name']}>{`Class (16/17)`}</h4>
       </div>
-    </div>
+      <ConfirmationModal
+        text="Are you sure you want to DELETE FirstName LastName?"
+        warningSubtext="This operation is irreversible!"
+        highlightedPart="FirstName LastName"
+        isOpen={isDeleteConfirmationOpen}
+        onOverlayClick={handleDeleteCancel}
+        onCancel={handleDeleteCancel}
+        onConfirm={handleDeleteConfirm}
+      />
+    </>
   );
 }
 

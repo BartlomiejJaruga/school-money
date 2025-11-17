@@ -1,0 +1,63 @@
+.modal {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 1rem;
+  border-radius: 1rem;
+  background-color: $color-modal-background;
+  padding: 2rem;
+  width: 300px;
+
+  &__text {
+    color: $color-text-black;
+    font-size: 1.2rem;
+    line-height: 1.25;
+    text-align: center;
+
+    &--highlight {
+      color: $color-accent-primary;
+    }
+  }
+
+  &__subtext,
+  &__warning-subtext {
+    font-style: italic;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  &__subtext {
+    color: $color-text-black;
+  }
+
+  &__warning-subtext {
+    color: $color-error;
+    font-weight: 500;
+  }
+
+  &__buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+    width: 100%;
+
+    .buttons__cancel {
+      @include default-button();
+    }
+
+    .buttons__confirm {
+      @include default-button-with-spinner(
+        $color-accent-primary,
+        $color-accent-primary-hover,
+        $color-text-white
+      );
+    }
+
+    .buttons__cancel,
+    .buttons__confirm {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+    }
+  }
+}

@@ -1,6 +1,6 @@
 import styles from './ModalTemplate.module.scss';
 
-type ModalTemplateProps = {
+export type ModalTemplateProps = {
   isOpen: boolean;
   onOverlayClick: () => void;
   children?: React.ReactNode;
