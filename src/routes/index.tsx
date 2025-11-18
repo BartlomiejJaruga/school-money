@@ -6,6 +6,7 @@ import RootRoute from '@routes/root.route';
 import FundsRoute from '@routes/funds.route';
 import KidsRoute from '@routes/kids.route';
 import LogoutRoute from '@routes/_logout.route';
+import CreatedFundsRoute from '@routes/createdFunds.route';
 
 export const router = createBrowserRouter([
   {
@@ -16,6 +17,6 @@ export const router = createBrowserRouter([
   {
     element: <AsideLayout />,
     errorElement: <ErrorPage />,
-    children: [FundsRoute, KidsRoute, LogoutRoute],
+    children: [FundsRoute, KidsRoute, LogoutRoute, CreatedFundsRoute],
   },
 ]);
