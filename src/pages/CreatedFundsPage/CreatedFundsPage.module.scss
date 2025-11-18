@@ -1,14 +1,11 @@
 $page-padding: 2rem;
 
 .page {
-  display: flex;
-  justify-content: center;
-  align-items: center;
   padding: $page-padding;
   min-height: calc(100vh - 2 * $page-padding);
 }
 
-.information-wrapper {
+.nothing-to-show-info-wrapper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -25,5 +22,44 @@ $page-padding: 2rem;
     color: $color-text-black;
     font-size: 1.5rem;
     text-align: center;
+  }
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 50px 200px repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
+  grid-template-areas:
+    'classes classes classes create-fund'
+    'fund-list fund-list class-info class-info'
+    'fund-list fund-list event-log event-log'
+    'fund-list fund-list event-log event-log'
+    'fund-list fund-list event-log event-log';
+  gap: 1em;
+  min-height: inherit;
+
+  &__classes {
+    grid-area: classes;
+    background-color: $color-bento-background;
+  }
+
+  &__create-fund {
+    grid-area: create-fund;
+    background-color: $color-bento-background;
+  }
+
+  &__fund-list {
+    grid-area: fund-list;
+    background-color: $color-bento-background;
+  }
+
+  &__class-info {
+    grid-area: class-info;
+    background-color: $color-bento-background;
+  }
+
+  &__event-log {
+    grid-area: event-log;
+    background-color: $color-bento-background;
   }
 }
