@@ -12,3 +12,6 @@ export const AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM = {
   Login: 'login',
   Register: 'register',
 } as const;
+
+export type SimpleDateString =
+  `${number}${number}${number}${number}-${number}${number}-${number}${number}`;

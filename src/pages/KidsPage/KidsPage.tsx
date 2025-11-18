@@ -13,36 +13,75 @@ import {
 } from '@schemas/kids/newChild.schema';
 import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import type { SimpleDateString } from '@lib/constants';
+
+type ChildData = {
+  firstName: string;
+  lastName: string;
+  birthday: SimpleDateString;
+  photoUrl: string;
+};
+
+const tempChildData: ChildData = {
+  firstName: 'John',
+  lastName: 'Millers',
+  birthday: '2012-05-25',
+  photoUrl: 'URL',
+};
 
 export function KidsPage() {
-  const [isAddNewChildModalOpen, setIsAddNewChildModalOpen] = useState(false);
+  const [isChildModalOpen, setIsChildModalOpen] = useState(false);
+  const [childDataToEdit, setChildDataToEdit] = useState<ChildData | null>(
+    null
+  );
 
-  const handleModalClose = () => {
-    setIsAddNewChildModalOpen(false);
+  const handleCancelChildModal = () => {
+    setIsChildModalOpen(false);
+    setChildDataToEdit(null);
   };
 
-  const handleModalOpen = () => {
-    setIsAddNewChildModalOpen(true);
+  const handleOpenChildModal = () => {
+    setIsChildModalOpen(true);
+    setChildDataToEdit(null);
+  };
+
+  const handleConfirmChildModal = () => {
+    setIsChildModalOpen(false);
+    setChildDataToEdit(null);
+  };
+
+  const handleEditChild = (childData: ChildData) => {
+    setIsChildModalOpen(true);
+    setChildDataToEdit(childData);
   };
 
   return (
     <>
       <div className={styles['page']}>
-        <KidTile />
-        <KidTile />
-        <NewKidTile handleModalOpen={handleModalOpen} />
+        <KidTile handleEditChild={handleEditChild} childData={tempChildData} />
+        <KidTile handleEditChild={handleEditChild} childData={tempChildData} />
+        <NewKidTile handleOpenChildModal={handleOpenChildModal} />
       </div>
       <ModalTemplate
-        isOpen={isAddNewChildModalOpen}
-        onOverlayClick={handleModalClose}
+        isOpen={isChildModalOpen}
+        onOverlayClick={handleCancelChildModal}
       >
-        <AddNewChildModal handleClose={handleModalClose} />
+        <ChildModal
+          onClose={handleCancelChildModal}
+          onConfirm={handleConfirmChildModal}
+          childData={childDataToEdit}
+        />
       </ModalTemplate>
     </>
   );
 }
 
-function KidTile() {
+type KidTileProps = {
+  handleEditChild: (childData: ChildData) => void;
+  childData: ChildData;
+};
+
+function KidTile({ handleEditChild, childData }: KidTileProps) {
   const actionMenuRef = useRef<HTMLDivElement | null>(null);
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
@@ -85,7 +124,12 @@ function KidTile() {
         />
         {isActionMenuOpen && (
           <div ref={actionMenuRef} className={styles['kid-tile__action-menu']}>
-            <button className={styles['action-menu__button']}>
+            <button
+              className={styles['action-menu__button']}
+              onClick={() => {
+                handleEditChild({ ...childData });
+              }}
+            >
               <Pencil />
               Edit
             </button>
@@ -109,16 +153,18 @@ function KidTile() {
           alt={`Kid Name photo`}
           className={styles['kid-tile__photo']}
         />
-        <h3 className={styles['kid-tile__names']}>FirstName LastName</h3>
+        <h3
+          className={styles['kid-tile__names']}
+        >{`${childData.firstName} ${childData.lastName}`}</h3>
         <div className={styles['kid-tile__class']}>
           <School className={styles['class__icon']} />
           <h4 className={styles['class__name']}>{`Class (16/17)`}</h4>
         </div>
       </div>
       <ConfirmationModal
-        text="Are you sure you want to DELETE FirstName LastName?"
+        text={`Are you sure you want to DELETE ${childData.firstName} ${childData.lastName}?`}
         warningSubtext="This operation is irreversible!"
-        highlightedPart="FirstName LastName"
+        highlightedPart={`${childData.firstName} ${childData.lastName}`}
         isOpen={isDeleteConfirmationOpen}
         onOverlayClick={handleDeleteCancel}
         onCancel={handleDeleteCancel}
@@ -129,27 +175,34 @@ function KidTile() {
 }
 
 type NewKidTileProps = {
-  handleModalOpen: React.MouseEventHandler<HTMLDivElement>;
+  handleOpenChildModal: React.MouseEventHandler<HTMLDivElement>;
 };
 
-function NewKidTile({ handleModalOpen }: NewKidTileProps) {
+function NewKidTile({ handleOpenChildModal }: NewKidTileProps) {
   return (
-    <div onClick={handleModalOpen} className={styles['new-kid-tile']}>
+    <div onClick={handleOpenChildModal} className={styles['new-kid-tile']}>
       <Plus className={styles['new-kid-tile__icon']} />
       <h2 className={styles['new-kid-tile__text']}>Add Child</h2>
     </div>
   );
 }
 
-type AddNewChildModalProps = {
-  handleClose: React.MouseEventHandler<HTMLElement | SVGSVGElement>;
+type ChildModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  childData?: ChildData | null;
 };
 
-function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
+function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
   const fetcher = useFetcher();
   const formMethods = useForm<NewChildValues>({
     resolver: zodResolver(NewChildSchema),
     mode: 'onChange',
+    defaultValues: {
+      firstName: childData?.firstName ?? '',
+      lastName: childData?.lastName ?? '',
+      birthday: childData?.birthday ?? '',
+    },
   });
 
   const {
@@ -158,6 +211,7 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
   } = formMethods;
 
   const onSubmit = (values: NewChildValues) => {
+    onConfirm();
     fetcher.submit(values, { method: 'post', action: '/kids' });
   };
 
@@ -167,7 +221,7 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
     <div className={styles['new-child-modal']}>
       <div className={styles['new-child-modal__top']}>
         <h2 className={styles['top__title']}>ADD NEW CHILD</h2>
-        <X onClick={handleClose} className={styles['top__close-icon-button']} />
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
       </div>
       <FormProvider {...formMethods}>
         <form
@@ -192,7 +246,7 @@ function AddNewChildModal({ handleClose }: AddNewChildModalProps) {
           <div className={styles['form__actions']}>
             <button
               type="button"
-              onClick={handleClose}
+              onClick={onClose}
               className={styles['actions__cancel']}
               disabled={busy}
             >
@@ -231,6 +285,7 @@ function DragAndDropPhotoInput({ className }: DragAndDropPhotoInputProps) {
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
+    if (!file) return;
 
     if (!isFileTypeValid(file)) return;
 
