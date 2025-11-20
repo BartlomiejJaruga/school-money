@@ -80,6 +80,7 @@ $new-kid-tile-hover-color: $color-accent-primary;
     border-radius: 50%;
     aspect-ratio: 1/1;
     height: 8rem;
+    object-fit: cover;
     user-select: none;
   }
 
@@ -260,6 +261,7 @@ $new-kid-tile-hover-color: $color-accent-primary;
       border-radius: 50%;
       aspect-ratio: 1/1;
       height: 200px;
+      object-fit: cover;
       font-style: italic;
     }
 
