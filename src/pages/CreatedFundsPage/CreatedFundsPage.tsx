@@ -12,6 +12,7 @@ import {
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
+import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 
 export function CreatedFundsPage() {
   return (
@@ -131,8 +132,23 @@ function FundTile() {
             <h2>24 PLN</h2>
           </div>
         </div>
-        <div>Time</div>
-        <div>Budget</div>
+        <HorizontalProgressBar
+          type="date"
+          title="Time"
+          start="23.11.2025"
+          end="30.11.2025"
+          textStart="Created:"
+          textEnd="Due to:"
+        />
+        <HorizontalProgressBar
+          type="numeric"
+          title="Budget"
+          start={0}
+          end={240}
+          current={24}
+          textStart="Raised:"
+          textEnd="Goal:"
+        />
         <div className={styles['details__actions-bar']}>
           <button className={styles['actions-bar__withdraw']}>
             Withdraw money
