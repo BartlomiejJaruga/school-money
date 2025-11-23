@@ -1,5 +1,45 @@
+$page-padding: 2rem;
+$bento-border-radius: 0.75rem;
+$bento-gap: 1rem;
+
 .page {
-  display: flex;
-  gap: 2rem;
-  padding: 2rem;
+  padding: $page-padding;
+  min-height: calc(100vh - 2 * $page-padding);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    'fund-list history'
+    'fund-list history'
+    'fund-list history'
+    'children history';
+  gap: $bento-gap;
+  min-height: inherit;
+
+  &__fund-list {
+    display: flex;
+    grid-area: fund-list;
+    flex-direction: column;
+    gap: $bento-gap;
+  }
+
+  &__children {
+    display: flex;
+    grid-area: children;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+  }
+
+  &__history {
+    display: flex;
+    grid-area: history;
+    flex-direction: column;
+    gap: 1rem;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+    padding: 1rem;
+  }
 }
