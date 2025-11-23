@@ -29,7 +29,7 @@ $color-subtext-white: #f8f8f8;
 $color-text-black: #000000;
 $color-subtext-black: #101010;
 $color-text-gray: #616161;
-$color-subtext-gray: #767676;
+$color-subtext-gray: #9d9d9d;
 $color-text-light-gray: #c9c9c9;
 
 $color-aside-background: #3b6861;
@@ -41,6 +41,7 @@ $color-buttons-black-hover: color.adjust(
   $lightness: +15%
 );
 $color-logout-button: #d92033;
+$color-switch-buttons-background: #e3e3e3;
 $color-inputs: #e2e2e2;
 $color-gray-lines: #d4d4d4;
 $color-drag-and-drop-border: #aaa;

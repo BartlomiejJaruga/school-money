@@ -1,4 +1,6 @@
 $page-padding: 2rem;
+$bento-border-radius: 0.75rem;
+$bento-gap: 1rem;
 
 .page {
   padding: $page-padding;
@@ -12,10 +14,10 @@ $page-padding: 2rem;
   gap: 0.5rem;
 
   &__icon {
+    stroke-width: 1px !important;
     width: auto;
     height: 3rem;
     color: $color-text-black;
-    stroke-width: 1px !important;
   }
 
   &__text {
@@ -28,29 +30,40 @@ $page-padding: 2rem;
 .grid-container {
   display: grid;
   grid-template-rows: 50px 200px repeat(3, 1fr);
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(6, 1fr);
   grid-template-areas:
-    'classes classes classes create-fund'
-    'fund-list fund-list class-info class-info'
-    'fund-list fund-list event-log event-log'
-    'fund-list fund-list event-log event-log'
-    'fund-list fund-list event-log event-log';
-  gap: 1em;
+    'classes classes classes classes classes create-fund'
+    'fund-list fund-list fund-list class-info class-info class-info'
+    'fund-list fund-list fund-list event-log event-log event-log'
+    'fund-list fund-list fund-list event-log event-log event-log'
+    'fund-list fund-list fund-list event-log event-log event-log';
+  gap: $bento-gap;
   min-height: inherit;
 
   &__classes {
+    display: flex;
     grid-area: classes;
+    gap: 0.5rem;
+    border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    padding: 0.5rem;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 
   &__create-fund {
     grid-area: create-fund;
-    background-color: $color-bento-background;
+    @include default-button;
+    border-radius: $bento-border-radius;
+    font-size: 1.15rem;
+    letter-spacing: 0.5px;
   }
 
   &__fund-list {
+    display: flex;
     grid-area: fund-list;
-    background-color: $color-bento-background;
+    flex-direction: column;
+    gap: $bento-gap;
   }
 
   &__class-info {
@@ -61,5 +74,184 @@ $page-padding: 2rem;
   &__event-log {
     grid-area: event-log;
     background-color: $color-bento-background;
+  }
+}
+
+.classes__button {
+  @include default-button(
+    $color-switch-buttons-background,
+    $color-accent-secondary,
+    $color-text-black
+  );
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+  min-width: min(20%, 10rem);
+  font-size: 1rem;
+
+  &--active {
+    background-color: $color-aside-background;
+    color: $color-text-white;
+
+    &:hover {
+      background-color: $color-aside-background;
+    }
+  }
+}
+
+.fund-list__top-bar {
+  display: flex;
+  gap: $bento-gap;
+
+  .top-bar__funds-summary {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 0.75rem;
+    border-radius: 0.5rem;
+    background-color: $color-bento-background;
+    padding: 0.5rem 1rem;
+    text-align: center;
+
+    & > h2 {
+      color: $color-text-black;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    & > span {
+      color: $color-text-gray;
+      font-weight: 500;
+
+      &:first-child {
+        font-size: 0.8rem;
+      }
+
+      &:last-child {
+        font-size: 0.7rem;
+      }
+    }
+  }
+
+  .top-bar__funds-type-button {
+    display: flex;
+    flex-grow: 2;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 0.5rem;
+    background-color: $color-switch-buttons-background;
+    padding: 0.75rem 1.5rem;
+    width: max(20%, 80px);
+
+    &:hover:not(&--active) {
+      background-color: $color-accent-secondary;
+    }
+
+    &--active {
+      background-color: $color-aside-background;
+      color: $color-text-white;
+    }
+
+    & > svg {
+      stroke-width: 0.75px !important;
+      width: auto;
+      height: 2.5rem;
+    }
+  }
+}
+
+.fund-list__container {
+  display: flex;
+  flex-direction: column;
+  gap: $bento-gap;
+  border-radius: $bento-border-radius;
+}
+
+.fund-tile {
+  display: flex;
+  border-radius: $bento-border-radius;
+  background-color: $color-bento-background;
+  min-height: 200px;
+
+  &__photo {
+    border-radius: $bento-border-radius 0 0 $bento-border-radius;
+    max-width: 200px;
+    object-fit: cover;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+
+    .details__top {
+      display: flex;
+      gap: 0.5rem;
+
+      & > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .fund-title {
+          color: $color-text-black;
+          font-weight: 500;
+          font-size: 1.25rem;
+        }
+
+        .fund-description {
+          display: -webkit-box;
+          line-clamp: 3;
+          -webkit-line-clamp: 3;
+          -webkit-box-orient: vertical;
+          padding-bottom: 0.1rem;
+          overflow: hidden;
+          color: $color-subtext-gray;
+          font-size: 1rem;
+          text-overflow: ellipsis;
+        }
+      }
+
+      & > div:last-child {
+        @include info-tile;
+      }
+    }
+
+    .details__actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      & > button {
+        padding: 0.5rem min(2rem, 5%);
+        font-size: 1rem;
+      }
+
+      .actions-bar__withdraw {
+        @include default-button(
+          $color-accent-primary,
+          $color-accent-primary-hover,
+          $color-text-white
+        );
+      }
+
+      .actions-bar__more-info {
+        @include default-button;
+      }
+    }
   }
 }
