@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useState } from 'react';
+import { EventLogRecord } from '@components/EventLogRecord';
 
 export function CreatedFundsPage() {
   return (
@@ -36,7 +37,9 @@ export function CreatedFundsPage() {
           <div className={styles['grid-container__class-info']}>
             <ClassInfo />
           </div>
-          <div className={styles['grid-container__event-log']}>Event log</div>
+          <div className={styles['grid-container__event-log']}>
+            <EventLog />
+          </div>
         </div>
       </div>
     </>
@@ -179,6 +182,19 @@ function ClassInfo() {
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+function EventLog() {
+  return (
+    <>
+      <h3 className={styles['event-log__title']}>Event log</h3>
+      <EventLogRecord />
+      <EventLogRecord />
+      <EventLogRecord />
+      <EventLogRecord />
+      <EventLogRecord />
     </>
   );
 }

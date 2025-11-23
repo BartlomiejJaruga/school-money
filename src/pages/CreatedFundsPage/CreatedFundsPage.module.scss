@@ -77,8 +77,14 @@ $bento-gap: 1rem;
   }
 
   &__event-log {
+    display: flex;
     grid-area: event-log;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    padding: 1rem clamp(0.5rem, 5%, 5rem) 1.5rem;
   }
 }
 
@@ -232,6 +238,7 @@ $bento-gap: 1rem;
 
       & > div:last-child {
         @include info-tile;
+        white-space: nowrap;
       }
     }
 
@@ -287,4 +294,10 @@ $bento-gap: 1rem;
     @include info-tile-with-icon;
     flex-grow: 1;
   }
+}
+
+.event-log__title {
+  color: $color-subtext-gray;
+  font-weight: 500;
+  font-size: 1rem;
 }

@@ -1,0 +1,37 @@
+$record-font-size: 1rem;
+
+.record {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  & > p {
+    color: $color-text-black;
+    font-size: $record-font-size;
+  }
+
+  &__money {
+    font-weight: 600;
+    font-size: inherit;
+
+    &--payment {
+      color: $color-success;
+    }
+
+    &--withdrawal {
+      color: $color-error;
+    }
+  }
+
+  &__child {
+    color: $color-text-black;
+    font-weight: 500;
+    font-size: inherit;
+  }
+
+  &__fund {
+    color: $color-info;
+    font-weight: 500;
+    font-size: $record-font-size;
+  }
+}

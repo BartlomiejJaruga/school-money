@@ -88,14 +88,14 @@
     color: $color-text-black;
     font-weight: 600;
     font-size: 1.25rem;
-    white-space: nowrap;
+    text-align: center;
   }
 
   & > span {
     color: $color-text-gray;
     font-weight: 500;
     font-size: 0.8rem;
-    white-space: nowrap;
+    text-align: center;
   }
 }
 
@@ -113,7 +113,7 @@
     color: $color-text-gray;
     font-weight: 500;
     font-size: 0.8rem;
-    white-space: nowrap;
+    text-align: center;
   }
 
   & > div {
@@ -126,7 +126,7 @@
       color: $color-text-black;
       font-weight: 600;
       font-size: 1.25rem;
-      white-space: nowrap;
+      text-align: center;
     }
 
     & > svg {
