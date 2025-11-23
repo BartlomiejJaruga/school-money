@@ -67,8 +67,13 @@ $bento-gap: 1rem;
   }
 
   &__class-info {
+    display: flex;
     grid-area: class-info;
+    flex-direction: column;
+    gap: 0.5rem;
+    border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    padding: 0.5rem;
   }
 
   &__event-log {
@@ -253,5 +258,33 @@ $bento-gap: 1rem;
         @include default-button;
       }
     }
+  }
+}
+
+.class-info__top-row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  height: 50%;
+
+  & > div {
+    @include info-tile;
+    flex-grow: 1;
+
+    &:last-child {
+      flex-grow: 2;
+    }
+  }
+}
+
+.class-info__bottom-row {
+  display: flex;
+  gap: 0.5rem;
+  width: 100%;
+  height: 50%;
+
+  & > div {
+    @include info-tile-with-icon;
+    flex-grow: 1;
   }
 }

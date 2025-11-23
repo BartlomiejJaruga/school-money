@@ -1,6 +1,14 @@
 import styles from './CreatedFundsPage.module.scss';
 import clsx from 'clsx';
-import { PackageOpen, Ticket, TicketCheck, TicketX } from 'lucide-react';
+import {
+  PackageOpen,
+  Ticket,
+  TicketCheck,
+  TicketX,
+  HeartHandshake,
+  Baby,
+  User,
+} from 'lucide-react';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useState } from 'react';
 
@@ -25,7 +33,9 @@ export function CreatedFundsPage() {
               <FundTile />
             </div>
           </div>
-          <div className={styles['grid-container__class-info']}>Class info</div>
+          <div className={styles['grid-container__class-info']}>
+            <ClassInfo />
+          </div>
           <div className={styles['grid-container__event-log']}>Event log</div>
         </div>
       </div>
@@ -130,5 +140,45 @@ function FundTile() {
         </div>
       </div>
     </div>
+  );
+}
+
+function ClassInfo() {
+  return (
+    <>
+      <div className={styles['class-info__top-row']}>
+        <div>
+          <span>Class</span>
+          <h2>3C 20/21</h2>
+        </div>
+        <div>
+          <span>Historical funds</span>
+          <h2>21090 PLN</h2>
+        </div>
+      </div>
+      <div className={styles['class-info__bottom-row']}>
+        <div>
+          <span>Kids</span>
+          <div>
+            <h2>21</h2>
+            <Baby />
+          </div>
+        </div>
+        <div>
+          <span>Parents</span>
+          <div>
+            <h2>19</h2>
+            <User />
+          </div>
+        </div>
+        <div>
+          <span>Funds</span>
+          <div>
+            <h2>32</h2>
+            <HeartHandshake />
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

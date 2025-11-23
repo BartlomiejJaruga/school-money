@@ -79,7 +79,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 0.25rem;
+  gap: 0.5rem;
   border-radius: 0.5rem;
   background-color: $color-background-primary-hover;
   padding: 1rem;
@@ -96,5 +96,42 @@
     font-weight: 500;
     font-size: 0.8rem;
     white-space: nowrap;
+  }
+}
+
+@mixin info-tile-with-icon() {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  border-radius: 0.5rem;
+  background-color: $color-background-primary-hover;
+  padding: 1rem;
+
+  & > span {
+    color: $color-text-gray;
+    font-weight: 500;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  & > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+
+    & > h2 {
+      color: $color-text-black;
+      font-weight: 600;
+      font-size: 1.25rem;
+      white-space: nowrap;
+    }
+
+    & > svg {
+      stroke-width: 2px !important;
+      color: $color-text-black;
+    }
   }
 }
