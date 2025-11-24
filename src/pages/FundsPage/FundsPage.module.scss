@@ -12,10 +12,10 @@ $bento-gap: 1rem;
   grid-template-rows: repeat(4, 1fr);
   grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
+    'fund-list children'
     'fund-list history'
     'fund-list history'
-    'fund-list history'
-    'children history';
+    'fund-list history';
   gap: $bento-gap;
   min-height: inherit;
 
@@ -41,5 +41,72 @@ $bento-gap: 1rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
     padding: 1rem;
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: space-between;
+
+  &__prev,
+  &__next {
+    @include default-button;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.6rem;
+    font-weight: 400;
+    font-size: 0.9rem;
+    line-height: 1;
+
+    & > svg {
+      stroke-width: 2px !important;
+      width: auto;
+      height: 1.25rem;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: $color-text-light-gray;
+      color: $color-text-gray;
+    }
+  }
+
+  &__prev {
+    padding-right: 0.8rem;
+  }
+
+  &__next {
+    padding-left: 0.8rem;
+  }
+
+  &__pages {
+    display: flex;
+    gap: 0.5rem;
+
+    .pages__page {
+      @include default-button(
+        $color-switch-buttons-background,
+        $color-accent-secondary,
+        $color-text-black
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 0.5rem;
+      aspect-ratio: 1/1;
+      height: 100%;
+      font-weight: 400;
+
+      &--active {
+        background-color: $color-buttons-black;
+        color: $color-text-white;
+
+        &:hover {
+          background-color: $color-buttons-black;
+        }
+      }
+    }
   }
 }
