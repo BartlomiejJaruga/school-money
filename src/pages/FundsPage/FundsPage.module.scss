@@ -142,13 +142,23 @@ $bento-gap: 1rem;
 
         .fund-title {
           color: $color-text-black;
-          font-weight: 500;
+          font-weight: 600;
           font-size: 1.25rem;
         }
 
         .fund-child {
+          display: flex;
+          align-items: center;
+          gap: 0.25rem;
           color: $color-text-black;
+          font-weight: 400;
           font-size: 1rem;
+
+          & > svg {
+            stroke-width: 1.5px !important;
+            width: auto;
+            height: 1.5rem;
+          }
         }
       }
 

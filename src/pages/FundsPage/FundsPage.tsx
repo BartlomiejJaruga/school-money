@@ -1,5 +1,5 @@
 import styles from './FundsPage.module.scss';
-import { BanknoteX, MoveLeft, MoveRight } from 'lucide-react';
+import { BanknoteX, MoveLeft, MoveRight, Baby } from 'lucide-react';
 import clsx from 'clsx';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import defaultFundPhoto from '@assets/default-fund.jpg';
@@ -55,7 +55,10 @@ function FundTile() {
         <div className={styles['details__top']}>
           <div>
             <h2 className={styles['fund-title']}>Theater trip</h2>
-            <p className={styles['fund-child']}>John Millers 3C 18/19</p>
+            <div className={styles['fund-child']}>
+              <Baby />
+              <span>John Millers 3C 18/19</span>
+            </div>
           </div>
           <div>
             <h2>24 PLN</h2>
