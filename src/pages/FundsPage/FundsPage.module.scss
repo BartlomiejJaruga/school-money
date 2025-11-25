@@ -74,11 +74,11 @@ $bento-gap: 1rem;
   }
 
   &__prev {
-    padding-right: 0.8rem;
+    padding-right: 0.7rem;
   }
 
   &__next {
-    padding-left: 0.8rem;
+    padding-left: 0.7rem;
   }
 
   &__pages {
@@ -88,7 +88,7 @@ $bento-gap: 1rem;
     .pages__page {
       @include default-button(
         $color-switch-buttons-background,
-        $color-accent-secondary,
+        $color-accent-secondary-hover,
         $color-text-black
       );
       display: flex;
@@ -105,6 +105,108 @@ $bento-gap: 1rem;
 
         &:hover {
           background-color: $color-buttons-black;
+        }
+      }
+    }
+  }
+}
+
+.fund-tile {
+  display: flex;
+  border-radius: $bento-border-radius;
+  background-color: $color-bento-background;
+  min-height: 200px;
+
+  &__photo {
+    border-radius: $bento-border-radius 0 0 $bento-border-radius;
+    max-width: 200px;
+    object-fit: cover;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+
+    .details__top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+
+      & > div:first-child {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+
+        .fund-title {
+          color: $color-text-black;
+          font-weight: 500;
+          font-size: 1.25rem;
+        }
+
+        .fund-child {
+          color: $color-text-black;
+          font-size: 1rem;
+        }
+      }
+
+      & > div:last-child {
+        @include info-tile;
+        white-space: nowrap;
+      }
+    }
+
+    .details__description {
+      display: -webkit-box;
+      line-clamp: 3;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      padding-bottom: 0.1rem;
+      overflow: hidden;
+      color: $color-subtext-gray;
+      font-size: 1rem;
+      text-overflow: ellipsis;
+    }
+
+    .details__time {
+      margin: 0.5rem 0;
+    }
+
+    .details__actions-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 0.5rem;
+
+      & > button {
+        padding: 0.25rem min(2rem, 3%);
+        font-size: 1rem;
+      }
+
+      .actions-bar__more-info {
+        @include default-button;
+      }
+
+      .actions-bar__make-payment {
+        @include default-button(
+          $color-accent-primary,
+          $color-accent-primary-hover,
+          $color-text-white
+        );
+      }
+
+      .actions-bar__discard {
+        @include default-button(#5a5a5a, #747474, $color-text-white);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        & > svg {
+          stroke-width: 1.5px !important;
+          width: auto;
+          height: 80%;
         }
       }
     }

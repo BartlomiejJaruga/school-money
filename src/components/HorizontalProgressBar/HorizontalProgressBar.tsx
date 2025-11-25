@@ -18,6 +18,7 @@ type HorizontalProgressBarProps = (DateProps | NumericProps) & {
   title: string;
   textStart: string;
   textEnd: string;
+  className?: string;
 };
 
 const parseStringToDate = (dateString: string): Date => {
@@ -73,7 +74,7 @@ export function HorizontalProgressBar(props: HorizontalProgressBarProps) {
   }
 
   return (
-    <div className={styles['wrapper']}>
+    <div className={clsx(styles['wrapper'], props.className ?? '')}>
       <h3 className={styles['wrapper__title']}>{props.title}</h3>
       <div
         className={clsx(
