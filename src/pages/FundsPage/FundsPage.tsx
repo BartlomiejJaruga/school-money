@@ -5,6 +5,7 @@ import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { FUND_STATUS_ENUM } from '@lib/constants';
 import { FundStatusTile } from '@components/FundStatusTile';
+import { CircularProgressBar } from '@components/CircularProgressBar';
 
 export function FundsPage() {
   return (
@@ -121,7 +122,10 @@ function HistoryFundTile() {
           status={FUND_STATUS_ENUM.paid}
           className={styles['info__fund-status']}
         />
-        <span className={styles['info__payment-percent']}>%%%%</span>
+        <CircularProgressBar
+          percent={75}
+          className={styles['info__payment-percent']}
+        />
         <button className={styles['info__more-info']}>More info</button>
       </div>
     </div>
