@@ -1,0 +1,25 @@
+.status-tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  width: 100%;
+  min-width: fit-content;
+  height: 100%;
+  color: $color-text-white;
+  font-size: 1rem;
+
+  &--paid {
+    background-color: $color-accent-primary;
+  }
+
+  &--cancelled {
+    background-color: $color-error;
+  }
+
+  &--discarded {
+    background-color: $color-discarded;
+  }
+}

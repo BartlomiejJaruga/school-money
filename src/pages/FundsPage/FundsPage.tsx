@@ -3,6 +3,8 @@ import { BanknoteX, MoveLeft, MoveRight, Baby } from 'lucide-react';
 import clsx from 'clsx';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import defaultFundPhoto from '@assets/default-fund.jpg';
+import { FUND_STATUS_ENUM } from '@lib/constants';
+import { FundStatusTile } from '@components/FundStatusTile';
 
 export function FundsPage() {
   return (
@@ -36,7 +38,11 @@ export function FundsPage() {
             </div>
           </div>
           <div className={styles['grid-container__children']}>children</div>
-          <div className={styles['grid-container__history']}>history</div>
+          <div className={styles['grid-container__history']}>
+            <HistoryFundTile />
+            <HistoryFundTile />
+            <HistoryFundTile />
+          </div>
         </div>
       </div>
     </>
@@ -88,6 +94,35 @@ function FundTile() {
             <BanknoteX />
           </button>
         </div>
+      </div>
+    </div>
+  );
+}
+
+function HistoryFundTile() {
+  return (
+    <div className={styles['history-fund-tile']}>
+      <img
+        src={defaultFundPhoto}
+        alt="fund photo"
+        className={styles['history-fund-tile__photo']}
+      />
+      <div className={styles['history-fund-tile__details']}>
+        <h2 className={styles['details__fund-title']}>Museum trip</h2>
+        <div className={styles['details__fund-child']}>
+          <Baby />
+          <span>John Millers 3C 18/19</span>
+        </div>
+        <span>Created: 01.10.2025</span>
+        <span>Due to: 08.10.2025</span>
+      </div>
+      <div className={styles['history-fund-tile__info']}>
+        <FundStatusTile
+          status={FUND_STATUS_ENUM.paid}
+          className={styles['info__fund-status']}
+        />
+        <span className={styles['info__payment-percent']}>%%%%</span>
+        <button className={styles['info__more-info']}>More info</button>
       </div>
     </div>
   );

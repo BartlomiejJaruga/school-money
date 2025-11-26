@@ -208,7 +208,11 @@ $bento-gap: 1rem;
       }
 
       .actions-bar__discard {
-        @include default-button(#5a5a5a, #747474, $color-text-white);
+        @include default-button(
+          $color-discarded,
+          $color-discarded-hover,
+          $color-text-white
+        );
         display: flex;
         justify-content: center;
         align-items: center;
@@ -219,6 +223,78 @@ $bento-gap: 1rem;
           height: 80%;
         }
       }
+    }
+  }
+}
+
+.history-fund-tile {
+  display: grid;
+  grid-template: 1fr / 200px repeat(2, 1fr);
+  border-radius: $bento-border-radius;
+  background-color: $color-background-primary-hover;
+
+  &__photo {
+    border-radius: $bento-border-radius 0 0 $bento-border-radius;
+    max-width: 200px;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 0.75rem;
+
+    .details__fund-title {
+      color: $color-text-black;
+      font-weight: 600;
+      font-size: 1.25rem;
+    }
+
+    .details__fund-child {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+      color: $color-text-black;
+      font-weight: 400;
+      font-size: 1rem;
+
+      & > svg {
+        stroke-width: 1.5px !important;
+        width: auto;
+        height: 1.5rem;
+      }
+    }
+
+    & > span {
+      color: $color-text-gray;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__info {
+    display: grid;
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-areas:
+      'status status payment-percent'
+      'status status payment-percent'
+      'more-info more-info more-info';
+    gap: 0.25rem;
+    padding: 0.5rem;
+
+    .info__fund-status {
+      grid-area: status;
+    }
+
+    .info__payment-percent {
+      grid-area: payment-percent;
+    }
+
+    .info__more-info {
+      grid-area: more-info;
+      @include default-button;
     }
   }
 }
