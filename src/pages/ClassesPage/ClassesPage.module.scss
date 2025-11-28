@@ -1,0 +1,38 @@
+$page-padding: 2rem;
+$bento-border-radius: 0.75rem;
+$bento-gap: 1rem;
+
+.page {
+  padding: $page-padding;
+  min-height: calc(100vh - 2 * $page-padding);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 50px repeat(2, 1fr);
+  grid-template-columns: 1fr minmax(100px, 250px);
+  grid-template-areas:
+    'classes-list create-class'
+    'classes-list empty'
+    'classes-list empty';
+  gap: $bento-gap;
+  min-height: inherit;
+
+  &__classes-list {
+    display: flex;
+    grid-area: classes-list;
+    flex-direction: column;
+    gap: $bento-gap;
+  }
+
+  &__create-class {
+    grid-area: create-class;
+
+    & > button {
+      @include default-button;
+      width: 100%;
+      height: 100%;
+      font-size: 1rem;
+    }
+  }
+}
