@@ -1,4 +1,6 @@
 import styles from './ClassesPage.module.scss';
+import { MoveRight } from 'lucide-react';
+import defaultUserImage from '@assets/default-user.png';
 
 export function ClassesPage() {
   return (
@@ -6,7 +8,8 @@ export function ClassesPage() {
       <div className={styles['page']}>
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__classes-list']}>
-            Classes list
+            <ClassTile />
+            <ClassTile />
           </div>
           <div className={styles['grid-container__create-class']}>
             <button>Create new class</button>
@@ -14,5 +17,37 @@ export function ClassesPage() {
         </div>
       </div>
     </>
+  );
+}
+
+function ClassTile() {
+  return (
+    <div className={styles['class-tile']}>
+      <div className={styles['class-tile__main-info']}>
+        <h2>3C 20/21</h2>
+        <span>Kids: 21</span>
+        <span>Active funds: 3</span>
+      </div>
+      <div className={styles['class-tile__right-side']}>
+        <div className={styles['right-side__treasurer-card']}>
+          <h5 className={styles['treasurer-card__label']}>Treasurer</h5>
+          <div className={styles['treasurer']}>
+            <img
+              className={styles['treasurer__photo']}
+              src={defaultUserImage}
+              alt="treasurer photo"
+            />
+            <div className={styles['treasurer__info']}>
+              <h4>Andrew Smith</h4>
+              <span>andrew.smith@gmail.com</span>
+            </div>
+          </div>
+        </div>
+        <button className={styles['right-side__go-to-class-btn']}>
+          Go to class
+          <MoveRight />
+        </button>
+      </div>
+    </div>
   );
 }

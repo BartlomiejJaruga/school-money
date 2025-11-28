@@ -36,3 +36,96 @@ $bento-gap: 1rem;
     }
   }
 }
+
+.class-tile {
+  display: flex;
+  justify-content: space-between;
+  border-radius: $bento-border-radius;
+  background-color: $color-bento-background;
+  padding: 1rem;
+  color: $color-text-black;
+
+  &__main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    & > h2 {
+      font-weight: 600;
+      font-size: 2rem;
+    }
+
+    & > span {
+      font-size: 1.25rem;
+    }
+  }
+
+  &__right-side {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 0.5rem;
+
+    .right-side__treasurer-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 0.5rem;
+      background-color: $color-background-primary-hover;
+      padding: 0.5rem;
+
+      .treasurer-card__label {
+        color: $color-text-gray;
+        font-weight: 500;
+        font-size: 0.9rem;
+      }
+
+      .treasurer {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+
+        &__photo {
+          border-radius: 50%;
+          aspect-ratio: 1/1;
+          width: 3.5rem;
+          object-fit: cover;
+          font-style: italic;
+        }
+
+        &__info {
+          display: flex;
+          flex-direction: column;
+          gap: 0.25rem;
+
+          & > h4 {
+            font-weight: 400;
+            font-size: 1.25rem;
+          }
+
+          & > span {
+            color: $color-text-gray;
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+
+    .right-side__go-to-class-btn {
+      @include default-button;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      border-radius: 0.5rem;
+      padding: 0.25rem 0.5rem;
+      font-size: 1rem;
+
+      & > svg {
+        stroke-width: 2px !important;
+        width: auto;
+        height: 1rem;
+      }
+    }
+  }
+}
