@@ -8,6 +8,7 @@ import KidsRoute from '@routes/kids.route';
 import LogoutRoute from '@routes/_logout.route';
 import CreatedFundsRoute from '@routes/createdFunds.route';
 import ClassesRoute from '@routes/classes.route';
+import ClassRoute from './class.route';
 
 export const router = createBrowserRouter([
   {
@@ -24,6 +25,7 @@ export const router = createBrowserRouter([
       LogoutRoute,
       CreatedFundsRoute,
       ClassesRoute,
+      ClassRoute,
     ],
   },
 ]);

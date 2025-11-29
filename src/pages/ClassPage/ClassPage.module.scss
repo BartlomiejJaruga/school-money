@@ -1,0 +1,112 @@
+$page-padding: 2rem;
+$bento-border-radius: 0.75rem;
+$bento-gap: 1rem;
+
+.page {
+  padding: $page-padding;
+  min-height: calc(100vh - 2 * $page-padding);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 50px repeat(4, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-areas:
+    'top-bar treasurer'
+    'fund-list class-info'
+    'fund-list children'
+    'fund-list children'
+    'fund-list children';
+  gap: $bento-gap;
+  min-height: inherit;
+
+  &__top-bar {
+    display: flex;
+    grid-area: top-bar;
+    gap: $bento-gap;
+  }
+
+  &__fund-list {
+    display: flex;
+    grid-area: fund-list;
+    flex-direction: column;
+    gap: $bento-gap;
+  }
+
+  &__treasurer {
+    grid-area: treasurer;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+  }
+
+  &__class-info {
+    display: flex;
+    grid-area: class-info;
+    flex-direction: column;
+    gap: 1rem;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+    padding: 1rem;
+  }
+
+  &__children {
+    grid-area: children;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+  }
+}
+
+.top-bar {
+  &__return-btn,
+  &__generate-report-btn {
+    @include default-button;
+    border-radius: $bento-border-radius;
+    padding: 0.25rem min(1rem, 3%);
+    font-weight: 400;
+    font-size: 1.25rem;
+  }
+
+  &__return-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  &__class-name {
+    display: flex;
+    flex-grow: 1;
+    justify-content: center;
+    align-items: center;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+  }
+}
+
+.class-info__top-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  height: 50%;
+
+  & > div {
+    @include info-tile;
+    flex-grow: 1;
+
+    &:first-child {
+      flex-grow: 2;
+    }
+  }
+}
+
+.class-info__bottom-row {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+  height: 50%;
+
+  & > div {
+    @include info-tile-with-icon;
+    flex-grow: 1;
+  }
+}
