@@ -9,10 +9,11 @@ $bento-gap: 1rem;
 
 .grid-container {
   display: grid;
-  grid-template-rows: 50px repeat(4, 1fr);
+  grid-template-rows: 50px 50px repeat(4, 1fr);
   grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
     'top-bar treasurer'
+    'fund-list treasurer'
     'fund-list class-info'
     'fund-list children'
     'fund-list children'
@@ -34,9 +35,15 @@ $bento-gap: 1rem;
   }
 
   &__treasurer {
+    display: flex;
     grid-area: treasurer;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    padding: 1rem;
   }
 
   &__class-info {
@@ -80,6 +87,86 @@ $bento-gap: 1rem;
     align-items: center;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+  }
+}
+
+.treasurer {
+  &__label {
+    color: $color-text-gray;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  &__card-and-class-code {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+
+    .treasurer__card {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      .treasurer__photo {
+        border-radius: 50%;
+        aspect-ratio: 1/1;
+        width: 3.5rem;
+        object-fit: cover;
+        font-style: italic;
+      }
+
+      .treasurer__info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        & > h4 {
+          font-weight: 400;
+          font-size: 1.25rem;
+        }
+
+        & > span {
+          color: $color-text-gray;
+          font-size: 0.9rem;
+        }
+      }
+    }
+  }
+}
+
+.class-code-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 0.5rem;
+  background-color: $color-background-primary-hover;
+  padding: 0.5rem;
+  min-width: 150px;
+
+  &__label {
+    color: $color-text-gray;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+
+  &__code {
+    filter: blur(8px);
+    transition: filter 0.5s ease-in-out;
+    cursor: pointer;
+    padding: 0.5rem;
+    color: $color-text-black;
+    font-weight: 500;
+    font-size: 1.25rem;
+    user-select: none;
+    text-align: center;
+    white-space: nowrap;
+
+    &--visible {
+      filter: blur(0);
+      cursor: default;
+      user-select: text;
+    }
   }
 }
 

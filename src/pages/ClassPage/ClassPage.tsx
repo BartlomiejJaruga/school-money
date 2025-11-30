@@ -1,5 +1,8 @@
 import { Baby, MoveLeft, User } from 'lucide-react';
 import styles from './ClassPage.module.scss';
+import { useState } from 'react';
+import clsx from 'clsx';
+import defaultUserImage from '@assets/default-user.png';
 
 export function ClassPage() {
   return (
@@ -17,7 +20,23 @@ export function ClassPage() {
             <div className={styles['top-bar__class-name']}>3C 20/21</div>
           </div>
           <div className={styles['grid-container__fund-list']}>Fund list</div>
-          <div className={styles['grid-container__treasurer']}>Treasurer</div>
+          <div className={styles['grid-container__treasurer']}>
+            <h5 className={styles['treasurer__label']}>Treasurer</h5>
+            <div className={styles['treasurer__card-and-class-code']}>
+              <div className={styles['treasurer__card']}>
+                <img
+                  className={styles['treasurer__photo']}
+                  src={defaultUserImage}
+                  alt="treasurer photo"
+                />
+                <div className={styles['treasurer__info']}>
+                  <h4>Andrew Smith</h4>
+                  <span>andrew.smith@gmail.com</span>
+                </div>
+              </div>
+              <ClassCode code="12345678" />
+            </div>
+          </div>
           <div className={styles['grid-container__class-info']}>
             <ClassInfo />
           </div>
@@ -25,6 +44,34 @@ export function ClassPage() {
         </div>
       </div>
     </>
+  );
+}
+
+type ClassCodeProps = {
+  code: string;
+};
+
+function ClassCode({ code }: ClassCodeProps) {
+  const [isRevealed, setIsRevealed] = useState(false);
+
+  const revealCode = (e: React.MouseEvent<HTMLElement>) => {
+    e.stopPropagation();
+    setIsRevealed(true);
+  };
+
+  return (
+    <div className={styles['class-code-tile']}>
+      <h5 className={styles['class-code-tile__label']}>Class code</h5>
+      <div
+        onClick={revealCode}
+        className={clsx(
+          styles['class-code-tile__code'],
+          isRevealed && styles['class-code-tile__code--visible']
+        )}
+      >
+        {isRevealed ? code : 'XXXXXXXX'}
+      </div>
+    </div>
   );
 }
 
