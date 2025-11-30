@@ -40,7 +40,14 @@ export function ClassPage() {
           <div className={styles['grid-container__class-info']}>
             <ClassInfo />
           </div>
-          <div className={styles['grid-container__children']}>Children</div>
+          <div className={styles['grid-container__children']}>
+            <h5 className={styles['children__label']}>Children</h5>
+            <ChildRow />
+            <ChildRow />
+            <ChildRow />
+            <ChildRow />
+            <ChildRow />
+          </div>
         </div>
       </div>
     </>
@@ -105,5 +112,21 @@ function ClassInfo() {
         </div>
       </div>
     </>
+  );
+}
+
+function ChildRow() {
+  return (
+    <div className={styles['child-row']}>
+      <div className={styles['child-row__parent']}>
+        <img
+          src={defaultUserImage}
+          alt="parent photo"
+          className={styles['parent__photo']}
+        />
+        <span className={styles['parent__name']}>Nadine Kemmer-Lowe</span>
+      </div>
+      <span className={styles['child-row__child']}>Herman Pfeffer-Mann</span>
+    </div>
   );
 }

@@ -135,3 +135,12 @@
     }
   }
 }
+
+// round photos
+
+@mixin round-photo() {
+  border-radius: 50%;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  font-style: italic;
+}

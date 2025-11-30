@@ -57,9 +57,14 @@ $bento-gap: 1rem;
   }
 
   &__children {
+    display: flex;
     grid-area: children;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    padding: 1rem min(2rem, 5%);
   }
 }
 
@@ -195,5 +200,46 @@ $bento-gap: 1rem;
   & > div {
     @include info-tile-with-icon;
     flex-grow: 1;
+  }
+}
+
+.children {
+  &__label {
+    color: $color-text-gray;
+    font-weight: 500;
+    font-size: 0.9rem;
+  }
+}
+
+.child-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid $color-gray-lines;
+  padding-bottom: 0.5rem;
+  width: 100%;
+
+  &__parent {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .parent__photo {
+      @include round-photo;
+      height: 2.5rem;
+    }
+
+    .parent__name {
+      color: $color-text-black;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+  }
+
+  &__child {
+    color: $color-success;
+    font-weight: 500;
+    font-size: 1rem;
   }
 }
