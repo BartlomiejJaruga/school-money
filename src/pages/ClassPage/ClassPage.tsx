@@ -3,6 +3,8 @@ import styles from './ClassPage.module.scss';
 import { useState } from 'react';
 import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
+import { FundTile } from '@components/FundTile';
+import { FundsPagination } from '@components/FundsPagination';
 
 export function ClassPage() {
   return (
@@ -19,7 +21,11 @@ export function ClassPage() {
             </button>
             <div className={styles['top-bar__class-name']}>3C 20/21</div>
           </div>
-          <div className={styles['grid-container__fund-list']}>Fund list</div>
+          <div className={styles['grid-container__fund-list']}>
+            <FundTile showBudget={true} />
+            <FundTile showBudget={true} />
+            <FundsPagination />
+          </div>
           <div className={styles['grid-container__treasurer']}>
             <h5 className={styles['treasurer__label']}>Treasurer</h5>
             <div className={styles['treasurer__card-and-class-code']}>
