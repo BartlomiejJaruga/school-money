@@ -62,6 +62,7 @@ export function CustomInput({
                 styles['field__icon--password-shown']
               )}
               onClick={() => setPasswordRevealed(false)}
+              tabIndex={0}
             />
           )}
           {type == 'password' && !passwordRevealed && (
@@ -71,6 +72,7 @@ export function CustomInput({
                 styles['field__icon--password-hidden']
               )}
               onClick={() => setPasswordRevealed(true)}
+              tabIndex={0}
             />
           )}
         </div>
