@@ -33,38 +33,6 @@ export function FundsPage() {
   );
 }
 
-function HistoryFundTile() {
-  return (
-    <div className={styles['history-fund-tile']}>
-      <img
-        src={defaultFundPhoto}
-        alt="fund photo"
-        className={styles['history-fund-tile__photo']}
-      />
-      <div className={styles['history-fund-tile__details']}>
-        <h2 className={styles['details__fund-title']}>Museum trip</h2>
-        <div className={styles['details__fund-child']}>
-          <Baby />
-          <span>John Millers 3C 18/19</span>
-        </div>
-        <span>Created: 01.10.2025</span>
-        <span>Due to: 08.10.2025</span>
-      </div>
-      <div className={styles['history-fund-tile__info']}>
-        <FundStatusTile
-          status={FUND_STATUS_ENUM.paid}
-          className={styles['info__fund-status']}
-        />
-        <CircularProgressBar
-          percent={75}
-          className={styles['info__payment-percent']}
-        />
-        <button className={styles['info__more-info']}>More info</button>
-      </div>
-    </div>
-  );
-}
-
 function ChildrenReportSection() {
   return (
     <div className={styles['children-report']}>
@@ -120,6 +88,38 @@ function ChildrenReportTile({ selected }: ChildrenReportTileProps) {
         <span>11</span>
       </div>
       <h6 className={styles['child-tile__info-to-click']}>Click to select</h6>
+    </div>
+  );
+}
+
+function HistoryFundTile() {
+  return (
+    <div className={styles['history-fund-tile']}>
+      <img
+        src={defaultFundPhoto}
+        alt="fund photo"
+        className={styles['history-fund-tile__photo']}
+      />
+      <div className={styles['history-fund-tile__details']}>
+        <h2 className={styles['details__fund-title']}>Museum trip</h2>
+        <div className={styles['details__fund-child']}>
+          <Baby />
+          <span>John Millers 3C 18/19</span>
+        </div>
+        <span>Created: 01.10.2025</span>
+        <span>Due to: 08.10.2025</span>
+      </div>
+      <div className={styles['history-fund-tile__info']}>
+        <FundStatusTile
+          status={FUND_STATUS_ENUM.paid}
+          className={styles['info__fund-status']}
+        />
+        <CircularProgressBar
+          percent={75}
+          className={styles['info__payment-percent']}
+        />
+        <button className={styles['info__more-info']}>More info</button>
+      </div>
     </div>
   );
 }
