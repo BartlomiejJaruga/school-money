@@ -1,6 +1,7 @@
 import styles from './ClassesPage.module.scss';
 import { MoveRight } from 'lucide-react';
 import defaultUserImage from '@assets/default-user.png';
+import { useNavigate } from 'react-router-dom';
 
 export function ClassesPage() {
   return (
@@ -21,6 +22,8 @@ export function ClassesPage() {
 }
 
 function ClassTile() {
+  const navigate = useNavigate();
+
   return (
     <div className={styles['class-tile']}>
       <div className={styles['class-tile__main-info']}>
@@ -43,7 +46,12 @@ function ClassTile() {
             </div>
           </div>
         </div>
-        <button className={styles['right-side__go-to-class-btn']}>
+        <button
+          className={styles['right-side__go-to-class-btn']}
+          onClick={() => {
+            navigate('/classes/class');
+          }}
+        >
           Go to class
           <MoveRight />
         </button>

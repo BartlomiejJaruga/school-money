@@ -5,14 +5,22 @@ import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
+import { useNavigate } from 'react-router-dom';
 
 export function ClassPage() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className={styles['page']}>
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__top-bar']}>
-            <button className={styles['top-bar__return-btn']}>
+            <button
+              className={styles['top-bar__return-btn']}
+              onClick={() => {
+                navigate(-1);
+              }}
+            >
               <MoveLeft />
               Return
             </button>
