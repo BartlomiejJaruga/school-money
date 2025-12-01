@@ -3,6 +3,9 @@ $bento-border-radius: 0.75rem;
 $bento-gap: 1rem;
 
 .page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: $page-padding;
   min-height: calc(100vh - 2 * $page-padding);
 }
