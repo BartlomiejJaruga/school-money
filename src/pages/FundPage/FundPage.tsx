@@ -31,7 +31,7 @@ function ParentFundPageVariant() {
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
       <div className={styles['grid-container__fund-details']}>Fund details</div>
-      <div className={styles['grid-container__fund-cost']}>Fund cost</div>
+      <div className={styles['grid-container__fund-cost']}>24 PLN</div>
       <div className={styles['grid-container__child-info']}>Child info</div>
       <div className={styles['grid-container__fund-budget']}>Fund budget</div>
       <div className={styles['grid-container__event-log']}>Event log</div>

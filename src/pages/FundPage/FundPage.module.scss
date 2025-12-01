@@ -66,9 +66,16 @@ $bento-gap: 1rem;
   }
 
   &__fund-cost {
+    display: flex;
     grid-area: fund-cost;
+    justify-content: center;
+    align-items: center;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
+    font-weight: 600;
+    font-size: 1.75rem;
+    text-align: center;
+    white-space: nowrap;
   }
 
   &__available-funds {
