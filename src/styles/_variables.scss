@@ -50,8 +50,8 @@ $color-gray-lines: #d4d4d4;
 $color-drag-and-drop-border: #aaa;
 $color-drag-and-drop-border-dragging: #007bff;
 $color-drag-and-drop-background-dragging: #eef;
-$color-discarded: #5a5a5a;
-$color-discarded-hover: color.adjust($color-discarded, $lightness: +10%);
+$color-rejected: #5a5a5a;
+$color-rejected-hover: color.adjust($color-rejected, $lightness: +10%);
 
 /* ================= GRADIENTS ================= */
 

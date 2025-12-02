@@ -15,8 +15,7 @@ export function FundStatusTile({ status, className }: FundStatusTileProps) {
         status == FUND_STATUS_ENUM.paid && styles['status-tile--paid'],
         status == FUND_STATUS_ENUM.cancelled &&
           styles['status-tile--cancelled'],
-        status == FUND_STATUS_ENUM.discarded &&
-          styles['status-tile--discarded'],
+        status == FUND_STATUS_ENUM.rejected && styles['status-tile--rejected'],
         className ?? ''
       )}
     >

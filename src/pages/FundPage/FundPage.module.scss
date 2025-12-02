@@ -198,8 +198,8 @@ $bento-gap: 1rem;
 
   &__reject {
     @include default-button(
-      $color-discarded,
-      $color-discarded-hover,
+      $color-rejected,
+      $color-rejected-hover,
       $color-text-white
     );
   }

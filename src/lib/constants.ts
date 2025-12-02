@@ -21,5 +21,5 @@ export type FUND_STATUS_TYPE = ValueOf<typeof FUND_STATUS_ENUM>;
 export const FUND_STATUS_ENUM = {
   paid: 'Paid',
   cancelled: 'Cancelled',
-  discarded: 'Discarded',
+  rejected: 'Rejected',
 } as const;

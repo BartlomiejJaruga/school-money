@@ -101,10 +101,10 @@ $bento-border-radius: 0.75rem;
         );
       }
 
-      .actions-bar__discard {
+      .actions-bar__reject {
         @include default-button(
-          $color-discarded,
-          $color-discarded-hover,
+          $color-rejected,
+          $color-rejected-hover,
           $color-text-white
         );
         display: flex;

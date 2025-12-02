@@ -68,7 +68,7 @@ export function FundTile({ showBudget = false }: FundTileProps) {
           <button className={styles['actions-bar__make-payment']}>
             Make payment
           </button>
-          <button className={styles['actions-bar__discard']}>
+          <button className={styles['actions-bar__reject']}>
             <BanknoteX />
           </button>
         </div>
