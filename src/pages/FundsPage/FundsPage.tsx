@@ -8,6 +8,7 @@ import { CircularProgressBar } from '@components/CircularProgressBar';
 import { useState } from 'react';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
+import { useNavigate } from 'react-router-dom';
 
 export function FundsPage() {
   return (
@@ -94,6 +95,8 @@ function ChildrenReportTile({ selected }: ChildrenReportTileProps) {
 }
 
 function HistoryFundTile() {
+  const navigate = useNavigate();
+
   return (
     <div className={styles['history-fund-tile']}>
       <img
@@ -119,7 +122,14 @@ function HistoryFundTile() {
           percent={75}
           className={styles['info__payment-percent']}
         />
-        <button className={styles['info__more-info']}>More info</button>
+        <button
+          className={styles['info__more-info']}
+          onClick={() => {
+            navigate('/funds/fund');
+          }}
+        >
+          More info
+        </button>
       </div>
     </div>
   );
