@@ -57,9 +57,11 @@ $bento-gap: 1rem;
 
   &__fund-details {
     grid-area: fund-details;
+    box-sizing: border-box;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
     padding: min(2rem, 5%);
+    min-width: 170px;
   }
 
   &__fund-cost {
