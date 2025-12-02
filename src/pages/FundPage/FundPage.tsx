@@ -1,6 +1,15 @@
 import clsx from 'clsx';
 import styles from './FundPage.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
+import {
+  BanknoteArrowDown,
+  BanknoteArrowUp,
+  BanknoteX,
+  FileChartColumn,
+  MoveLeft,
+  Pencil,
+  TicketX,
+} from 'lucide-react';
 
 export function FundPage() {
   const isParentTreasurer = false;
@@ -26,7 +35,28 @@ export function FundPage() {
 function ParentFundPageVariant() {
   return (
     <>
-      <div className={styles['grid-container__top-bar']}>Top bar</div>
+      <div className={styles['grid-container__top-bar']}>
+        <div className={styles['top-bar__left-side']}>
+          <button className={styles['top-bar__return']}>
+            <MoveLeft />
+            Return
+          </button>
+          <button className={styles['top-bar__generate-report']}>
+            <FileChartColumn />
+            Generate report
+          </button>
+        </div>
+        <div className={styles['top-bar__right-side']}>
+          <button className={styles['top-bar__make-payment']}>
+            <BanknoteArrowUp />
+            Make payment
+          </button>
+          <button className={styles['top-bar__reject']}>
+            <BanknoteX />
+            Reject
+          </button>
+        </div>
+      </div>
       <div className={styles['grid-container__fund-photo']}>
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
@@ -45,7 +75,36 @@ function ParentFundPageVariant() {
 function TreasurerFundPageVariant() {
   return (
     <>
-      <div className={styles['grid-container__top-bar']}>Top bar</div>
+      <div className={styles['grid-container__top-bar']}>
+        <div className={styles['top-bar__left-side']}>
+          <button className={styles['top-bar__return']}>
+            <MoveLeft />
+            Return
+          </button>
+          <button className={styles['top-bar__generate-report']}>
+            <FileChartColumn />
+            Generate report
+          </button>
+        </div>
+        <div className={styles['top-bar__right-side']}>
+          <button className={styles['top-bar__edit']}>
+            <Pencil />
+            Edit
+          </button>
+          <button className={styles['top-bar__cancel']}>
+            <TicketX />
+            Cancel
+          </button>
+          <button className={styles['top-bar__deposit']}>
+            <BanknoteArrowUp />
+            Deposit
+          </button>
+          <button className={styles['top-bar__withdraw']}>
+            <BanknoteArrowDown />
+            Withdraw
+          </button>
+        </div>
+      </div>
       <div className={styles['grid-container__fund-photo']}>
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>

@@ -19,10 +19,13 @@ $color-accent-secondary-hover: color.adjust(
 );
 
 $color-success: #198754;
+$color-success-hover: color.adjust($color-success, $lightness: -7.5%);
 $color-error: #dc3545;
+$color-error-hover: color.adjust($color-error, $lightness: -10%);
 $color-warning: #ffc107;
+$color-warning-hover: color.adjust($color-warning, $lightness: -7.5%);
 $color-info: #0dcaf0;
-$color-rejected: #7c7c7c;
+$color-info-hover: color.adjust($color-info, $lightness: -10%);
 
 $color-text-white: #ffffff;
 $color-subtext-white: #f8f8f8;

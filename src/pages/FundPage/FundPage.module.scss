@@ -37,7 +37,7 @@ $bento-gap: 1rem;
   &__top-bar {
     display: flex;
     grid-area: top-bar;
-    flex-direction: column;
+    justify-content: space-between;
     gap: $bento-gap;
   }
 
@@ -122,5 +122,85 @@ $bento-gap: 1rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
     padding: 1rem;
+  }
+}
+
+.top-bar {
+  &__left-side,
+  &__right-side {
+    display: flex;
+    gap: $bento-gap;
+
+    & > button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      font-weight: 400;
+      font-size: 1.15rem;
+
+      & > svg {
+        stroke-width: 2px !important;
+        width: auto;
+        height: 1.5rem;
+      }
+    }
+  }
+
+  &__return {
+    @include default-button;
+  }
+
+  &__generate-report {
+    @include default-button;
+  }
+
+  &__edit {
+    @include default-button(
+      $color-warning,
+      $color-warning-hover,
+      $color-text-white
+    );
+  }
+
+  &__cancel {
+    @include default-button(
+      $color-error,
+      $color-error-hover,
+      $color-text-white
+    );
+  }
+
+  &__deposit {
+    @include default-button(
+      $color-success,
+      $color-success-hover,
+      $color-text-white
+    );
+  }
+
+  &__withdraw {
+    @include default-button(
+      $color-accent-primary,
+      $color-accent-primary-hover,
+      $color-text-white
+    );
+  }
+
+  &__make-payment {
+    @include default-button(
+      $color-accent-primary,
+      $color-accent-primary-hover,
+      $color-text-white
+    );
+  }
+
+  &__reject {
+    @include default-button(
+      $color-discarded,
+      $color-discarded-hover,
+      $color-text-white
+    );
   }
 }
