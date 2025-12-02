@@ -85,7 +85,12 @@ $bento-gap: 1rem;
   }
 
   &__child-info {
+    display: flex;
     grid-area: child-info;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
   }
@@ -202,5 +207,24 @@ $bento-gap: 1rem;
       $color-rejected-hover,
       $color-text-white
     );
+  }
+}
+
+.child-info {
+  &__label-icon {
+    stroke-width: 2px !important;
+    color: $color-text-black;
+  }
+
+  &__names {
+    color: $color-text-black;
+    font-weight: 500;
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  &__class {
+    color: $color-text-black;
+    font-size: 1rem;
   }
 }

@@ -2,12 +2,14 @@ import clsx from 'clsx';
 import styles from './FundPage.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import {
+  Baby,
   BanknoteArrowDown,
   BanknoteArrowUp,
   BanknoteX,
   FileChartColumn,
   MoveLeft,
   Pencil,
+  School,
   TicketX,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -70,7 +72,11 @@ function ParentFundPageVariant() {
       </div>
       <div className={styles['grid-container__fund-details']}>Fund details</div>
       <div className={styles['grid-container__fund-cost']}>24 PLN</div>
-      <div className={styles['grid-container__child-info']}>Child info</div>
+      <div className={styles['grid-container__child-info']}>
+        <Baby className={styles['child-info__label-icon']} />
+        <h3 className={styles['child-info__names']}>John Millers</h3>
+        <span className={styles['child-info__class']}>3C 18/19</span>
+      </div>
       <div className={styles['grid-container__fund-budget']}>Fund budget</div>
       <div className={styles['grid-container__event-log']}>Event log</div>
       <div className={styles['grid-container__fund-documents']}>
