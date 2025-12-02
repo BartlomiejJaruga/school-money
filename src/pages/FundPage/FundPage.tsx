@@ -9,7 +9,6 @@ import {
   FileChartColumn,
   MoveLeft,
   Pencil,
-  School,
   TicketX,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
