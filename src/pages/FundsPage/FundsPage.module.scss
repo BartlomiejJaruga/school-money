@@ -36,6 +36,7 @@ $bento-gap: 1rem;
     display: flex;
     grid-area: history;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
@@ -152,6 +153,14 @@ $bento-gap: 1rem;
   &__info-to-click {
     font-style: italic;
     font-size: 0.8rem;
+  }
+}
+
+.history {
+  &__label {
+    color: $color-text-gray;
+    font-weight: 500;
+    font-size: 1rem;
   }
 }
 

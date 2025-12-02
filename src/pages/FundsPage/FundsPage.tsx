@@ -23,6 +23,7 @@ export function FundsPage() {
             <ChildrenReportSection />
           </div>
           <div className={styles['grid-container__history']}>
+            <h5 className={styles['history__label']}>Historical funds</h5>
             <HistoryFundTile />
             <HistoryFundTile />
             <HistoryFundTile />
