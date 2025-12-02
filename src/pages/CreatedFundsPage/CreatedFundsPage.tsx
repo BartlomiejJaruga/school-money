@@ -13,6 +13,7 @@ import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
+import { useNavigate } from 'react-router-dom';
 
 export function CreatedFundsPage() {
   return (
@@ -111,6 +112,8 @@ function FundListTopBar() {
 }
 
 function FundTile() {
+  const navigate = useNavigate();
+
   return (
     <div className={styles['fund-tile']}>
       <img
@@ -153,7 +156,12 @@ function FundTile() {
           <button className={styles['actions-bar__withdraw']}>
             Withdraw money
           </button>
-          <button className={styles['actions-bar__more-info']}>
+          <button
+            className={styles['actions-bar__more-info']}
+            onClick={() => {
+              navigate('/funds/fund');
+            }}
+          >
             More info
           </button>
         </div>

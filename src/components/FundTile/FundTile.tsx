@@ -2,12 +2,15 @@ import styles from './FundTile.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { Baby, BanknoteX } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 type FundTileProps = {
   showBudget?: boolean;
 };
 
 export function FundTile({ showBudget = false }: FundTileProps) {
+  const navigate = useNavigate();
+
   return (
     <div className={styles['fund-tile']}>
       <img
@@ -54,7 +57,12 @@ export function FundTile({ showBudget = false }: FundTileProps) {
           />
         )}
         <div className={styles['details__actions-bar']}>
-          <button className={styles['actions-bar__more-info']}>
+          <button
+            className={styles['actions-bar__more-info']}
+            onClick={() => {
+              navigate('/funds/fund');
+            }}
+          >
             More info
           </button>
           <button className={styles['actions-bar__make-payment']}>

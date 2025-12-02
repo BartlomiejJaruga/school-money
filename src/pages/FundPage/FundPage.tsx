@@ -10,6 +10,7 @@ import {
   Pencil,
   TicketX,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 
 export function FundPage() {
   const isParentTreasurer = false;
@@ -33,11 +34,18 @@ export function FundPage() {
 }
 
 function ParentFundPageVariant() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className={styles['grid-container__top-bar']}>
         <div className={styles['top-bar__left-side']}>
-          <button className={styles['top-bar__return']}>
+          <button
+            className={styles['top-bar__return']}
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
             <MoveLeft />
             Return
           </button>
@@ -73,11 +81,18 @@ function ParentFundPageVariant() {
 }
 
 function TreasurerFundPageVariant() {
+  const navigate = useNavigate();
+
   return (
     <>
       <div className={styles['grid-container__top-bar']}>
         <div className={styles['top-bar__left-side']}>
-          <button className={styles['top-bar__return']}>
+          <button
+            className={styles['top-bar__return']}
+            onClick={() => {
+              navigate(-1);
+            }}
+          >
             <MoveLeft />
             Return
           </button>
