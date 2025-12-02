@@ -169,6 +169,7 @@ $bento-gap: 1rem;
   grid-template: 1fr / 200px repeat(2, 1fr);
   border-radius: $bento-border-radius;
   background-color: $color-background-primary-hover;
+  width: 100%;
 
   &__photo {
     border-radius: $bento-border-radius 0 0 $bento-border-radius;
