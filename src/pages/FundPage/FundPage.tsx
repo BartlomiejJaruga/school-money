@@ -12,6 +12,7 @@ import {
   TicketX,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 
 export function FundPage() {
   const isParentTreasurer = false;
@@ -69,7 +70,9 @@ function ParentFundPageVariant() {
       <div className={styles['grid-container__fund-photo']}>
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
-      <div className={styles['grid-container__fund-details']}>Fund details</div>
+      <div className={styles['grid-container__fund-details']}>
+        <FundDetails />
+      </div>
       <div className={styles['grid-container__fund-cost']}>24 PLN</div>
       <div className={styles['grid-container__child-info']}>
         <Baby className={styles['child-info__label-icon']} />
@@ -128,7 +131,9 @@ function TreasurerFundPageVariant() {
       <div className={styles['grid-container__fund-photo']}>
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
-      <div className={styles['grid-container__fund-details']}>Fund details</div>
+      <div className={styles['grid-container__fund-details']}>
+        <FundDetails />
+      </div>
       <div className={styles['grid-container__available-funds']}>
         Available funds
       </div>
@@ -141,5 +146,29 @@ function TreasurerFundPageVariant() {
         Fund documents
       </div>
     </>
+  );
+}
+
+function FundDetails() {
+  return (
+    <div className={styles['fund-details']}>
+      <div>
+        <h1 className={styles['fund-details__title']}>Theater trip</h1>
+        <p className={styles['fund-details__description']}>
+          After the final words, the theater will self-ignite in an act of
+          despair and dramatic defiance, leaving only glowing ashes as a
+          monument to the performance that once was.
+        </p>
+      </div>
+      <HorizontalProgressBar
+        type="date"
+        title="Time"
+        start="23.11.2025"
+        end="07.12.2025"
+        textStart="Created:"
+        textEnd="Due to:"
+        className={styles['fund-details__time']}
+      />
+    </div>
   );
 }
