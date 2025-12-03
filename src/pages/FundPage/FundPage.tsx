@@ -10,9 +10,11 @@ import {
   MoveLeft,
   Pencil,
   TicketX,
+  User,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
+import { CircularProgressBar } from '@components/CircularProgressBar';
 
 export function FundPage() {
   const isParentTreasurer = false;
@@ -79,7 +81,9 @@ function ParentFundPageVariant() {
         <h3 className={styles['child-info__names']}>John Millers</h3>
         <span className={styles['child-info__class']}>3C 18/19</span>
       </div>
-      <div className={styles['grid-container__fund-budget']}>Fund budget</div>
+      <div className={styles['grid-container__fund-budget']}>
+        <FundBudget />
+      </div>
       <div className={styles['grid-container__event-log']}>Event log</div>
       <div className={styles['grid-container__fund-documents']}>
         Fund documents
@@ -138,7 +142,9 @@ function TreasurerFundPageVariant() {
         Available funds
       </div>
       <div className={styles['grid-container__event-log']}>Event log</div>
-      <div className={styles['grid-container__fund-budget']}>Fund budget</div>
+      <div className={styles['grid-container__fund-budget']}>
+        <FundBudget />
+      </div>
       <div className={styles['grid-container__children-info']}>
         Children info
       </div>
@@ -170,5 +176,51 @@ function FundDetails() {
         className={styles['fund-details__time']}
       />
     </div>
+  );
+}
+
+function FundBudget() {
+  return (
+    <>
+      <div className={styles['budget-info-tile']}>
+        <h5 className={styles['budget-info-tile__label']}>Budget info</h5>
+        <div className={styles['budget-info-tile__stats']}>
+          <span>Raised:</span>
+          <span>48 PLN</span>
+          <span>Goal:</span>
+          <span>240 PLN</span>
+          <span>Cost per person:</span>
+          <span>24 PLN</span>
+          <span>Contributors:</span>
+          <span>2</span>
+          <span>Participants:</span>
+          <span>10</span>
+        </div>
+        <CircularProgressBar
+          percent={20}
+          className={styles['budget-info-tile__progress-ring']}
+          backgroundClassName={
+            styles['budget-info-tile__progress-ring-background']
+          }
+        />
+      </div>
+
+      <div className={styles['budget-participants-tiles']}>
+        <div className={styles['budget-participants-tiles__children']}>
+          <span>Children</span>
+          <div>
+            <Baby />
+            <h2>10</h2>
+          </div>
+        </div>
+        <div className={styles['budget-participants-tiles__parents']}>
+          <span>Parents</span>
+          <div>
+            <User />
+            <h2>10</h2>
+          </div>
+        </div>
+      </div>
+    </>
   );
 }

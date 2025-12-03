@@ -4,6 +4,7 @@ import styles from './CircularProgressBar.module.scss';
 type CircularProgressBarProps = {
   percent: number;
   className?: string;
+  backgroundClassName?: string;
 };
 
 const THRESHOLD_COLOR_MEDIUM: number = 35;
@@ -14,6 +15,7 @@ const circumference = 2 * Math.PI * radius;
 export function CircularProgressBar({
   percent,
   className,
+  backgroundClassName,
 }: CircularProgressBarProps) {
   const strokeDashoffset =
     circumference - (Math.max(0, percent) / 100) * circumference;
@@ -34,7 +36,10 @@ export function CircularProgressBar({
         viewBox="0 0 120 120"
       >
         <circle
-          className={styles['circular-progress-bar__circle--background']}
+          className={clsx(
+            styles['circular-progress-bar__circle--background'],
+            backgroundClassName ?? ''
+          )}
           cx="60"
           cy="60"
           r={radius}

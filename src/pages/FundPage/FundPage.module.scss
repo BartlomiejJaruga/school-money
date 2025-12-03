@@ -95,7 +95,10 @@ $bento-gap: 1rem;
   }
 
   &__fund-budget {
+    display: flex;
     grid-area: fund-budget;
+    flex-direction: column;
+    gap: $bento-gap;
   }
 
   &__event-log {
@@ -247,5 +250,62 @@ $bento-gap: 1rem;
   &__class {
     color: $color-text-black;
     font-size: 1rem;
+  }
+}
+
+.budget-info-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  border-radius: $bento-border-radius;
+  background-color: $color-bento-background;
+  padding: 1rem;
+
+  &__label {
+    @include section-small-label;
+  }
+
+  &__stats {
+    $budget-font-size: 1rem;
+    display: grid;
+    grid-template-rows: repeat(5, $budget-font-size);
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    width: 100%;
+
+    & > span {
+      font-size: $budget-font-size;
+    }
+
+    & > span:nth-of-type(odd) {
+      text-align: left;
+    }
+
+    & > span:nth-of-type(even) {
+      text-align: right;
+    }
+  }
+
+  &__progress-ring {
+    margin: 1rem 0;
+    aspect-ratio: 1;
+    width: 50%;
+  }
+
+  &__progress-ring-background {
+    stroke: $color-background-primary-hover !important;
+  }
+}
+
+.budget-participants-tiles {
+  display: flex;
+  gap: $bento-gap;
+  width: 100%;
+
+  &__children,
+  &__parents {
+    @include info-tile-with-icon($color-bento-background);
+    width: 50%;
   }
 }

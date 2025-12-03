@@ -74,14 +74,14 @@
 
 // info tiles
 
-@mixin info-tile() {
+@mixin info-tile($background-color: $color-background-primary-hover) {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.5rem;
-  background-color: $color-background-primary-hover;
+  background-color: $background-color;
   padding: 1rem;
 
   & > h2 {
@@ -99,14 +99,14 @@
   }
 }
 
-@mixin info-tile-with-icon() {
+@mixin info-tile-with-icon($background-color: $color-background-primary-hover) {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
   border-radius: 0.5rem;
-  background-color: $color-background-primary-hover;
+  background-color: $background-color;
   padding: 1rem;
 
   & > span {
@@ -143,4 +143,13 @@
   aspect-ratio: 1/1;
   object-fit: cover;
   font-style: italic;
+}
+
+// labels
+
+@mixin section-small-label($text-color: $color-text-gray) {
+  color: $text-color;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-align: center;
 }
