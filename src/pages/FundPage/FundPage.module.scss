@@ -125,6 +125,7 @@ $bento-gap: 1rem;
     display: flex;
     grid-area: fund-documents;
     flex-direction: column;
+    align-items: center;
     gap: 1rem;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
@@ -307,5 +308,89 @@ $bento-gap: 1rem;
   &__parents {
     @include info-tile-with-icon($color-bento-background);
     width: 50%;
+  }
+}
+
+.fund-documents {
+  &__label {
+    @include section-small-label;
+  }
+}
+
+.fund-document {
+  display: flex;
+  gap: 0.5rem;
+  border-radius: $bento-border-radius;
+  background-color: $color-background-primary-hover;
+  padding: 0.5rem;
+
+  &__thumbnail {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.5rem;
+    background-color: darkkhaki;
+    aspect-ratio: 1;
+    height: 100%;
+  }
+
+  &__details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .details__title {
+      color: $color-text-black;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+
+    .details__description {
+      color: $color-subtext-gray;
+      font-size: 0.9rem;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.5rem;
+
+    & > button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background-color 0.2s ease;
+      cursor: pointer;
+      border: 0;
+      border-radius: 0.5rem;
+      background-color: $color-bento-background;
+      padding: 0.25rem;
+      aspect-ratio: 1;
+
+      & > svg {
+        height: 1.25rem;
+        color: $color-text-black;
+      }
+    }
+
+    .actions__edit {
+      &:hover {
+        background-color: $color-accent-secondary-hover;
+      }
+    }
+
+    .actions__delete {
+      &:hover {
+        background-color: $color-error;
+      }
+    }
+
+    .actions__download {
+      &:hover {
+        background-color: $color-info-hover;
+      }
+    }
   }
 }

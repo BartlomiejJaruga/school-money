@@ -2,6 +2,7 @@ import clsx from 'clsx';
 import styles from './FundPage.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import {
+  ArrowDownToLine,
   Baby,
   BanknoteArrowDown,
   BanknoteArrowUp,
@@ -10,6 +11,7 @@ import {
   MoveLeft,
   Pencil,
   TicketX,
+  Trash2,
   User,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
@@ -86,7 +88,10 @@ function ParentFundPageVariant() {
       </div>
       <div className={styles['grid-container__event-log']}>Event log</div>
       <div className={styles['grid-container__fund-documents']}>
-        Fund documents
+        <h5 className={styles['fund-documents__label']}>Fund documents</h5>
+        <FundDocument />
+        <FundDocument />
+        <FundDocument />
       </div>
     </>
   );
@@ -222,5 +227,30 @@ function FundBudget() {
         </div>
       </div>
     </>
+  );
+}
+
+function FundDocument() {
+  return (
+    <div className={styles['fund-document']}>
+      <div className={styles['fund-document__thumbnail']}>File</div>
+      <div className={styles['fund-document__details']}>
+        <h4 className={styles['details__title']}>Paragon za autobus</h4>
+        <p className={styles['details__desciption']}>
+          Paragon za autobus i kawkę dla dzieci
+        </p>
+      </div>
+      <div className={styles['fund-document__actions']}>
+        <button className={styles['actions__edit']}>
+          <Pencil />
+        </button>
+        <button className={styles['actions__delete']}>
+          <Trash2 />
+        </button>
+        {/* <button className={styles['actions__download']}>
+          <ArrowDownToLine />
+        </button> */}
+      </div>
+    </div>
   );
 }
