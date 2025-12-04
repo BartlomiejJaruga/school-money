@@ -158,6 +158,9 @@ function TreasurerFundPageVariant() {
         <FundDocument isParentTreasurer={true} />
         <FundDocument isParentTreasurer={true} />
         <FundDocument isParentTreasurer={true} />
+        <button className={styles['fund-documents__upload-files']}>
+          Upload files
+        </button>
       </div>
     </>
   );

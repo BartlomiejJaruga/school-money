@@ -315,6 +315,13 @@ $bento-gap: 1rem;
   &__label {
     @include section-small-label;
   }
+
+  &__upload-files {
+    @include default-button;
+    padding: 0.5rem 1rem;
+    width: 100%;
+    font-size: 1rem;
+  }
 }
 
 .fund-document {
