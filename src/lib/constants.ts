@@ -23,3 +23,12 @@ export const FUND_STATUS_ENUM = {
   cancelled: 'Cancelled',
   rejected: 'Rejected',
 } as const;
+
+export type FundDocumentsType = ValueOf<typeof FUND_DOCUMENTS_TYPE_ENUM>;
+
+export const FUND_DOCUMENTS_TYPE_ENUM = {
+  image: 'image',
+  pdf: 'pdf',
+  video: 'video',
+  archive: 'archive',
+} as const;

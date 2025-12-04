@@ -336,9 +336,15 @@ $bento-gap: 1rem;
     justify-content: center;
     align-items: center;
     border-radius: 0.5rem;
-    background-color: darkkhaki;
     aspect-ratio: 1;
     height: 100%;
+
+    & > svg {
+      width: auto;
+      height: 40%;
+      color: $color-text-black;
+      stroke-width: 1px !important;
+    }
   }
 
   &__details {

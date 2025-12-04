@@ -8,18 +8,26 @@ import {
   BanknoteArrowUp,
   BanknoteX,
   FileChartColumn,
+  FileText,
+  FolderArchive,
+  Image,
   MoveLeft,
   Pencil,
   TicketX,
   Trash2,
   User,
+  Video,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { CircularProgressBar } from '@components/CircularProgressBar';
+import {
+  FUND_DOCUMENTS_TYPE_ENUM,
+  type FundDocumentsType,
+} from '@lib/constants';
 
 export function FundPage() {
-  const isParentTreasurer = true;
+  const isParentTreasurer = false;
 
   return (
     <div className={styles['page']}>
@@ -89,9 +97,22 @@ function ParentFundPageVariant() {
       <div className={styles['grid-container__event-log']}>Event log</div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
-        <FundDocument />
-        <FundDocument />
-        <FundDocument />
+        <FundDocument
+          isParentTreasurer={false}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.image}
+        />
+        <FundDocument
+          isParentTreasurer={false}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.pdf}
+        />
+        <FundDocument
+          isParentTreasurer={false}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.archive}
+        />
+        <FundDocument
+          isParentTreasurer={false}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.video}
+        />
       </div>
     </>
   );
@@ -155,9 +176,22 @@ function TreasurerFundPageVariant() {
       </div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
-        <FundDocument isParentTreasurer={true} />
-        <FundDocument isParentTreasurer={true} />
-        <FundDocument isParentTreasurer={true} />
+        <FundDocument
+          isParentTreasurer={true}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.image}
+        />
+        <FundDocument
+          isParentTreasurer={true}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.pdf}
+        />
+        <FundDocument
+          isParentTreasurer={true}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.archive}
+        />
+        <FundDocument
+          isParentTreasurer={true}
+          fileType={FUND_DOCUMENTS_TYPE_ENUM.video}
+        />
         <button className={styles['fund-documents__upload-files']}>
           Upload files
         </button>
@@ -238,12 +272,24 @@ function FundBudget() {
 
 type FundDocumentProps = {
   isParentTreasurer?: boolean;
+  fileType: FundDocumentsType;
 };
 
-function FundDocument({ isParentTreasurer = false }: FundDocumentProps) {
+function FundDocument({
+  isParentTreasurer = false,
+  fileType,
+}: FundDocumentProps) {
   return (
     <div className={styles['fund-document']}>
-      <div className={styles['fund-document__thumbnail']}>File</div>
+      <div className={styles['fund-document__thumbnail']}>
+        {fileType == FUND_DOCUMENTS_TYPE_ENUM.image && <Image />}
+
+        {fileType == FUND_DOCUMENTS_TYPE_ENUM.pdf && <FileText />}
+
+        {fileType == FUND_DOCUMENTS_TYPE_ENUM.archive && <FolderArchive />}
+
+        {fileType == FUND_DOCUMENTS_TYPE_ENUM.video && <Video />}
+      </div>
       <div className={styles['fund-document__details']}>
         <h4 className={styles['details__title']}>Paragon za autobus</h4>
         <p className={styles['details__desciption']}>
