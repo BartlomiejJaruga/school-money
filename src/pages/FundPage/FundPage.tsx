@@ -19,7 +19,7 @@ import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 
 export function FundPage() {
-  const isParentTreasurer = false;
+  const isParentTreasurer = true;
 
   return (
     <div className={styles['page']}>
@@ -154,7 +154,10 @@ function TreasurerFundPageVariant() {
         Children info
       </div>
       <div className={styles['grid-container__fund-documents']}>
-        Fund documents
+        <h5 className={styles['fund-documents__label']}>Fund documents</h5>
+        <FundDocument isParentTreasurer={true} />
+        <FundDocument isParentTreasurer={true} />
+        <FundDocument isParentTreasurer={true} />
       </div>
     </>
   );
@@ -230,7 +233,11 @@ function FundBudget() {
   );
 }
 
-function FundDocument() {
+type FundDocumentProps = {
+  isParentTreasurer?: boolean;
+};
+
+function FundDocument({ isParentTreasurer = false }: FundDocumentProps) {
   return (
     <div className={styles['fund-document']}>
       <div className={styles['fund-document__thumbnail']}>File</div>
@@ -241,15 +248,22 @@ function FundDocument() {
         </p>
       </div>
       <div className={styles['fund-document__actions']}>
-        <button className={styles['actions__edit']}>
-          <Pencil />
-        </button>
-        <button className={styles['actions__delete']}>
-          <Trash2 />
-        </button>
-        {/* <button className={styles['actions__download']}>
-          <ArrowDownToLine />
-        </button> */}
+        {isParentTreasurer && (
+          <>
+            <button className={styles['actions__edit']}>
+              <Pencil />
+            </button>
+            <button className={styles['actions__delete']}>
+              <Trash2 />
+            </button>
+          </>
+        )}
+
+        {!isParentTreasurer && (
+          <button className={styles['actions__download']}>
+            <ArrowDownToLine />
+          </button>
+        )}
       </div>
     </div>
   );
