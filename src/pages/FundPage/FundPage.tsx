@@ -29,7 +29,7 @@ import {
 import { EventLogRecord } from '@components/EventLogRecord';
 
 export function FundPage() {
-  const isParentTreasurer = false;
+  const isParentTreasurer = true;
 
   return (
     <div className={styles['page']}>
@@ -169,7 +169,8 @@ function TreasurerFundPageVariant() {
         <FundDetails />
       </div>
       <div className={styles['grid-container__available-funds']}>
-        Available funds
+        <span>Available funds</span>
+        <h2>0 PLN</h2>
       </div>
       <div className={styles['grid-container__event-log']}>
         <EventLog />
