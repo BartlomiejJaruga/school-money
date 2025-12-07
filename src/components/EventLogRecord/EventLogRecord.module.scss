@@ -62,7 +62,10 @@ $record-font-size: 1rem;
   }
 
   &__description-wrapper {
+    display: flex;
     position: relative;
+    justify-content: center;
+    align-items: center;
 
     .description-wrapper__icon {
       width: auto;
