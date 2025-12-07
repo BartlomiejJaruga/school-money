@@ -10,6 +10,7 @@ import CreatedFundsRoute from '@routes/createdFunds.route';
 import ClassesRoute from '@routes/classes.route';
 import ClassRoute from '@routes/class.route';
 import FundRoute from '@routes/fund.route';
+import PaymentHistoryRoute from '@routes/paymentHistory.route';
 
 export const router = createBrowserRouter([
   {
@@ -28,6 +29,7 @@ export const router = createBrowserRouter([
       ClassesRoute,
       ClassRoute,
       FundRoute,
+      PaymentHistoryRoute,
     ],
   },
 ]);
