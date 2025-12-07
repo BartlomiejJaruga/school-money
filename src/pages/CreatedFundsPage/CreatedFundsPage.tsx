@@ -14,6 +14,7 @@ import { useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { useNavigate } from 'react-router-dom';
+import { FUND_OPERATION_TYPE_ENUM } from '@lib/constants';
 
 export function CreatedFundsPage() {
   return (
@@ -214,11 +215,46 @@ function EventLog() {
   return (
     <>
       <h3 className={styles['event-log__title']}>Event log</h3>
-      <EventLogRecord />
-      <EventLogRecord />
-      <EventLogRecord />
-      <EventLogRecord />
-      <EventLogRecord />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.payment,
+          date: '2025-11-27',
+        }}
+        showFundName={true}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.refund,
+          date: '2025-11-24',
+        }}
+        showFundName={true}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.deposit,
+          date: '2025-11-23',
+        }}
+        showFundName={true}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.withdrawal,
+          date: '2025-11-23',
+        }}
+        showFundName={true}
+      />
     </>
   );
 }
