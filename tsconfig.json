@@ -33,7 +33,8 @@
       "@assets/*": ["assets/*"],
       "@routes/*": ["routes/*"],
       "@lib/*": ["lib/*"],
-      "@schemas/*": ["schemas/*"]
+      "@schemas/*": ["schemas/*"],
+      "@dtos/*": ["services/dtos/*"]
     }
   },
   "include": ["src"],

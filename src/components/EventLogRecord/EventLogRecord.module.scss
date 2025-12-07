@@ -3,22 +3,54 @@ $record-font-size: 1rem;
 .record {
   display: flex;
   justify-content: space-between;
+  align-items: center;
+  gap: min(0.5rem, 3%);
   width: 100%;
 
-  & > p {
-    color: $color-text-black;
-    font-size: $record-font-size;
+  & > div {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    gap: min(1rem, 5%);
+
+    & > p {
+      color: $color-text-black;
+      font-size: $record-font-size;
+    }
+  }
+
+  &__date {
+    color: $color-subtext-gray;
+  }
+
+  &__operation {
+    &--refund {
+      color: $color-subtext-gray;
+      font-weight: 600;
+    }
+
+    &--withdrawal {
+      color: $color-error;
+      font-weight: 600;
+    }
+
+    &--deposit {
+      color: $color-success;
+      font-weight: 600;
+    }
   }
 
   &__money {
     font-weight: 600;
     font-size: inherit;
 
-    &--payment {
+    &--payment,
+    &--deposit {
       color: $color-success;
     }
 
-    &--withdrawal {
+    &--withdrawal,
+    &--refund {
       color: $color-error;
     }
   }
@@ -27,6 +59,12 @@ $record-font-size: 1rem;
     color: $color-text-black;
     font-weight: 500;
     font-size: inherit;
+  }
+
+  &__description {
+    width: auto;
+    min-width: $record-font-size;
+    height: $record-font-size;
   }
 
   &__fund {

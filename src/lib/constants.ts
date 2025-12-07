@@ -32,3 +32,12 @@ export const FUND_DOCUMENTS_TYPE_ENUM = {
   video: 'video',
   archive: 'archive',
 } as const;
+
+export type FundOperationType = ValueOf<typeof FUND_OPERATION_TYPE_ENUM>;
+
+export const FUND_OPERATION_TYPE_ENUM = {
+  payment: 'FUND_PAYMENT',
+  refund: 'FUND_REFUND',
+  deposit: 'FUND_DEPOSIT',
+  withdrawal: 'FUND_WITHDRAWAL',
+} as const;

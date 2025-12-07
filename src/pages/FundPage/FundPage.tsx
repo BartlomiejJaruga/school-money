@@ -23,8 +23,10 @@ import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 import {
   FUND_DOCUMENTS_TYPE_ENUM,
+  FUND_OPERATION_TYPE_ENUM,
   type FundDocumentsType,
 } from '@lib/constants';
+import { EventLogRecord } from '@components/EventLogRecord';
 
 export function FundPage() {
   const isParentTreasurer = false;
@@ -94,7 +96,9 @@ function ParentFundPageVariant() {
       <div className={styles['grid-container__fund-budget']}>
         <FundBudget />
       </div>
-      <div className={styles['grid-container__event-log']}>Event log</div>
+      <div className={styles['grid-container__event-log']}>
+        <EventLog />
+      </div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
         <FundDocument
@@ -167,7 +171,9 @@ function TreasurerFundPageVariant() {
       <div className={styles['grid-container__available-funds']}>
         Available funds
       </div>
-      <div className={styles['grid-container__event-log']}>Event log</div>
+      <div className={styles['grid-container__event-log']}>
+        <EventLog />
+      </div>
       <div className={styles['grid-container__fund-budget']}>
         <FundBudget />
       </div>
@@ -266,6 +272,50 @@ function FundBudget() {
           </div>
         </div>
       </div>
+    </>
+  );
+}
+
+function EventLog() {
+  return (
+    <>
+      <h5 className={styles['event-log__label']}>Event log</h5>
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.payment,
+          date: '2025-11-27',
+        }}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.refund,
+          date: '2025-11-24',
+        }}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.deposit,
+          date: '2025-11-23',
+        }}
+      />
+      <EventLogRecord
+        fundOperationDTO={{
+          fundOperationId: '1',
+          amountInCents: 2400,
+          currency: 'PLN',
+          operationType: FUND_OPERATION_TYPE_ENUM.withdrawal,
+          date: '2025-11-23',
+        }}
+      />
     </>
   );
 }

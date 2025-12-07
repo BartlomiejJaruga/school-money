@@ -13,6 +13,7 @@ export default defineConfig({
       '@routes': path.resolve(__dirname, 'src/routes'),
       '@lib': path.resolve(__dirname, 'src/lib'),
       '@schemas': path.resolve(__dirname, 'src/schemas'),
+      '@dtos': path.resolve(__dirname, 'scr/services/dtos'),
     },
   },
   css: {
