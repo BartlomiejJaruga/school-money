@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import styles from './FundPage.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
+import defaultUserPhoto from '@assets/default-user.png';
 import {
   ArrowDownToLine,
   Baby,
@@ -22,8 +23,10 @@ import { useNavigate } from 'react-router-dom';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 import {
+  CHILD_FUND_STATUS_ENUM,
   FUND_DOCUMENTS_TYPE_ENUM,
   FUND_OPERATION_TYPE_ENUM,
+  type ChildFundStatusType,
   type FundDocumentsType,
 } from '@lib/constants';
 import { EventLogRecord } from '@components/EventLogRecord';
@@ -179,7 +182,7 @@ function TreasurerFundPageVariant() {
         <FundBudget />
       </div>
       <div className={styles['grid-container__children-info']}>
-        Children info
+        <ChildrenInfo />
       </div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
@@ -318,6 +321,83 @@ function EventLog() {
         }}
       />
     </>
+  );
+}
+
+function ChildrenInfo() {
+  return (
+    <>
+      <h5 className={styles['children-info__label']}>Children info</h5>
+      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.paid} />
+      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.rejected} />
+      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
+      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
+      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
+    </>
+  );
+}
+
+const getChildrenStatusString = (
+  childFundStatus: ChildFundStatusType
+): string => {
+  let childFundStatusString: string;
+  if (childFundStatus == CHILD_FUND_STATUS_ENUM.paid) {
+    childFundStatusString = 'Paid';
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.unpaid) {
+    childFundStatusString = 'Unpaid';
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.rejected) {
+    childFundStatusString = 'Rejected';
+  } else {
+    childFundStatusString = 'Error';
+  }
+
+  return childFundStatusString;
+};
+
+const getChildrenStatusClassName = (
+  childFundStatus: ChildFundStatusType
+): string => {
+  let childFundStatusClass: string;
+  if (childFundStatus == CHILD_FUND_STATUS_ENUM.paid) {
+    childFundStatusClass = 'paid';
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.unpaid) {
+    childFundStatusClass = 'unpaid';
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.rejected) {
+    childFundStatusClass = 'rejected';
+  } else {
+    childFundStatusClass = 'error';
+  }
+
+  return childFundStatusClass;
+};
+
+type ChildrenInfoRowProps = {
+  status: ChildFundStatusType;
+};
+
+function ChildrenInfoRow({ status }: ChildrenInfoRowProps) {
+  const statusString = getChildrenStatusString(status);
+  const statusClassname = getChildrenStatusClassName(status);
+
+  return (
+    <div className={styles['children-info-row']}>
+      <div>
+        <img
+          src={defaultUserPhoto}
+          alt="child photo"
+          className={styles['children-info-row__image']}
+        />
+        <span className={styles['children-info-row__names']}>John Millers</span>
+      </div>
+      <span
+        className={clsx(
+          styles['children-info-row__status'],
+          styles[`children-info-row__status--${statusClassname}`]
+        )}
+      >
+        {statusString}
+      </span>
+    </div>
   );
 }
 

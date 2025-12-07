@@ -41,3 +41,11 @@ export const FUND_OPERATION_TYPE_ENUM = {
   deposit: 'FUND_DEPOSIT',
   withdrawal: 'FUND_WITHDRAWAL',
 } as const;
+
+export type ChildFundStatusType = ValueOf<typeof CHILD_FUND_STATUS_ENUM>;
+
+export const CHILD_FUND_STATUS_ENUM = {
+  paid: 'PAID',
+  unpaid: 'UNPAID',
+  rejected: 'REJECTED',
+} as const;
