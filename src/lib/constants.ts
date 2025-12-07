@@ -49,3 +49,25 @@ export const CHILD_FUND_STATUS_ENUM = {
   unpaid: 'UNPAID',
   rejected: 'REJECTED',
 } as const;
+
+export type PaymentHistoryOperationType = ValueOf<
+  typeof PAYMENT_HISTORY_OPERATION_TYPE_ENUM
+>;
+
+export const PAYMENT_HISTORY_OPERATION_TYPE_ENUM = {
+  walletTopUp: 'WALLET_TOP_UP',
+  walletWithdrawal: 'WALLET_WITHDRAWAL',
+  fundPayment: 'FUND_PAYMENT',
+  fundRefund: 'FUND_REFUND',
+  fundDeposit: 'FUND_DEPOSIT',
+  fundWithdrawal: 'FUND_WITHDRAWAL',
+} as const;
+
+export type PaymentHistoryOperationStatusType = ValueOf<
+  typeof PAYMENT_HISTORY_OPERATION_STATUS_ENUM
+>;
+
+export const PAYMENT_HISTORY_OPERATION_STATUS_ENUM = {
+  success: 'success',
+  fail: 'fail',
+} as const;

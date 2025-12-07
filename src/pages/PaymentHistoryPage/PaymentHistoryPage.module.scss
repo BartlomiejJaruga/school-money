@@ -1,4 +1,6 @@
 $page-padding: 2rem;
+$elements-border-radius: 0.75rem;
+$table-spacings: 0.75rem;
 
 .page {
   display: flex;
@@ -12,5 +14,70 @@ $page-padding: 2rem;
     margin: 5vh 0;
     font-weight: 400;
     font-size: clamp(1rem, 4vw, 2.5rem);
+  }
+}
+
+.history-table-wrapper {
+  border: 1px solid $color-gray-lines;
+  border-radius: $elements-border-radius;
+  width: 100%;
+  max-width: 1024px;
+  overflow: hidden;
+}
+
+.history-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: $color-bento-background;
+  width: 100%;
+
+  &__header {
+    background-color: transparent;
+
+    & > tr > th {
+      border-bottom: 1px solid $color-gray-lines;
+      padding: $table-spacings 0 $table-spacings $table-spacings;
+      color: $color-text-black;
+      font-weight: 500;
+      text-align: left;
+
+      &:first-child {
+        padding-left: $table-spacings;
+      }
+
+      &:last-child {
+        padding-right: $table-spacings;
+      }
+    }
+  }
+
+  &__row {
+    border-bottom: 1px solid $color-gray-lines;
+
+    &:last-child {
+      border: 0;
+    }
+  }
+
+  &__cell {
+    padding: $table-spacings 0 $table-spacings $table-spacings;
+    color: $color-text-black;
+
+    &:last-child {
+      padding-right: $table-spacings;
+    }
+
+    &--amount,
+    &--status {
+      font-weight: 600;
+    }
+
+    &--positive {
+      color: $color-success;
+    }
+
+    &--negative {
+      color: $color-error;
+    }
   }
 }
