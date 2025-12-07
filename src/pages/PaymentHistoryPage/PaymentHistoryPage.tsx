@@ -6,6 +6,7 @@ import {
   type PaymentHistoryOperationStatusType,
   type PaymentHistoryOperationType,
 } from '@lib/constants';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 type PaymentHistoryRecord = {
   date: string;
@@ -77,7 +78,12 @@ export function PaymentHistoryPage() {
       <div className={styles['page']}>
         <h1 className={styles['page__label']}>Wallet and Funds history</h1>
         <PaymentHistoryTable data={PAYMENT_HISTORY_DATA} />
-        <div>Pagination</div>
+        <PaymentHistoryPagination
+          number={1}
+          size={10}
+          totalElements={267}
+          totalPages={27}
+        />
       </div>
     </>
   );
@@ -209,5 +215,50 @@ function PaymentHistoryTableRow({
         {operationStatusString}
       </td>
     </tr>
+  );
+}
+
+type PaymentHistoryPaginationProps = {
+  number: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+};
+
+function PaymentHistoryPagination({
+  number,
+  size,
+  totalElements,
+  totalPages,
+}: PaymentHistoryPaginationProps) {
+  const pageRangeStart = (number - 1) * size + 1;
+  const pageRangeEnd =
+    number * size >= totalElements ? totalElements : number * size;
+
+  return (
+    <div className={styles['payment-history-pagination-wrapper']}>
+      <div className={styles['payment-history-pagination']}>
+        <div className={styles['payment-history-pagination__pages']}>
+          <span
+            className={styles['payment-history-pagination__pages--highlighted']}
+          >
+            {`${pageRangeStart}-${pageRangeEnd}`}
+          </span>
+          {` of ${totalElements}`}
+        </div>
+        <button
+          className={styles['payment-history-pagination__prev']}
+          disabled={number == 1 ? true : false}
+        >
+          <ChevronLeft />
+        </button>
+        <button
+          className={styles['payment-history-pagination__next']}
+          disabled={number == totalPages ? true : false}
+        >
+          <ChevronRight />
+        </button>
+      </div>
+    </div>
   );
 }

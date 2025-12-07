@@ -1,6 +1,8 @@
 $page-padding: 2rem;
 $elements-border-radius: 0.75rem;
 $table-spacings: 0.75rem;
+$table-min-width: 350px;
+$table-max-width: 1024px;
 
 .page {
   display: flex;
@@ -20,8 +22,7 @@ $table-spacings: 0.75rem;
 .history-table-wrapper {
   border: 1px solid $color-gray-lines;
   border-radius: $elements-border-radius;
-  width: 100%;
-  max-width: 1024px;
+  width: clamp($table-min-width, 100%, $table-max-width);
   overflow: hidden;
 }
 
@@ -79,5 +80,69 @@ $table-spacings: 0.75rem;
     &--negative {
       color: $color-error;
     }
+  }
+}
+
+.payment-history-pagination-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  width: clamp($table-min-width, 100%, $table-max-width);
+}
+
+.payment-history-pagination {
+  display: flex;
+  border: 1px solid $color-gray-lines;
+  border-radius: $elements-border-radius;
+  background-color: $color-bento-background;
+
+  &__pages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    padding: 1rem;
+    color: $color-text-black;
+    text-align: center;
+    white-space: nowrap;
+
+    &--highlighted {
+      font-weight: 500;
+    }
+  }
+
+  &__prev,
+  &__next {
+    @include default-button(
+      $color-bento-background,
+      $color-background-primary-hover,
+      $color-text-black
+    );
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left: 1px solid $color-gray-lines;
+    border-radius: 0;
+    padding: 0.5rem;
+    aspect-ratio: 1;
+
+    & > svg {
+      stroke-width: 1.5px !important;
+      width: auto;
+      height: 2rem;
+      color: $color-text-black;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      background-color: $color-background-primary-hover;
+
+      & > svg {
+        color: $color-text-gray;
+      }
+    }
+  }
+
+  &__next {
+    border-radius: 0 $elements-border-radius $elements-border-radius 0;
   }
 }
