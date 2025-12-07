@@ -99,7 +99,12 @@ export function EventLogRecord({
           FUND_OPERATION_TYPE_ENUM.withdrawal ||
           fundOperationDTO.operationType ==
             FUND_OPERATION_TYPE_ENUM.deposit) && (
-          <Info className={styles['record__description']} />
+          <div className={styles['record__description-wrapper']}>
+            <Info className={styles['description-wrapper__icon']} />
+            <span className={styles['description-wrapper__tooltip']}>
+              This is description for the money change.
+            </span>
+          </div>
         )}
       </div>
 

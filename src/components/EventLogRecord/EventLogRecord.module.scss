@@ -61,10 +61,47 @@ $record-font-size: 1rem;
     font-size: inherit;
   }
 
-  &__description {
-    width: auto;
-    min-width: $record-font-size;
-    height: $record-font-size;
+  &__description-wrapper {
+    position: relative;
+
+    .description-wrapper__icon {
+      width: auto;
+      min-width: $record-font-size;
+      height: $record-font-size;
+
+      &:hover + .description-wrapper__tooltip {
+        display: flex;
+      }
+    }
+
+    .description-wrapper__tooltip {
+      display: none;
+      position: absolute;
+      top: -45%;
+      right: calc(100% + 12px);
+      justify-content: center;
+      align-items: center;
+      box-shadow: $shadow-medium;
+      border-radius: 0.5rem;
+      background-color: $color-bento-background;
+      padding: 0.5rem;
+      min-width: 300px;
+      color: $color-text-black;
+      font-size: $record-font-size;
+      text-align: center;
+
+      &::before {
+        position: absolute;
+        top: $record-font-size;
+        right: -5px;
+        transform: translateY(-50%) rotate(45deg);
+        box-shadow: 1px -1px 0.1rem rgba(0, 0, 0, 0.3);
+        background: $color-bento-background;
+        width: 10px;
+        height: 10px;
+        content: '';
+      }
+    }
   }
 
   &__fund {
