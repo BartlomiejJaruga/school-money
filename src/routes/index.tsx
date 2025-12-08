@@ -11,6 +11,7 @@ import ClassesRoute from '@routes/classes.route';
 import ClassRoute from '@routes/class.route';
 import FundRoute from '@routes/fund.route';
 import PaymentHistoryRoute from '@routes/paymentHistory.route';
+import ProfileRoute from '@routes/profile.route';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +31,7 @@ export const router = createBrowserRouter([
       ClassRoute,
       FundRoute,
       PaymentHistoryRoute,
+      ProfileRoute,
     ],
   },
 ]);

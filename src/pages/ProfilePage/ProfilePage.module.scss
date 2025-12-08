@@ -1,0 +1,37 @@
+$page-padding: 2rem;
+$bento-border-radius: 0.75rem;
+$bento-gap: 1rem;
+
+.page {
+  padding: $page-padding;
+  min-height: calc(100vh - 2 * $page-padding);
+}
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 300px 200px;
+  grid-template-columns: 300px 1fr;
+  grid-template-areas:
+    'avatar basic-info-form'
+    'password-form password-form';
+  gap: $bento-gap;
+  min-height: inherit;
+
+  &__avatar {
+    grid-area: avatar;
+  }
+
+  &__basic-info-form {
+    grid-area: basic-info-form;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+    padding: 1rem;
+  }
+
+  &__password-form {
+    grid-area: password-form;
+    border-radius: $bento-border-radius;
+    background-color: $color-bento-background;
+    padding: 1rem;
+  }
+}
