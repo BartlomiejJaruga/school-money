@@ -3,6 +3,8 @@ $bento-border-radius: 0.75rem;
 $bento-gap: 2rem;
 
 .page {
+  display: flex;
+  justify-content: center;
   padding: $page-padding;
   min-height: calc(100vh - 2 * $page-padding);
 }
@@ -15,6 +17,9 @@ $bento-gap: 2rem;
     'avatar basic-info-form'
     'password-form password-form';
   gap: $bento-gap;
+  margin-top: 5vh;
+  width: 100%;
+  max-width: 1024px;
   min-height: inherit;
 
   &__avatar {
