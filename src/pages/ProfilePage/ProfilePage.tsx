@@ -10,6 +10,10 @@ import {
   type BasicInfoFormValues,
 } from '@schemas/profile/basicInfoForm.schema';
 import { PROFILE_FORM_TYPE_ENUM } from '@lib/constants';
+import {
+  ResetPasswordFormSchema,
+  type ResetPasswordFormValues,
+} from '@schemas/profile/resetPasswordForm.schema';
 
 export function ProfilePage() {
   return (
@@ -23,7 +27,7 @@ export function ProfilePage() {
             <BasicInfoForm />
           </div>
           <div className={styles['grid-container__password-form']}>
-            Password form
+            <PasswordResetForm />
           </div>
         </div>
       </div>
@@ -106,6 +110,81 @@ function BasicInfoForm() {
           autoComplete="off"
         />
         <div className={styles['basic-info-form__actions']}>
+          <button
+            type="button"
+            className={styles['actions__cancel']}
+            onClick={() => reset()}
+            disabled={busy}
+          >
+            Cancel
+          </button>
+          <button className={styles['actions__confirm']} disabled={busy}>
+            Confirm
+          </button>
+        </div>
+      </form>
+    </FormProvider>
+  );
+}
+
+function PasswordResetForm() {
+  const fetcher = useFetcher();
+  const formMethods = useForm<ResetPasswordFormValues>({
+    resolver: zodResolver(ResetPasswordFormSchema),
+    mode: 'onChange',
+    defaultValues: {
+      currentPassword: '',
+      newPassword: '',
+      repeatNewPassword: '',
+    },
+  });
+
+  const {
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: ResetPasswordFormValues) => {
+    fetcher.submit(
+      { ...values, formType: PROFILE_FORM_TYPE_ENUM.changePasswordForm },
+      { method: 'post', action: '/profile' }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <FormProvider {...formMethods}>
+      <form
+        noValidate
+        onSubmit={handleSubmit(onSubmit)}
+        className={styles['reset-password-form']}
+      >
+        <div className={styles['reset-password-form__inputs']}>
+          <CustomInputWithLabel
+            type="password"
+            label="Current password"
+            name="currentPassword"
+            placeholder="Current password"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            type="password"
+            label="New password"
+            name="newPassword"
+            placeholder="New password"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            type="password"
+            label="Repeat new password"
+            name="repeatNewPassword"
+            placeholder="Repeat new password"
+            autoComplete="off"
+          />
+        </div>
+        <div className={styles['reset-password-form__actions']}>
           <button
             type="button"
             className={styles['actions__cancel']}

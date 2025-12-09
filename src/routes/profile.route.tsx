@@ -17,7 +17,11 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
 
     console.log({ firstName, lastName, emailAddress });
   } else if (formType == PROFILE_FORM_TYPE_ENUM.changePasswordForm) {
-    console.log('Change password form submitted.');
+    const currentPassword = formData.get('currentPassword');
+    const newPassword = formData.get('newPassword');
+    const repeatNewPassword = formData.get('repeatNewPassword');
+
+    console.log({ currentPassword, newPassword, repeatNewPassword });
   } else {
     console.log('[PROFILE ACTION] Other form type submitted.');
   }

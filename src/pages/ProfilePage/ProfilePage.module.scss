@@ -46,7 +46,7 @@ $bento-gap: 2rem;
     grid-area: password-form;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
-    padding: 1rem;
+    padding: 2rem;
   }
 }
 
@@ -116,6 +116,43 @@ $bento-gap: 2rem;
     align-items: center;
     gap: 1rem;
     margin-top: 0.5rem;
+    width: 100%;
+
+    & > button {
+      padding: 0.5rem 2rem;
+      font-size: 1rem;
+    }
+
+    .actions__cancel {
+      @include default-button;
+    }
+
+    .actions__confirm {
+      @include default-button(
+        $color-accent-primary,
+        $color-accent-primary-hover,
+        $color-text-white
+      );
+    }
+  }
+}
+
+.reset-password-form {
+  &__inputs {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+
+    & > div {
+      width: 33%;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
     width: 100%;
 
     & > button {
