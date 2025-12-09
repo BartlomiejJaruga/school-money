@@ -5,9 +5,7 @@ import type {
   RouteObject,
 } from 'react-router-dom';
 
-export const action: ActionFunction = async ({
-  request,
-}: ActionFunctionArgs) => {
+const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
   const firstName = formData.get('firstName');

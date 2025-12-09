@@ -71,3 +71,8 @@ export const PAYMENT_HISTORY_OPERATION_STATUS_ENUM = {
   success: 'success',
   fail: 'fail',
 } as const;
+
+export const PROFILE_FORM_TYPE_ENUM = {
+  basicInfoForm: 'BASIC_INFO_FORM',
+  changePasswordForm: 'CHANGE_PASSWORD_FORM',
+} as const;

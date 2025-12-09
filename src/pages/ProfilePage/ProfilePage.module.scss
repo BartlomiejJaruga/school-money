@@ -17,7 +17,8 @@ $bento-gap: 2rem;
     'avatar basic-info-form'
     'password-form password-form';
   gap: $bento-gap;
-  margin-top: 5vh;
+  box-sizing: border-box;
+  padding-top: 5vh;
   width: 100%;
   max-width: 1024px;
   min-height: inherit;
@@ -38,7 +39,7 @@ $bento-gap: 2rem;
     grid-area: basic-info-form;
     border-radius: $bento-border-radius;
     background-color: $color-bento-background;
-    padding: 1rem;
+    padding: 2rem;
   }
 
   &__password-form {
@@ -94,6 +95,44 @@ $bento-gap: 2rem;
         height: 20%;
         color: $color-text-white;
       }
+    }
+  }
+}
+
+.basic-info-form {
+  &__names {
+    display: flex;
+    gap: 2rem;
+    width: 100%;
+
+    & > div {
+      width: 50%;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
+    width: 100%;
+
+    & > button {
+      padding: 0.5rem 2rem;
+      font-size: 1rem;
+    }
+
+    .actions__cancel {
+      @include default-button;
+    }
+
+    .actions__confirm {
+      @include default-button(
+        $color-accent-primary,
+        $color-accent-primary-hover,
+        $color-text-white
+      );
     }
   }
 }
