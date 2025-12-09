@@ -5,6 +5,11 @@ type ValueOf<T> = T[keyof T];
 
 // === CONSTANTS ===
 
+export const PASSWORD_MIN_LENGTH = 4;
+export const PASSWORD_MAX_LENGTH = 20;
+
+// === ENUMS AND TYPES ===
+
 export type AuthenticationPageAsideType = ValueOf<
   typeof AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM
 >;

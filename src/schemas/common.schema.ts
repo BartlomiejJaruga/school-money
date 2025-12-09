@@ -1,4 +1,5 @@
 import { z, ZodObject, type ZodRawShape } from 'zod';
+import { PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '@lib/constants';
 
 export const Email = z
   .string()
@@ -9,12 +10,28 @@ export const Email = z
 export const Password = z
   .string()
   .refine((v) => !/\s/.test(v), "Password can't contain spaces")
-  .min(1, 'This field is required');
+  .min(1, 'This field is required')
+  .min(
+    PASSWORD_MIN_LENGTH,
+    `Password can't be shorter than ${PASSWORD_MIN_LENGTH} characters`
+  )
+  .max(
+    PASSWORD_MAX_LENGTH,
+    `Password can't be longer than ${PASSWORD_MAX_LENGTH} characters`
+  );
 
 export const RepeatPassword = z
   .string()
   .trim()
-  .min(1, 'This field is required');
+  .min(1, 'This field is required')
+  .min(
+    PASSWORD_MIN_LENGTH,
+    `Password can't be shorter than ${PASSWORD_MIN_LENGTH} characters`
+  )
+  .max(
+    PASSWORD_MAX_LENGTH,
+    `Password can't be longer than ${PASSWORD_MAX_LENGTH} characters`
+  );
 
 export const FirstName = z.string().trim().min(1, 'This field is required');
 
