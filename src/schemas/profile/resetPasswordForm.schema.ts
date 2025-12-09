@@ -15,7 +15,7 @@ export const ResetPasswordFormSchema = checkFieldsEquality(
   ResetPasswordFormSchemaBase,
   'newPassword',
   'repeatNewPassword',
-  "Passwords don't match."
+  "Passwords don't match"
 );
 
 export type ResetPasswordFormValues = z.infer<typeof ResetPasswordFormSchema>;
