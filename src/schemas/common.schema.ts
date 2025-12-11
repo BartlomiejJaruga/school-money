@@ -1,6 +1,8 @@
 import { z, ZodObject, type ZodRawShape } from 'zod';
 import { PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '@lib/constants';
 
+// consts
+
 export const Email = z
   .string()
   .trim()
@@ -50,6 +52,30 @@ export const Birthday = z
     today.setHours(0, 0, 0, 0);
     return date <= today;
   }, "Birthday can't be a future date");
+
+export const DateInput = z
+  .string()
+  .min(1, 'This field is required')
+  .refine((val) => {
+    const date = new Date(val);
+    return !isNaN(date.getTime());
+  }, 'Invalid date format');
+
+export const FundTitle = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .max(80, 'Title is too long');
+
+export const FundDescription = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .max(1000, 'Description is too long');
+
+export const PositiveNumber = z.number().min(0, 'This field is required');
+
+// functions
 
 export function checkFieldsEquality<
   T extends ZodRawShape,
