@@ -15,8 +15,20 @@ import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { useNavigate } from 'react-router-dom';
 import { FUND_OPERATION_TYPE_ENUM } from '@lib/constants';
+import { ModalTemplate } from '@components/ModalTemplate';
+import { FundInfoModal } from '@components/FundInfoModal';
 
 export function CreatedFundsPage() {
+  const [isCreateFundModalOpen, setIsCreateFundModalOpen] = useState(false);
+
+  const handleCancelCreateFundModal = () => {
+    setIsCreateFundModalOpen(false);
+  };
+
+  const handleConfirmCreateFundModal = () => {
+    setIsCreateFundModalOpen(false);
+  };
+
   return (
     <>
       <div className={styles['page']}>
@@ -27,7 +39,12 @@ export function CreatedFundsPage() {
             <ClassButton name="3C 20/21" />
             <ClassButton name="4B 19/20" />
           </div>
-          <button className={styles['grid-container__create-fund']}>
+          <button
+            className={styles['grid-container__create-fund']}
+            onClick={() => {
+              setIsCreateFundModalOpen(true);
+            }}
+          >
             Create fund
           </button>
           <div className={styles['grid-container__fund-list']}>
@@ -45,6 +62,15 @@ export function CreatedFundsPage() {
           </div>
         </div>
       </div>
+      <ModalTemplate
+        isOpen={isCreateFundModalOpen}
+        onOverlayClick={handleCancelCreateFundModal}
+      >
+        <FundInfoModal
+          onClose={handleCancelCreateFundModal}
+          onConfirm={handleConfirmCreateFundModal}
+        />
+      </ModalTemplate>
     </>
   );
 }

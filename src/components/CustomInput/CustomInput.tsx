@@ -33,7 +33,10 @@ export function CustomInput({
     register,
     formState: { errors },
   } = formContext;
-  const registration = register(name);
+  const registration = register(
+    name,
+    type === 'number' ? { valueAsNumber: true } : {}
+  );
   const errorMessage = (errors?.[name]?.message ?? '') as string;
 
   const currentType =
