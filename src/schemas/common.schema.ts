@@ -73,7 +73,7 @@ export const FundDescription = z
   .min(1, 'This field is required')
   .max(1000, 'Description is too long');
 
-export const PositiveNumber = z.number().min(0, 'This field is required');
+export const PositiveNumber = z.number({ error: 'This field is required' });
 
 // functions
 
