@@ -70,6 +70,11 @@ export function CreatedFundsPage() {
           type="create"
           onClose={handleCancelCreateFundModal}
           onConfirm={handleConfirmCreateFundModal}
+          classData={{
+            classId: '1',
+            name: 'Class Name 1',
+            children: 20,
+          }}
         />
       </ModalTemplate>
     </>

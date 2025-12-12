@@ -10,6 +10,13 @@ import {
 } from '@schemas/components/fundInfoModal.schema';
 import type { SimpleDateString } from '@lib/constants';
 
+type ClassData = {
+  // delete and change all placed used when DTO of class is established
+  classId: string;
+  name: string;
+  children: number;
+};
+
 type FundInfoModalData = Omit<FundInfoModalValues, 'startDate' | 'endDate'> & {
   startDate: SimpleDateString;
   endDate: SimpleDateString;
@@ -19,6 +26,7 @@ type FundInfoModalProps = {
   type: 'create' | 'edit';
   onClose: () => void;
   onConfirm: () => void;
+  classData: ClassData;
   defaultData?: FundInfoModalData;
 };
 
@@ -32,6 +40,7 @@ export function FundInfoModal({
   type,
   onClose,
   onConfirm,
+  classData,
   defaultData,
 }: FundInfoModalProps) {
   const fetcher = useFetcher();
@@ -50,6 +59,7 @@ export function FundInfoModal({
   const {
     handleSubmit,
     formState: { isSubmitting },
+    watch,
   } = formMethods;
 
   const onSubmit = (values: FundInfoModalValues) => {
@@ -57,6 +67,10 @@ export function FundInfoModal({
     fetcher.submit(values, { method: 'post', action: '/created-funds' });
   };
 
+  const costPerChildValue = watch('costPerChild');
+  const trueCostPerChild =
+    costPerChildValue && !isNaN(costPerChildValue) ? costPerChildValue : 0;
+  const totalCost = trueCostPerChild * classData.children;
   const busy = isSubmitting || fetcher.state != 'idle';
 
   return (
@@ -110,9 +124,9 @@ export function FundInfoModal({
               />
               <div className={styles['form__payment-info']}>
                 <h5 className={styles['payment-info__label']}>Payment info</h5>
-                <span>Cost per child: 0.00 PLN</span>
-                <span>Participants: 21</span>
-                <span>Total cost: 0.00 PLN</span>
+                <span>{`Cost per child: ${trueCostPerChild.toFixed(2)} PLN`}</span>
+                <span>{`Participants: ${classData.children}`}</span>
+                <span>{`Total cost: ${totalCost.toFixed(2)} PLN`}</span>
               </div>
             </>
           )}
