@@ -8,10 +8,18 @@ import {
   FundInfoModalSchema,
   type FundInfoModalValues,
 } from '@schemas/components/fundInfoModal.schema';
+import type { SimpleDateString } from '@lib/constants';
+
+type FundInfoModalData = Omit<FundInfoModalValues, 'startDate' | 'endDate'> & {
+  startDate: SimpleDateString;
+  endDate: SimpleDateString;
+};
 
 type FundInfoModalProps = {
+  type: 'create' | 'edit';
   onClose: () => void;
   onConfirm: () => void;
+  defaultData?: FundInfoModalData;
 };
 
 const TODAY = new Date();
@@ -20,13 +28,22 @@ const padDate = (num: number) => {
 };
 const today = `${TODAY.getFullYear()}-${padDate(TODAY.getMonth() + 1)}-${padDate(TODAY.getDate())}`;
 
-export function FundInfoModal({ onClose, onConfirm }: FundInfoModalProps) {
+export function FundInfoModal({
+  type,
+  onClose,
+  onConfirm,
+  defaultData,
+}: FundInfoModalProps) {
   const fetcher = useFetcher();
   const formMethods = useForm<FundInfoModalValues>({
     resolver: zodResolver(FundInfoModalSchema),
     mode: 'onChange',
     defaultValues: {
-      startDate: today,
+      title: defaultData?.title ?? '',
+      description: defaultData?.description ?? '',
+      startDate: defaultData?.startDate ?? today,
+      endDate: defaultData?.endDate ?? '',
+      costPerChild: defaultData?.costPerChild ?? undefined,
     },
   });
 
@@ -45,7 +62,9 @@ export function FundInfoModal({ onClose, onConfirm }: FundInfoModalProps) {
   return (
     <div className={styles['fund-info-modal']}>
       <div className={styles['fund-info-modal__top']}>
-        <h2 className={styles['top__title']}>CREATE NEW FUND</h2>
+        <h2 className={styles['top__title']}>
+          {type == 'create' ? 'CREATE NEW FUND' : 'EDIT FUND'}
+        </h2>
         <X onClick={onClose} className={styles['top__close-icon-button']} />
       </div>
       <FormProvider {...formMethods}>
@@ -67,28 +86,36 @@ export function FundInfoModal({ onClose, onConfirm }: FundInfoModalProps) {
             placeholder="Enter fund description"
             autoComplete="off"
           />
-          <div className={styles['form__dates']}>
-            <CustomInputWithLabel
-              type="date"
-              label="Start date"
-              name="startDate"
-            />
-            <CustomInputWithLabel type="date" label="End date" name="endDate" />
-          </div>
-          <CustomInputWithLabel
-            type="number"
-            label="Cost per child"
-            name="costPerChild"
-            placeholder="Enter cost per child"
-            autoComplete="off"
-            min={1}
-          />
-          <div className={styles['form__payment-info']}>
-            <h5 className={styles['payment-info__label']}>Payment info</h5>
-            <span>Cost per child: 0.00 PLN</span>
-            <span>Participants: 21</span>
-            <span>Total cost: 0.00 PLN</span>
-          </div>
+          {type == 'create' && (
+            <>
+              <div className={styles['form__dates']}>
+                <CustomInputWithLabel
+                  type="date"
+                  label="Start date"
+                  name="startDate"
+                />
+                <CustomInputWithLabel
+                  type="date"
+                  label="End date"
+                  name="endDate"
+                />
+              </div>
+              <CustomInputWithLabel
+                type="number"
+                label="Cost per child"
+                name="costPerChild"
+                placeholder="Enter cost per child"
+                autoComplete="off"
+                min={1}
+              />
+              <div className={styles['form__payment-info']}>
+                <h5 className={styles['payment-info__label']}>Payment info</h5>
+                <span>Cost per child: 0.00 PLN</span>
+                <span>Participants: 21</span>
+                <span>Total cost: 0.00 PLN</span>
+              </div>
+            </>
+          )}
           <div className={styles['form__actions']}>
             <button
               type="button"

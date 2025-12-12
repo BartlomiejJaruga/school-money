@@ -67,6 +67,7 @@ export function CreatedFundsPage() {
         onOverlayClick={handleCancelCreateFundModal}
       >
         <FundInfoModal
+          type="create"
           onClose={handleCancelCreateFundModal}
           onConfirm={handleConfirmCreateFundModal}
         />
