@@ -7,6 +7,7 @@ import {
 import { AuthenticationPage } from '@pages/AuthenticationPage';
 import axiosInstance from '@services/axiosInstance';
 import { isAxiosError } from 'axios';
+import { AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM } from '@lib/constants';
 
 export type AuthenticationResponse = {
   ok: boolean;
@@ -33,7 +34,9 @@ export const action: ActionFunction = async ({
   };
 };
 
-function registerUser(formData: FormData): AuthenticationResponse {
+async function registerUser(
+  formData: FormData
+): Promise<AuthenticationResponse> {
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
   const firstName = String(formData.get('firstName') ?? '');
@@ -41,11 +44,35 @@ function registerUser(formData: FormData): AuthenticationResponse {
 
   console.log({ email, password, firstName, lastName });
 
-  return {
-    ok: true,
-    status: 200,
-    message: 'User created successfully',
-  };
+  try {
+    const requestBody = {
+      first_name: firstName,
+      last_name: lastName,
+      email: email,
+      password: password,
+    };
+
+    const response = await axiosInstance.post('/v1/auth/register', requestBody);
+    console.log(response);
+
+    return redirect(`/?asideType=${AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login}`);
+  } catch (error) {
+    console.error('Error', error);
+
+    if (isAxiosError(error)) {
+      return {
+        ok: false,
+        status: error.status ?? 500,
+        message: error.response?.data?.message ?? 'Unknown server error.',
+      };
+    }
+
+    return {
+      ok: false,
+      status: 500,
+      message: 'Unknown server error.',
+    };
+  }
 }
 
 async function loginUser(

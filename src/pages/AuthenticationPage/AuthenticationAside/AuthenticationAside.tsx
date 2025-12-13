@@ -1,4 +1,4 @@
-import { useFetcher } from 'react-router-dom';
+import { useFetcher, useSearchParams } from 'react-router-dom';
 import styles from './AuthenticationAside.module.scss';
 import { FormProvider, useForm } from 'react-hook-form';
 import {
@@ -9,7 +9,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import type { AuthenticationResponse } from '@routes/root.route';
 import { LoginSchema, type LoginValues } from '@schemas/auth/login.schema';
 import { CustomInput } from '@components/CustomInput';
-import { useState } from 'react';
 import {
   AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM,
   type AuthenticationPageAsideType,
@@ -17,13 +16,15 @@ import {
 import { TriangleAlert } from 'lucide-react';
 
 export function AuthenticationAside() {
-  const [currentAsideType, setCurrentAsideType] =
-    useState<AuthenticationPageAsideType>(
-      AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login
-    );
+  const [searchParams, setSearchParams] = useSearchParams();
+  const currentAsideType =
+    (searchParams.get('asideType') as AuthenticationPageAsideType) ??
+    AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login;
+  console.log({ currentAsideType });
 
   const handleChangeAside = (newAsideType: AuthenticationPageAsideType) => {
-    setCurrentAsideType(newAsideType);
+    searchParams.set('asideType', newAsideType);
+    setSearchParams(searchParams, { replace: true });
   };
 
   return (
@@ -69,6 +70,13 @@ function RegisterAside({ handleChangeAside }: AsideProps) {
     <>
       <h2 className={styles['title']}>Create an account</h2>
       <FormProvider {...formMethods}>
+        {fetcher?.data?.ok == false && (
+          <div className={styles['error-box']}>
+            <TriangleAlert />
+            <span>{fetcher.data.message}</span>
+          </div>
+        )}
+
         <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}
