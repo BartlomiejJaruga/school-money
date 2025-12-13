@@ -34,7 +34,8 @@
       "@routes/*": ["routes/*"],
       "@lib/*": ["lib/*"],
       "@schemas/*": ["schemas/*"],
-      "@dtos/*": ["services/dtos/*"]
+      "@dtos/*": ["services/dtos/*"],
+      "@services/*": ["services/*"]
     }
   },
   "include": ["src"],

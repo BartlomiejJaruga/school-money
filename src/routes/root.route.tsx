@@ -5,6 +5,8 @@ import {
   type RouteObject,
 } from 'react-router-dom';
 import { AuthenticationPage } from '@pages/AuthenticationPage';
+import axiosInstance from '@services/axiosInstance';
+import { isAxiosError } from 'axios';
 
 export type AuthenticationResponse = {
   ok: boolean;
@@ -46,13 +48,45 @@ function registerUser(formData: FormData): AuthenticationResponse {
   };
 }
 
-function loginUser(formData: FormData): AuthenticationResponse {
+async function loginUser(
+  formData: FormData,
+  redirectTo: string = '/funds'
+): Promise<AuthenticationResponse> {
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
 
   console.log({ email, password });
 
-  return redirect('/funds');
+  try {
+    const requestBody = {
+      email: email,
+      password: password,
+    };
+
+    const response = await axiosInstance.post(
+      '/v1/auth/authenticate',
+      requestBody
+    );
+    console.log(response);
+
+    return redirect(redirectTo);
+  } catch (error) {
+    console.error('Error', error);
+
+    if (isAxiosError(error)) {
+      return {
+        ok: false,
+        status: error.status ?? 500,
+        message: error.response?.data?.message ?? 'Unknown server error.',
+      };
+    }
+
+    return {
+      ok: false,
+      status: 500,
+      message: 'Unknown server error.',
+    };
+  }
 }
 
 const RootRoute: RouteObject = {

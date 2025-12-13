@@ -14,6 +14,7 @@ import {
   AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM,
   type AuthenticationPageAsideType,
 } from '@lib/constants';
+import { TriangleAlert } from 'lucide-react';
 
 export function AuthenticationAside() {
   const [currentAsideType, setCurrentAsideType] =
@@ -129,6 +130,13 @@ function LoginAside({ handleChangeAside }: AsideProps) {
     <>
       <h2 className={styles['title']}>Log in</h2>
       <FormProvider {...formMethods}>
+        {fetcher?.data?.ok == false && (
+          <div className={styles['error-box']}>
+            <TriangleAlert />
+            <span>{fetcher.data.message}</span>
+          </div>
+        )}
+
         <form
           noValidate
           onSubmit={handleSubmit(onSubmit)}

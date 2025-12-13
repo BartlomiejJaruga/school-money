@@ -3,6 +3,20 @@ import react from '@vitejs/plugin-react-swc';
 import path from 'path';
 
 export default defineConfig({
+  server: {
+    proxy: {
+      '/api': {
+        target: 'https://bit-fix.online/api',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+        configure: (proxy) => {
+          proxy.on('proxyReq', (proxyReq) => {
+            proxyReq.setHeader('Origin', 'https://bit-fix.online');
+          });
+        },
+      },
+    },
+  },
   plugins: [react()],
   resolve: {
     alias: {
@@ -14,6 +28,7 @@ export default defineConfig({
       '@lib': path.resolve(__dirname, 'src/lib'),
       '@schemas': path.resolve(__dirname, 'src/schemas'),
       '@dtos': path.resolve(__dirname, 'scr/services/dtos'),
+      '@services': path.resolve(__dirname, 'src/services'),
     },
   },
   css: {

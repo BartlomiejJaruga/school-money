@@ -16,6 +16,29 @@ $aside-padding-left-right: 7.5rem;
   height: calc(100% - 2 * $aside-padding-top-bottom);
 }
 
+.error-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  background-color: $color-error;
+  padding: 1rem;
+  color: $color-text-white;
+
+  & > svg {
+    width: auto;
+    min-width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  & > span {
+    font-weight: 400;
+    font-size: 1rem;
+  }
+}
+
 .title {
   @include apply-font($font-heading-primary);
   margin-bottom: 1rem;
