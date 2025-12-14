@@ -15,7 +15,7 @@ export type AuthenticationResponse = {
   message?: string;
 };
 
-export const action: ActionFunction = async ({
+const action: ActionFunction = async ({
   request,
 }: ActionFunctionArgs): Promise<AuthenticationResponse> => {
   const formData = await request.formData();

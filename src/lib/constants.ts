@@ -81,3 +81,11 @@ export const PROFILE_FORM_TYPE_ENUM = {
   basicInfoForm: 'BASIC_INFO_FORM',
   changePasswordForm: 'CHANGE_PASSWORD_FORM',
 } as const;
+
+export type UserRoleType = ValueOf<typeof USER_ROLE_ENUM>;
+
+export const USER_ROLE_ENUM = {
+  parent: 'PARENT',
+  schoolAdmin: 'SCHOOL_ADMIN',
+  superAdmin: 'SUPER_ADMIN',
+} as const;

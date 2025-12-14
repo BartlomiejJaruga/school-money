@@ -5,13 +5,13 @@ import {
   type RouteObject,
 } from 'react-router-dom';
 
-export const loader: LoaderFunction = async () => {
+const loader: LoaderFunction = async () => {
   // checking if user logged in here and removing user data and tokens here
 
   return redirect('/');
 };
 
-export const action: ActionFunction = async () => {
+const action: ActionFunction = async () => {
   // checking if user logged in here and removing user data and tokens here
 
   return redirect('/');
