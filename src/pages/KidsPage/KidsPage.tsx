@@ -5,7 +5,7 @@ import clsx from 'clsx';
 import { useEffect, useRef, useState } from 'react';
 import { ModalTemplate } from '@components/ModalTemplate';
 import { FormProvider, useForm } from 'react-hook-form';
-import { useFetcher } from 'react-router-dom';
+import { useFetcher, useLoaderData } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   NewChildSchema,
@@ -13,27 +13,15 @@ import {
 } from '@schemas/kids/newChild.schema';
 import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
 import { ConfirmationModal } from '@components/ConfirmationModal';
-import type { SimpleDateString } from '@lib/constants';
-
-type ChildData = {
-  firstName: string;
-  lastName: string;
-  birthday: SimpleDateString;
-  photoUrl: string;
-};
-
-const tempChildData: ChildData = {
-  firstName: 'John',
-  lastName: 'Millers',
-  birthday: '2012-05-25',
-  photoUrl: 'URL',
-};
+import type { ChildData } from '@lib/constants';
+import type { KidsLoaderData } from '@routes/kids.route';
 
 export function KidsPage() {
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
   const [childDataToEdit, setChildDataToEdit] = useState<ChildData | null>(
     null
   );
+  const kidsLoaderData = useLoaderData() as KidsLoaderData;
 
   const handleCancelChildModal = () => {
     setIsChildModalOpen(false);
@@ -58,8 +46,16 @@ export function KidsPage() {
   return (
     <>
       <div className={styles['page']}>
-        <KidTile handleEditChild={handleEditChild} childData={tempChildData} />
-        <KidTile handleEditChild={handleEditChild} childData={tempChildData} />
+        {kidsLoaderData.children &&
+          kidsLoaderData.children.map((child: ChildData) => {
+            return (
+              <KidTile
+                handleEditChild={handleEditChild}
+                childData={child}
+                key={child.id}
+              />
+            );
+          })}
         <NewKidTile handleOpenChildModal={handleOpenChildModal} />
       </div>
       <ModalTemplate
@@ -158,7 +154,9 @@ function KidTile({ handleEditChild, childData }: KidTileProps) {
         >{`${childData.firstName} ${childData.lastName}`}</h3>
         <div className={styles['kid-tile__class']}>
           <School className={styles['class__icon']} />
-          <h4 className={styles['class__name']}>{`Class (16/17)`}</h4>
+          <h4
+            className={styles['class__name']}
+          >{`${childData.schoolClass.name} (${childData.schoolClass.year})`}</h4>
         </div>
       </div>
       <ConfirmationModal
@@ -212,7 +210,10 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
 
   const onSubmit = (values: NewChildValues) => {
     onConfirm();
-    fetcher.submit(values, { method: 'post', action: '/kids' });
+    fetcher.submit(
+      { childId: childData?.id ?? null, ...values },
+      { method: 'post', action: '/kids' }
+    );
   };
 
   const busy = isSubmitting || fetcher.state != 'idle';

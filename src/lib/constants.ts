@@ -94,3 +94,17 @@ export type WalletData = {
   currency: string;
   balanceInCents: number;
 };
+
+export type SchoolClassData = {
+  id: string;
+  name: string;
+  year: string;
+};
+
+export type ChildData = {
+  id: string;
+  schoolClass: SchoolClassData;
+  firstName: string;
+  lastName: string;
+  birthday: SimpleDateString;
+};
