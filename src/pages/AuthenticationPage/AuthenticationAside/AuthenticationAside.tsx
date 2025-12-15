@@ -20,7 +20,6 @@ export function AuthenticationAside() {
   const currentAsideType =
     (searchParams.get('asideType') as AuthenticationPageAsideType) ??
     AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login;
-  console.log({ currentAsideType });
 
   const handleChangeAside = (newAsideType: AuthenticationPageAsideType) => {
     searchParams.set('asideType', newAsideType);

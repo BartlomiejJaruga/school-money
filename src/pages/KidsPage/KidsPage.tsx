@@ -210,8 +210,10 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
 
   const onSubmit = (values: NewChildValues) => {
     onConfirm();
+    const data = childData?.id ?? 'no-id';
+    console.log({ data });
     fetcher.submit(
-      { childId: childData?.id ?? null, ...values },
+      { childId: data, ...values },
       { method: 'post', action: '/kids' }
     );
   };

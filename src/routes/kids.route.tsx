@@ -63,7 +63,9 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const lastName = formData.get('lastName');
   const birthday = formData.get('birthday');
 
-  if (childId == null) {
+  console.log({ childId });
+
+  if (childId === 'no-id') {
     try {
       const requestBody = {
         first_name: firstName,
