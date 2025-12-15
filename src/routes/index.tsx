@@ -12,6 +12,7 @@ import ClassRoute from '@routes/class.route';
 import FundRoute from '@routes/fund.route';
 import PaymentHistoryRoute from '@routes/paymentHistory.route';
 import ProfileRoute from '@routes/profile.route';
+import { loader as authenticationLoader } from '@routes/_authenticated.route';
 
 export const router = createBrowserRouter([
   {
@@ -22,6 +23,7 @@ export const router = createBrowserRouter([
   {
     element: <AsideLayout />,
     errorElement: <ErrorPage />,
+    loader: authenticationLoader,
     children: [
       FundsRoute,
       KidsRoute,

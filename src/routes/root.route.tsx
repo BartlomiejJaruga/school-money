@@ -2,12 +2,23 @@ import {
   redirect,
   type ActionFunction,
   type ActionFunctionArgs,
+  type LoaderFunction,
   type RouteObject,
 } from 'react-router-dom';
 import { AuthenticationPage } from '@pages/AuthenticationPage';
 import axiosInstance from '@services/axiosInstance';
 import { isAxiosError } from 'axios';
-import { AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM } from '@lib/constants';
+import {
+  AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM,
+  type UserRoleType,
+} from '@lib/constants';
+import {
+  getUserData,
+  saveAuthData,
+  saveUserData,
+  type AuthData,
+  type UserData,
+} from '@lib/session';
 
 export type AuthenticationResponse = {
   ok: boolean;
@@ -96,6 +107,20 @@ async function loginUser(
     );
     console.log(response);
 
+    const userData: UserData = {
+      userId: response.data.user_id,
+      role: response.data.role as UserRoleType,
+      firstName: response.data.first_name,
+      lastName: response.data.last_name,
+    };
+    saveUserData(userData);
+
+    const authData: AuthData = {
+      accessToken: response.data.access_token,
+      refreshToken: response.data.refresh_token,
+    };
+    saveAuthData(authData);
+
     return redirect(redirectTo);
   } catch (error) {
     console.error('Error', error);
@@ -116,10 +141,16 @@ async function loginUser(
   }
 }
 
+const loader: LoaderFunction = async () => {
+  const userData = getUserData();
+  if (userData) return redirect('/funds');
+};
+
 const RootRoute: RouteObject = {
   path: '/',
   element: <AuthenticationPage />,
   action: action,
+  loader: loader,
 };
 
 export default RootRoute;

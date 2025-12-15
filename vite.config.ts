@@ -6,12 +6,11 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'https://bit-fix.online/api',
+        target: 'https://api.bit-fix.online',
         changeOrigin: true,
-        rewrite: (path) => path.replace(/^\/api/, ''),
         configure: (proxy) => {
           proxy.on('proxyReq', (proxyReq) => {
-            proxyReq.setHeader('Origin', 'https://bit-fix.online');
+            proxyReq.setHeader('Origin', 'https://api.bit-fix.online');
           });
         },
       },
