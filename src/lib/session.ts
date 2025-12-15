@@ -8,6 +8,7 @@ export type UserData = {
   role: UserRoleType;
   firstName: string;
   lastName: string;
+  email: string;
 };
 
 const AUTH_DATA_KEY = 'auth-data';

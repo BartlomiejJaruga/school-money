@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useRouteLoaderData } from 'react-router-dom';
 import styles from './AppAside.module.scss';
 import logoWhite from '@assets/logo-white.svg';
 import defaultUser from '@assets/default-user.png';
@@ -14,8 +14,13 @@ import {
   LogOut,
 } from 'lucide-react';
 import clsx from 'clsx';
+import { getUserData } from '@lib/session';
+import type { AsideLayoutData } from '@routes/_authenticated.route';
+import type { WalletData } from '@lib/constants';
 
 export function AppAside() {
+  const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
+
   return (
     <>
       <aside className={styles['aside']}>
@@ -26,7 +31,7 @@ export function AppAside() {
             className={styles['top-side__logo']}
           />
           <UserInfo />
-          <Wallet />
+          <Wallet walletData={asideLayoutData.walletData} />
           <hr className={styles['top-side__divider']} />
           <NavList />
         </div>
@@ -46,6 +51,8 @@ export function AppAside() {
 }
 
 function UserInfo() {
+  const userData = getUserData();
+
   return (
     <div className={styles['user-info']}>
       <img
@@ -54,19 +61,31 @@ function UserInfo() {
         className={styles['user-info__avatar']}
       />
       <div className={styles['user-info__info']}>
-        <span className={styles['info__names']}>Andrew Smith</span>
-        <span className={styles['info__email']}>andrew.smith@gmail.com</span>
+        <span className={styles['info__names']}>
+          {userData?.firstName} {userData?.lastName}
+        </span>
+        <span className={styles['info__email']}>{userData?.email}</span>
       </div>
     </div>
   );
 }
 
-function Wallet() {
+type WalletProps = {
+  walletData: WalletData | null;
+};
+
+function Wallet({ walletData }: WalletProps) {
+  const walletBalance = walletData?.balanceInCents
+    ? walletData.balanceInCents / 100
+    : 'No info';
+
   return (
     <div className={styles['wallet']}>
       <div className={styles['wallet__balance']}>
         <span className={styles['balance__title']}>Wallet balance</span>
-        <h3 className={styles['balance__amount']}>100.00 PLN</h3>
+        <h3 className={styles['balance__amount']}>
+          {walletBalance} {walletData?.currency}
+        </h3>
       </div>
       <div className={styles['wallet__operations']}>
         <button className={styles['operations__button']}>

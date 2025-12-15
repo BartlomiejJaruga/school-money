@@ -89,3 +89,8 @@ export const USER_ROLE_ENUM = {
   schoolAdmin: 'SCHOOL_ADMIN',
   superAdmin: 'SUPER_ADMIN',
 } as const;
+
+export type WalletData = {
+  currency: string;
+  balanceInCents: number;
+};

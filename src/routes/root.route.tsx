@@ -112,6 +112,7 @@ async function loginUser(
       role: response.data.role as UserRoleType,
       firstName: response.data.first_name,
       lastName: response.data.last_name,
+      email: email,
     };
     saveUserData(userData);
 

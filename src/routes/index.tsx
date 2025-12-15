@@ -21,6 +21,7 @@ export const router = createBrowserRouter([
     children: [RootRoute],
   },
   {
+    id: 'aside-layout',
     element: <AsideLayout />,
     errorElement: <ErrorPage />,
     loader: authenticationLoader,
