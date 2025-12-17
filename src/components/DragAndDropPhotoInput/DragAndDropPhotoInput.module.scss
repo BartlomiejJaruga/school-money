@@ -1,0 +1,67 @@
+.photo-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+
+  &__title {
+    align-self: flex-start;
+    color: $color-text-black;
+    font-size: 1.1rem;
+  }
+
+  &__dropzone {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 2px dashed $color-drag-and-drop-border;
+    border-radius: 1rem;
+    padding: 2rem;
+    width: 100%;
+    height: 200px;
+    color: $color-text-gray;
+    text-align: center;
+
+    &--dragging {
+      border-color: $color-drag-and-drop-border-dragging;
+      background-color: $color-drag-and-drop-background-dragging;
+      color: $color-drag-and-drop-border-dragging;
+    }
+
+    & > label {
+      cursor: pointer;
+    }
+
+    & > input {
+      display: none;
+    }
+  }
+
+  &__preview {
+    position: relative;
+
+    .preview__photo {
+      border-radius: 50%;
+      aspect-ratio: 1/1;
+      height: 200px;
+      object-fit: cover;
+      font-style: italic;
+    }
+
+    .preview__delete {
+      position: absolute;
+      top: 0;
+      right: 0;
+      cursor: pointer;
+      border-radius: 50%;
+      background-color: $color-error;
+      padding: 0.25rem;
+      width: auto;
+      height: 2rem;
+      color: $color-text-white;
+    }
+  }
+}
