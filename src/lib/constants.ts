@@ -95,7 +95,7 @@ export type WalletData = {
   balanceInCents: number;
 };
 
-export type SchoolClassData = {
+export type ChildDataSchoolClassData = {
   id: string;
   name: string;
   year: string;
@@ -103,7 +103,7 @@ export type SchoolClassData = {
 
 export type ChildData = {
   id: string;
-  schoolClass: SchoolClassData;
+  schoolClass: ChildDataSchoolClassData;
   firstName: string;
   lastName: string;
   birthday: SimpleDateString;
