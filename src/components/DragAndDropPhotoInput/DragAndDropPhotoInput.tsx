@@ -1,18 +1,40 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './DragAndDropPhotoInput.module.scss';
 import clsx from 'clsx';
 import { X } from 'lucide-react';
+import { useFormContext } from 'react-hook-form';
 
 type DragAndDropPhotoInputProps = {
+  name: string;
+  photoUrl?: string | null;
   className?: string;
 };
 
 export function DragAndDropPhotoInput({
+  name,
+  photoUrl = null,
   className,
 }: DragAndDropPhotoInputProps) {
+  const formContext = useFormContext();
+  if (!formContext) {
+    throw new Error(
+      'DragAndDropPhotoInput should be used inside of FormProvider'
+    );
+  }
   const [isDragging, setIsDragging] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(photoUrl);
   const inputRef = useRef<HTMLInputElement>(null);
+  const { setValue, register } = formContext;
+
+  useEffect(() => {
+    register(name);
+  }, [register]);
+
+  useEffect(() => {
+    if (photoUrl) {
+      setPreview(photoUrl);
+    }
+  }, [photoUrl]);
 
   const isFileTypeValid = (file: File) => {
     const allowedTypes = ['image/png', 'image/jpeg'];
@@ -28,13 +50,11 @@ export function DragAndDropPhotoInput({
     e.preventDefault();
     setIsDragging(false);
     const file = e.dataTransfer.files[0];
-    if (!file) return;
-
-    if (!isFileTypeValid(file)) return;
+    if (!file || !isFileTypeValid(file)) return;
 
     handlePhotoPreview(file);
 
-    console.log(file); // TO DO handle file saving in form
+    setValue(name, file, { shouldValidate: true });
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -46,18 +66,21 @@ export function DragAndDropPhotoInput({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (!isFileTypeValid(file)) return;
+    if (!file || !isFileTypeValid(file)) return;
 
     handlePhotoPreview(file);
 
-    console.log(file); // TO DO handle file saving in form
+    setValue(name, file, { shouldValidate: true });
   };
 
   const handlePhotoPreview = (file: File) => {
     const url = URL.createObjectURL(file);
     setPreview(url);
+  };
+
+  const handlePhotoRemove = () => {
+    setPreview(null);
+    setValue(name, null);
   };
 
   return (
@@ -99,7 +122,7 @@ export function DragAndDropPhotoInput({
           />
           <X
             className={styles['preview__delete']}
-            onClick={() => setPreview(null)}
+            onClick={handlePhotoRemove}
           />
         </div>
       )}

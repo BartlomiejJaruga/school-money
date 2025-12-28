@@ -16,6 +16,7 @@ import { ConfirmationModal } from '@components/ConfirmationModal';
 import type { ChildData } from '@lib/constants';
 import type { KidsLoaderData } from '@routes/kids.route';
 import { DragAndDropPhotoInput } from '@components/DragAndDropPhotoInput';
+import axiosInstance from '@services/axiosInstance';
 
 export function KidsPage() {
   const [isChildModalOpen, setIsChildModalOpen] = useState(false);
@@ -83,6 +84,36 @@ function KidTile({ handleEditChild, childData }: KidTileProps) {
   const [isActionMenuOpen, setIsActionMenuOpen] = useState(false);
   const [isDeleteConfirmationOpen, setIsDeleteConfirmationOpen] =
     useState(false);
+  const [childAvatarUrl, setChildAvatarUrl] = useState<string>(defaultImage);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async () => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/children/${childData.id}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setChildAvatarUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setChildAvatarUrl(defaultImage);
+      }
+    };
+
+    if (childData.id) {
+      fetchAvatar();
+    }
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   useEffect(() => {
     function handleClickOutsideActionMenu(event: MouseEvent) {
@@ -146,7 +177,7 @@ function KidTile({ handleEditChild, childData }: KidTileProps) {
           </div>
         )}
         <img
-          src={defaultImage}
+          src={childAvatarUrl}
           alt={`Kid Name photo`}
           className={styles['kid-tile__photo']}
         />
@@ -193,6 +224,7 @@ type ChildModalProps = {
 };
 
 function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const fetcher = useFetcher();
   const formMethods = useForm<NewChildValues>({
     resolver: zodResolver(NewChildSchema),
@@ -204,19 +236,60 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
     },
   });
 
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (childId: string) => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/children/${childId}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setPhotoUrl(null);
+      }
+    };
+
+    if (childData && childData.id) {
+      fetchAvatar(childData.id);
+    }
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
+
   const {
     handleSubmit,
     formState: { isSubmitting },
   } = formMethods;
 
   const onSubmit = (values: NewChildValues) => {
+    const childId = childData?.id ?? 'no-id';
+
+    const formData = new FormData();
+    formData.append('childId', childId);
+    formData.append('firstName', values.firstName);
+    formData.append('lastName', values.lastName);
+    formData.append('birthday', values.birthday);
+
+    if (values.avatarFile) {
+      formData.append('avatarFile', values.avatarFile);
+    }
+
+    fetcher.submit(formData, {
+      method: 'post',
+      action: '/kids',
+      encType: 'multipart/form-data',
+    });
+
     onConfirm();
-    const data = childData?.id ?? 'no-id';
-    console.log({ data });
-    fetcher.submit(
-      { childId: data, ...values },
-      { method: 'post', action: '/kids' }
-    );
   };
 
   const busy = isSubmitting || fetcher.state != 'idle';
@@ -246,7 +319,7 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
             autoComplete="off"
           />
           <CustomInputWithLabel label="Birthday" type="date" name="birthday" />
-          <DragAndDropPhotoInput />
+          <DragAndDropPhotoInput name="avatarFile" photoUrl={photoUrl} />
           <div className={styles['form__actions']}>
             <button
               type="button"

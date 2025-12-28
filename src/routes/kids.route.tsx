@@ -30,7 +30,6 @@ export const loader: LoaderFunction = async () => {
 const fetchParentChildren = async (): Promise<ChildData[] | null> => {
   try {
     const response = await axiosInstance.get('/v1/children');
-    console.log(response);
 
     const children: ChildData[] = response.data.content.map((child: any) => {
       const childData: ChildData = {
@@ -58,42 +57,49 @@ const fetchParentChildren = async (): Promise<ChildData[] | null> => {
 const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
 
-  const childId = formData.get('childId');
-  const firstName = formData.get('firstName');
-  const lastName = formData.get('lastName');
-  const birthday = formData.get('birthday');
+  const childId = formData.get('childId') as string;
+  const firstName = formData.get('firstName') as string;
+  const lastName = formData.get('lastName') as string;
+  const birthday = formData.get('birthday') as string;
+  const avatarFile = formData.get('avatarFile') as File | null;
 
-  console.log({ childId });
+  let currentChildId = childId;
 
-  if (childId === 'no-id') {
-    try {
-      const requestBody = {
+  try {
+    if (childId === 'no-id') {
+      const response = await axiosInstance.post('/v1/children', {
         first_name: firstName,
         last_name: lastName,
         birth_date: birthday,
-      };
+      });
 
-      const response = await axiosInstance.post('/v1/children', requestBody);
-      console.log(response);
-    } catch (error) {
-      console.error('Error', error);
+      currentChildId = response.data.id;
+    } else {
+      axiosInstance.patch(`/v1/children/${childId}`, {
+        first_name: firstName,
+        last_name: lastName,
+        birth_date: birthday,
+      });
     }
-  } else {
-    try {
-      const requestBody = {
-        first_name: firstName,
-        last_name: lastName,
-        birth_date: birthday,
-      };
 
-      const response = await axiosInstance.patch(
-        `/v1/children/${childId}`,
-        requestBody
+    if (avatarFile && avatarFile.size > 0 && currentChildId) {
+      const avatarFormData = new FormData();
+      avatarFormData.append('avatarFile', avatarFile);
+
+      axiosInstance.patch(
+        `/v1/children/${currentChildId}/avatar`,
+        avatarFormData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        }
       );
-      console.log(response);
-    } catch (error) {
-      console.error('Error', error);
+    } else if (!avatarFile && currentChildId) {
+      axiosInstance.delete(`/v1/children/${currentChildId}/avatar`);
     }
+  } catch (error) {
+    console.error('Error', error);
   }
 };
 
