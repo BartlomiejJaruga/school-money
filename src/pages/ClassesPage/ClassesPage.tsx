@@ -98,7 +98,7 @@ function ClassTile({ classData }: ClassTileProps) {
         <button
           className={styles['right-side__go-to-class-btn']}
           onClick={() => {
-            navigate('/classes/class');
+            navigate('/classes/class', { state: { classData } });
           }}
         >
           Go to class

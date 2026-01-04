@@ -5,10 +5,13 @@ import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 
 export function ClassPage() {
   const navigate = useNavigate();
+  const location = useLocation();
+  const classData = location.state.classData as SchoolClassResponseDto;
 
   return (
     <>
@@ -27,7 +30,9 @@ export function ClassPage() {
             <button className={styles['top-bar__generate-report-btn']}>
               Generate report
             </button>
-            <div className={styles['top-bar__class-name']}>3C 20/21</div>
+            <div
+              className={styles['top-bar__class-name']}
+            >{`${classData.school_class_name} ${classData.school_class_year}`}</div>
           </div>
           <div className={styles['grid-container__fund-list']}>
             <FundTile showBudget={true} />
@@ -44,11 +49,11 @@ export function ClassPage() {
                   alt="treasurer photo"
                 />
                 <div className={styles['treasurer__info']}>
-                  <h4>Andrew Smith</h4>
-                  <span>andrew.smith@gmail.com</span>
+                  <h4>{`${classData.treasurer.first_name} ${classData.treasurer.last_name}`}</h4>
+                  <span>{classData.treasurer.email}</span>
                 </div>
               </div>
-              <ClassCode code="12345678" />
+              <ClassCode code={classData.invitation_code} />
             </div>
           </div>
           <div className={styles['grid-container__class-info']}>
