@@ -186,9 +186,16 @@ function KidTile({ handleEditChild, childData }: KidTileProps) {
         >{`${childData.firstName} ${childData.lastName}`}</h3>
         <div className={styles['kid-tile__class']}>
           <School className={styles['class__icon']} />
-          <h4
-            className={styles['class__name']}
-          >{`${childData.schoolClass.name} (${childData.schoolClass.year})`}</h4>
+
+          {childData?.schoolClass?.id && (
+            <h4
+              className={styles['class__name']}
+            >{`${childData.schoolClass.name} (${childData.schoolClass.year})`}</h4>
+          )}
+
+          {!childData?.schoolClass?.id && (
+            <h4 className={styles['class__name']}>No class</h4>
+          )}
         </div>
       </div>
       <ConfirmationModal
@@ -234,8 +241,10 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
       firstName: childData?.firstName ?? '',
       lastName: childData?.lastName ?? '',
       birthday: childData?.birthday ?? '',
+      invitationCode: '',
     },
   });
+  const hasSchoolClass = childData?.schoolClass?.id ? true : false;
 
   useEffect(() => {
     let objectUrl: string | null = null;
@@ -273,12 +282,14 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
 
   const onSubmit = (values: NewChildValues) => {
     const childId = childData?.id ?? 'no-id';
+    const invitationCode = values.invitationCode ?? '';
 
     const formData = new FormData();
     formData.append('childId', childId);
     formData.append('firstName', values.firstName);
     formData.append('lastName', values.lastName);
     formData.append('birthday', values.birthday);
+    formData.append('invitationCode', invitationCode);
     formData.append('deletePhoto', String(deletePhoto));
 
     if (values.avatarFile) {
@@ -321,6 +332,14 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
             autoComplete="off"
           />
           <CustomInputWithLabel label="Birthday" type="date" name="birthday" />
+          {!hasSchoolClass && (
+            <CustomInputWithLabel
+              label="Invitation Code"
+              name="invitationCode"
+              placeholder="XXXXXXXXXX"
+              autoComplete="off"
+            />
+          )}
           <DragAndDropPhotoInput
             name="avatarFile"
             photoUrl={photoUrl}

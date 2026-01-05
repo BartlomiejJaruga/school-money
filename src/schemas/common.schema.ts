@@ -75,6 +75,13 @@ export const FundDescription = z
 
 export const PositiveNumber = z.number({ error: 'This field is required' });
 
+export const InvitationCode = z
+  .string()
+  .trim()
+  .regex(/^[A-Z0-9]{12}$/, 'Invalid code format')
+  .optional()
+  .or(z.literal(''));
+
 // functions
 
 export function checkFieldsEquality<

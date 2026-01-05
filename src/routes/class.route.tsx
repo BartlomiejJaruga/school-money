@@ -37,7 +37,7 @@ const fetchClassChildren = async (
         params: {
           page: 0,
           size: 50,
-          sort: 'lastName,firstName,birthDate,DESC',
+          sort: 'lastName,firstName,birthDate,ASC',
         },
       }
     );

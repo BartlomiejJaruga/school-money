@@ -35,7 +35,7 @@ const fetchParentChildren = async (): Promise<ChildData[] | null> => {
       const childData: ChildData = {
         id: child.child_id,
         schoolClass: {
-          id: child.school_class?.school_class_id ?? 'no info',
+          id: child.school_class?.school_class_id ?? '',
           name: child.school_class?.school_class_name ?? 'no info',
           year: child.school_class?.school_class_year ?? 'no info',
         },
@@ -61,6 +61,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const firstName = formData.get('firstName') as string;
   const lastName = formData.get('lastName') as string;
   const birthday = formData.get('birthday') as string;
+  const invitationCode = formData.get('invitationCode') as string;
   const avatarFile = formData.get('avatarFile') as File | null;
   const deletePhoto = formData.get('deletePhoto') == 'true';
 
@@ -87,7 +88,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
       const avatarFormData = new FormData();
       avatarFormData.append('avatarFile', avatarFile);
 
-      axiosInstance.patch(
+      await axiosInstance.patch(
         `/v1/children/${currentChildId}/avatar`,
         avatarFormData,
         {
@@ -97,7 +98,19 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
         }
       );
     } else if (deletePhoto && currentChildId) {
-      axiosInstance.delete(`/v1/children/${currentChildId}/avatar`);
+      await axiosInstance.delete(`/v1/children/${currentChildId}/avatar`);
+    }
+
+    if (invitationCode && currentChildId) {
+      await axiosInstance.post(
+        `/v1/children/${currentChildId}/school-class`,
+        {},
+        {
+          params: {
+            invitationCode: invitationCode,
+          },
+        }
+      );
     }
   } catch (error) {
     console.error('Error', error);
