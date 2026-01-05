@@ -62,6 +62,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const lastName = formData.get('lastName') as string;
   const birthday = formData.get('birthday') as string;
   const avatarFile = formData.get('avatarFile') as File | null;
+  const deletePhoto = formData.get('deletePhoto') == 'true';
 
   let currentChildId = childId;
 
@@ -75,14 +76,14 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
 
       currentChildId = response.data.id;
     } else {
-      axiosInstance.patch(`/v1/children/${childId}`, {
+      await axiosInstance.patch(`/v1/children/${childId}`, {
         first_name: firstName,
         last_name: lastName,
         birth_date: birthday,
       });
     }
 
-    if (avatarFile && avatarFile.size > 0 && currentChildId) {
+    if (!deletePhoto && avatarFile && avatarFile.size > 0 && currentChildId) {
       const avatarFormData = new FormData();
       avatarFormData.append('avatarFile', avatarFile);
 
@@ -95,7 +96,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
           },
         }
       );
-    } else if (!avatarFile && currentChildId) {
+    } else if (deletePhoto && currentChildId) {
       axiosInstance.delete(`/v1/children/${currentChildId}/avatar`);
     }
   } catch (error) {

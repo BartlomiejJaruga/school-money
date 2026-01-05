@@ -8,12 +8,16 @@ type DragAndDropPhotoInputProps = {
   name: string;
   photoUrl?: string | null;
   className?: string;
+  onAdd?: () => void;
+  onDelete?: () => void;
 };
 
 export function DragAndDropPhotoInput({
   name,
   photoUrl = null,
   className,
+  onAdd,
+  onDelete,
 }: DragAndDropPhotoInputProps) {
   const formContext = useFormContext();
   if (!formContext) {
@@ -55,6 +59,7 @@ export function DragAndDropPhotoInput({
     handlePhotoPreview(file);
 
     setValue(name, file, { shouldValidate: true });
+    onAdd?.();
   };
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -71,6 +76,7 @@ export function DragAndDropPhotoInput({
     handlePhotoPreview(file);
 
     setValue(name, file, { shouldValidate: true });
+    onAdd?.();
   };
 
   const handlePhotoPreview = (file: File) => {
@@ -81,6 +87,7 @@ export function DragAndDropPhotoInput({
   const handlePhotoRemove = () => {
     setPreview(null);
     setValue(name, null);
+    onDelete?.();
   };
 
   return (

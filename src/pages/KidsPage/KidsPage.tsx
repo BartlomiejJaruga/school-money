@@ -225,6 +225,7 @@ type ChildModalProps = {
 
 function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+  const [deletePhoto, setDeletePhoto] = useState<boolean>(false);
   const fetcher = useFetcher();
   const formMethods = useForm<NewChildValues>({
     resolver: zodResolver(NewChildSchema),
@@ -278,6 +279,7 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
     formData.append('firstName', values.firstName);
     formData.append('lastName', values.lastName);
     formData.append('birthday', values.birthday);
+    formData.append('deletePhoto', String(deletePhoto));
 
     if (values.avatarFile) {
       formData.append('avatarFile', values.avatarFile);
@@ -319,7 +321,16 @@ function ChildModal({ onClose, onConfirm, childData }: ChildModalProps) {
             autoComplete="off"
           />
           <CustomInputWithLabel label="Birthday" type="date" name="birthday" />
-          <DragAndDropPhotoInput name="avatarFile" photoUrl={photoUrl} />
+          <DragAndDropPhotoInput
+            name="avatarFile"
+            photoUrl={photoUrl}
+            onAdd={() => {
+              setDeletePhoto(false);
+            }}
+            onDelete={() => {
+              setDeletePhoto(true);
+            }}
+          />
           <div className={styles['form__actions']}>
             <button
               type="button"
