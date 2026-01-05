@@ -205,9 +205,14 @@ $bento-gap: 1rem;
 
 .children {
   &__label {
+    display: flex;
+    justify-content: space-around;
+    gap: 35%;
+    width: 100%;
     color: $color-text-gray;
     font-weight: 500;
     font-size: 0.9rem;
+    text-align: center;
   }
 }
 

@@ -63,7 +63,11 @@ export function ClassPage() {
             <ClassInfo />
           </div>
           <div className={styles['grid-container__children']}>
-            <h5 className={styles['children__label']}>Children</h5>
+            <div className={styles['children__label']}>
+              <h5>Child</h5>
+              <h5>Parent</h5>
+            </div>
+
             {classLoaderData?.children &&
               classLoaderData?.children?.length > 0 &&
               classLoaderData.children.map((childRowData) => {
