@@ -57,6 +57,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
 };
 
 const ClassesRoute: RouteObject = {
+  index: true,
   path: '/classes',
   element: <ClassesPage />,
   loader: loader,

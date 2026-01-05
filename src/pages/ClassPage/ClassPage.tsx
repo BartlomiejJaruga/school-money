@@ -5,10 +5,13 @@ import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import type { ClassLoaderData } from '@routes/class.route';
+import type { ChildWithParentInfoResponseDto } from '@dtos/ChildWithParentInfoResponseDto';
 
 export function ClassPage() {
+  const classLoaderData = useLoaderData() as ClassLoaderData;
   const navigate = useNavigate();
   const location = useLocation();
   const classData = location.state.classData as SchoolClassResponseDto;
@@ -61,11 +64,21 @@ export function ClassPage() {
           </div>
           <div className={styles['grid-container__children']}>
             <h5 className={styles['children__label']}>Children</h5>
-            <ChildRow />
-            <ChildRow />
-            <ChildRow />
-            <ChildRow />
-            <ChildRow />
+            {classLoaderData?.children &&
+              classLoaderData?.children?.length > 0 &&
+              classLoaderData.children.map((childRowData) => {
+                return (
+                  <ChildRow
+                    childRowData={childRowData}
+                    key={childRowData.child_id}
+                  />
+                );
+              })}
+
+            {classLoaderData?.children &&
+              classLoaderData?.children?.length < 1 && (
+                <div>No children yet</div>
+              )}
           </div>
         </div>
       </div>
@@ -95,7 +108,7 @@ function ClassCode({ code }: ClassCodeProps) {
           isRevealed && styles['class-code-tile__code--visible']
         )}
       >
-        {isRevealed ? code : 'XXXXXXXX'}
+        {isRevealed ? code : 'XXXXXXXXXX'}
       </div>
     </div>
   );
@@ -134,7 +147,11 @@ function ClassInfo() {
   );
 }
 
-function ChildRow() {
+type ChildRowProps = {
+  childRowData: ChildWithParentInfoResponseDto;
+};
+
+function ChildRow({ childRowData }: ChildRowProps) {
   return (
     <div className={styles['child-row']}>
       <div className={styles['child-row__parent']}>
@@ -143,9 +160,13 @@ function ChildRow() {
           alt="parent photo"
           className={styles['parent__photo']}
         />
-        <span className={styles['parent__name']}>Nadine Kemmer-Lowe</span>
+        <span
+          className={styles['parent__name']}
+        >{`${childRowData.first_name} ${childRowData.last_name}`}</span>
       </div>
-      <span className={styles['child-row__child']}>Herman Pfeffer-Mann</span>
+      <span
+        className={styles['child-row__child']}
+      >{`${childRowData.parent.first_name} ${childRowData.parent.last_name}`}</span>
     </div>
   );
 }
