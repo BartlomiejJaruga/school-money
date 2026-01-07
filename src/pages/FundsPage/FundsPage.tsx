@@ -2,22 +2,28 @@ import styles from './FundsPage.module.scss';
 import { Baby } from 'lucide-react';
 import clsx from 'clsx';
 import defaultFundPhoto from '@assets/default-fund.jpg';
-import { FUND_STATUS_ENUM } from '@lib/constants';
+import { FUND_PAYMENT_STATUS_ENUM } from '@lib/constants';
 import { FundStatusTile } from '@components/FundStatusTile';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 import { useState } from 'react';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
+import type { FundsLoaderData } from '@routes/funds.route';
 
 export function FundsPage() {
+  const fundsLoaderData = useLoaderData() as FundsLoaderData;
+
   return (
     <>
       <div className={styles['page']}>
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__fund-list']}>
-            <FundTile />
-            <FundTile />
+            {fundsLoaderData?.funds &&
+              fundsLoaderData.funds.length > 0 &&
+              fundsLoaderData.funds.map((fund) => {
+                return <FundTile fundData={fund} />;
+              })}
             <FundsPagination />
           </div>
           <div className={styles['grid-container__children']}>
@@ -115,7 +121,7 @@ function HistoryFundTile() {
       </div>
       <div className={styles['history-fund-tile__info']}>
         <FundStatusTile
-          status={FUND_STATUS_ENUM.paid}
+          status={FUND_PAYMENT_STATUS_ENUM.paid}
           className={styles['info__fund-status']}
         />
         <CircularProgressBar

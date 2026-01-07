@@ -1,14 +1,16 @@
 import styles from './FundTile.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
+import type { FundResponseDTO } from '@dtos/FundResponseDto';
 import { Baby, BanknoteX } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type FundTileProps = {
+  fundData: FundResponseDTO;
   showBudget?: boolean;
 };
 
-export function FundTile({ showBudget = false }: FundTileProps) {
+export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   const navigate = useNavigate();
 
   return (
@@ -21,7 +23,7 @@ export function FundTile({ showBudget = false }: FundTileProps) {
       <div className={styles['fund-tile__details']}>
         <div className={styles['details__top']}>
           <div>
-            <h2 className={styles['fund-title']}>Theater trip</h2>
+            <h2 className={styles['fund-title']}>{fundData.title}</h2>
             <div className={styles['fund-child']}>
               <Baby />
               <span>John Millers 3C 18/19</span>

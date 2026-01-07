@@ -21,12 +21,22 @@ export const AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM = {
 export type SimpleDateString =
   `${number}${number}${number}${number}-${number}${number}-${number}${number}`;
 
+export type FUND_PAYMENT_STATUS_TYPE = ValueOf<typeof FUND_PAYMENT_STATUS_ENUM>;
+
+export const FUND_PAYMENT_STATUS_ENUM = {
+  paid: 'PAID',
+  unpaid: 'UNPAID',
+  rejected: 'DECLINED',
+} as const;
+
 export type FUND_STATUS_TYPE = ValueOf<typeof FUND_STATUS_ENUM>;
 
 export const FUND_STATUS_ENUM = {
-  paid: 'Paid',
-  cancelled: 'Cancelled',
-  rejected: 'Rejected',
+  scheduled: 'SCHEDULED',
+  active: 'ACTIVE',
+  finished: 'FINISHED',
+  blocked: 'BLOCKED',
+  cancelled: 'CANCELLED',
 } as const;
 
 export type FundDocumentsType = ValueOf<typeof FUND_DOCUMENTS_TYPE_ENUM>;

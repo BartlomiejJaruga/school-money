@@ -38,8 +38,11 @@ export function ClassPage() {
             >{`${classData.school_class_name} ${classData.school_class_year}`}</div>
           </div>
           <div className={styles['grid-container__fund-list']}>
-            <FundTile showBudget={true} />
-            <FundTile showBudget={true} />
+            {classLoaderData.funds &&
+              classLoaderData.funds?.length > 0 &&
+              classLoaderData.funds.map((fund) => {
+                return <FundTile fundData={fund} showBudget={true} />;
+              })}
             <FundsPagination />
           </div>
           <div className={styles['grid-container__treasurer']}>
