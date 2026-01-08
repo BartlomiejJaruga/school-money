@@ -17,6 +17,7 @@ import clsx from 'clsx';
 import { getUserData } from '@lib/session';
 import type { AsideLayoutData } from '@routes/_authenticated.route';
 import type { WalletData } from '@lib/constants';
+import { useEffect, useState } from 'react';
 
 export function AppAside() {
   const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
@@ -30,7 +31,7 @@ export function AppAside() {
             alt="SchoolMoney logo"
             className={styles['top-side__logo']}
           />
-          <UserInfo />
+          <UserInfo userAvatar={asideLayoutData.userAvatar} />
           <Wallet walletData={asideLayoutData.walletData} />
           <hr className={styles['top-side__divider']} />
           <NavList />
@@ -50,13 +51,29 @@ export function AppAside() {
   );
 }
 
-function UserInfo() {
+type UserInfoProps = {
+  userAvatar: Blob | null;
+};
+
+function UserInfo({ userAvatar }: UserInfoProps) {
   const userData = getUserData();
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string>(defaultUser);
+
+  useEffect(() => {
+    if (!userAvatar) return;
+
+    const objectUrl = URL.createObjectURL(userAvatar);
+    setUserAvatarUrl(objectUrl);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [userAvatar]);
 
   return (
     <div className={styles['user-info']}>
       <img
-        src={defaultUser}
+        src={userAvatarUrl}
         alt="avatar"
         className={styles['user-info__avatar']}
       />

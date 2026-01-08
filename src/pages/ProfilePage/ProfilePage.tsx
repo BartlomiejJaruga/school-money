@@ -3,7 +3,7 @@ import styles from './ProfilePage.module.scss';
 import defaultUserPhoto from '@assets/default-user.png';
 import { FormProvider, useForm } from 'react-hook-form';
 import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
-import { useFetcher } from 'react-router-dom';
+import { useFetcher, useRouteLoaderData } from 'react-router-dom';
 import { zodResolver } from '@hookform/resolvers/zod';
 import {
   BasicInfoFormSchema,
@@ -14,6 +14,8 @@ import {
   ResetPasswordFormSchema,
   type ResetPasswordFormValues,
 } from '@schemas/profile/resetPasswordForm.schema';
+import type { AsideLayoutData } from '@routes/_authenticated.route';
+import { useEffect, useRef, useState } from 'react';
 
 export function ProfilePage() {
   return (
@@ -36,14 +38,66 @@ export function ProfilePage() {
 }
 
 function Avatar() {
+  const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
+  const fetcher = useFetcher();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [userAvatarUrl, setUserAvatarUrl] = useState<string>(defaultUserPhoto);
+
+  useEffect(() => {
+    if (!asideLayoutData.userAvatar) return;
+
+    const objectUrl = URL.createObjectURL(asideLayoutData.userAvatar);
+    setUserAvatarUrl(objectUrl);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, [asideLayoutData.userAvatar]);
+
+  const handleOverlayClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!['image/png', 'image/jpeg'].includes(file.type)) {
+      alert('Accepted formats: .png, .jpg');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('avatarFile', file);
+    formData.append('formType', PROFILE_FORM_TYPE_ENUM.updateAvatar);
+
+    fetcher.submit(formData, {
+      method: 'post',
+      action: '/profile',
+      encType: 'multipart/form-data',
+    });
+  };
+
   return (
     <div className={styles['avatar-wrapper']}>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept=".png, .jpg, .jpeg"
+        style={{ display: 'none' }}
+      />
       <img
-        src={defaultUserPhoto}
+        src={userAvatarUrl}
         alt="avatar photo"
         className={styles['avatar__photo']}
       />
-      <div className={styles['avatar__overlay']}>
+      <div
+        className={styles['avatar__overlay']}
+        onClick={handleOverlayClick}
+        role="button"
+        tabIndex={0}
+      >
         <ImagePlus />
       </div>
     </div>

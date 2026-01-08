@@ -90,6 +90,7 @@ export const PAYMENT_HISTORY_OPERATION_STATUS_ENUM = {
 export const PROFILE_FORM_TYPE_ENUM = {
   basicInfoForm: 'BASIC_INFO_FORM',
   changePasswordForm: 'CHANGE_PASSWORD_FORM',
+  updateAvatar: 'UPDATE_AVATAR',
 } as const;
 
 export type UserRoleType = ValueOf<typeof USER_ROLE_ENUM>;
