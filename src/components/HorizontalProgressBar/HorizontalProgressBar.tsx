@@ -1,5 +1,6 @@
 import clsx from 'clsx';
 import styles from './HorizontalProgressBar.module.scss';
+import { formatISOToDate } from '@lib/utils';
 
 interface DateProps {
   type: 'date';
@@ -21,14 +22,9 @@ type HorizontalProgressBarProps = (DateProps | NumericProps) & {
   className?: string;
 };
 
-const parseStringToDate = (dateString: string): Date => {
-  const [day, month, year] = dateString.split('.').map(Number);
-  return new Date(year, month - 1, day);
-};
-
 const calculateDateProgress = (start: string, end: string): number => {
-  const startTimestamp = parseStringToDate(start).getTime();
-  const endTimestamp = parseStringToDate(end).getTime();
+  const startTimestamp = new Date(start).getTime();
+  const endTimestamp = new Date(end).getTime();
   const nowTimestamp = new Date().getTime();
 
   const totalDuration = endTimestamp - startTimestamp;
@@ -86,10 +82,12 @@ export function HorizontalProgressBar(props: HorizontalProgressBarProps) {
       </div>
       <div className={styles['wrapper__labels']}>
         <span className={styles['labels__start']}>
-          {props.textStart} {props.type == 'date' ? props.start : props.current}
+          {props.textStart}{' '}
+          {props.type == 'date' ? formatISOToDate(props.start) : props.current}
         </span>
         <span className={styles['labels__end']}>
-          {props.textEnd} {props.end}
+          {props.textEnd}{' '}
+          {props.type == 'date' ? formatISOToDate(props.end) : props.end}
         </span>
       </div>
     </div>

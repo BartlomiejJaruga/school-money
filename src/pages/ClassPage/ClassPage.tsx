@@ -41,7 +41,13 @@ export function ClassPage() {
             {classLoaderData.funds &&
               classLoaderData.funds?.length > 0 &&
               classLoaderData.funds.map((fund) => {
-                return <FundTile fundData={fund} showBudget={true} />;
+                return (
+                  <FundTile
+                    fundData={fund}
+                    showBudget={true}
+                    key={fund.fund_id}
+                  />
+                );
               })}
             <FundsPagination />
           </div>

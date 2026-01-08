@@ -9,13 +9,8 @@ import {
   type FundInfoModalValues,
 } from '@schemas/components/fundInfoModal.schema';
 import type { SimpleDateString } from '@lib/constants';
-
-type ClassData = {
-  // delete and change all placed used when DTO of class is established
-  classId: string;
-  name: string;
-  children: number;
-};
+import { CustomSelect } from '@components/CustomSelect';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 
 type FundInfoModalData = Omit<FundInfoModalValues, 'startDate' | 'endDate'> & {
   startDate: SimpleDateString;
@@ -26,7 +21,7 @@ type FundInfoModalProps = {
   type: 'create' | 'edit';
   onClose: () => void;
   onConfirm: () => void;
-  classData: ClassData;
+  classesData: SchoolClassResponseDto[] | null;
   defaultData?: FundInfoModalData;
 };
 
@@ -40,7 +35,7 @@ export function FundInfoModal({
   type,
   onClose,
   onConfirm,
-  classData,
+  classesData,
   defaultData,
 }: FundInfoModalProps) {
   const fetcher = useFetcher();
@@ -50,6 +45,7 @@ export function FundInfoModal({
     defaultValues: {
       title: defaultData?.title ?? '',
       description: defaultData?.description ?? '',
+      schoolClassId: defaultData?.schoolClassId ?? '',
       startDate: defaultData?.startDate ?? today,
       endDate: defaultData?.endDate ?? '',
       costPerChild: defaultData?.costPerChild ?? undefined,
@@ -68,9 +64,19 @@ export function FundInfoModal({
   };
 
   const costPerChildValue = watch('costPerChild');
+  const currentlySelectedClassId = watch('schoolClassId');
+  const numberOfChildrenInClass =
+    currentlySelectedClassId && classesData
+      ? classesData.filter(
+          (schoolClass) =>
+            schoolClass.school_class_id == currentlySelectedClassId
+        )[0].number_of_children
+      : null;
   const trueCostPerChild =
     costPerChildValue && !isNaN(costPerChildValue) ? costPerChildValue : 0;
-  const totalCost = trueCostPerChild * classData.children;
+  const totalCost = numberOfChildrenInClass
+    ? (trueCostPerChild * numberOfChildrenInClass).toFixed(2)
+    : '?';
   const busy = isSubmitting || fetcher.state != 'idle';
 
   return (
@@ -102,6 +108,18 @@ export function FundInfoModal({
           />
           {type == 'create' && (
             <>
+              <CustomSelect name="schoolClassId">
+                <option value="">Select a class</option>
+                {classesData &&
+                  classesData.map((schoolClass) => {
+                    return (
+                      <option
+                        value={schoolClass.school_class_id}
+                        key={schoolClass.school_class_id}
+                      >{`${schoolClass.school_class_name} (${schoolClass.school_class_year})`}</option>
+                    );
+                  })}
+              </CustomSelect>
               <div className={styles['form__dates']}>
                 <CustomInputWithLabel
                   type="date"
@@ -125,8 +143,8 @@ export function FundInfoModal({
               <div className={styles['form__payment-info']}>
                 <h5 className={styles['payment-info__label']}>Payment info</h5>
                 <span>{`Cost per child: ${trueCostPerChild.toFixed(2)} PLN`}</span>
-                <span>{`Participants: ${classData.children}`}</span>
-                <span>{`Total cost: ${totalCost.toFixed(2)} PLN`}</span>
+                <span>{`Participants: ${numberOfChildrenInClass ?? '?'}`}</span>
+                <span>{`Total cost: ${totalCost} PLN`}</span>
               </div>
             </>
           )}

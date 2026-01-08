@@ -12,6 +12,9 @@ type FundTileProps = {
 
 export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   const navigate = useNavigate();
+  const amountPerChild = Number(
+    (fundData.amount_per_child_in_cents / 100).toFixed(0)
+  );
 
   return (
     <div className={styles['fund-tile']}>
@@ -30,18 +33,15 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
             </div>
           </div>
           <div>
-            <h2>24 PLN</h2>
+            <h2>{`${amountPerChild} PLN`}</h2>
           </div>
         </div>
-        <p className={styles['details__description']}>
-          After the play ends, the theater will self-ignite in an act of despair
-          and dramatic events.
-        </p>
+        <p className={styles['details__description']}>{fundData.description}</p>
         <HorizontalProgressBar
           type="date"
           title="Time"
-          start="23.11.2025"
-          end="30.11.2025"
+          start={fundData.starts_at}
+          end={fundData.ends_at}
           textStart="Created:"
           textEnd="Due to:"
           className={styles['details__time']}
@@ -51,8 +51,8 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
             type="numeric"
             title="Bugdet"
             start={0}
-            current={48}
-            end={240}
+            current={fundData.fund_progress}
+            end={amountPerChild * 6}
             textStart="Raised:"
             textEnd="Goal:"
             className={styles['details__bugdet']}

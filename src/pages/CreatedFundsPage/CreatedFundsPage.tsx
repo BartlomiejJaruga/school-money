@@ -13,12 +13,14 @@ import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
-import { useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import { FUND_OPERATION_TYPE_ENUM } from '@lib/constants';
 import { ModalTemplate } from '@components/ModalTemplate';
 import { FundInfoModal } from '@components/FundInfoModal';
+import type { CreatedFundsLoaderData } from '@routes/createdFunds.route';
 
 export function CreatedFundsPage() {
+  const createdFundsLoaderData = useLoaderData() as CreatedFundsLoaderData;
   const [isCreateFundModalOpen, setIsCreateFundModalOpen] = useState(false);
 
   const handleCancelCreateFundModal = () => {
@@ -70,11 +72,7 @@ export function CreatedFundsPage() {
           type="create"
           onClose={handleCancelCreateFundModal}
           onConfirm={handleConfirmCreateFundModal}
-          classData={{
-            classId: '1',
-            name: 'Class Name 1',
-            children: 20,
-          }}
+          classesData={createdFundsLoaderData.classes}
         />
       </ModalTemplate>
     </>

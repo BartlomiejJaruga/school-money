@@ -4,11 +4,13 @@ import {
   FundDescription,
   DateInput,
   PositiveNumber,
+  SchoolClassId,
 } from '@schemas/common.schema';
 
 export const FundInfoModalSchema = z.object({
   title: FundTitle,
   description: FundDescription,
+  schoolClassId: SchoolClassId,
   startDate: DateInput,
   endDate: DateInput,
   costPerChild: PositiveNumber.min(1, "The cost can't be lower than 1 PLN").max(

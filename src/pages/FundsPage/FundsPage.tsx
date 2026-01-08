@@ -22,7 +22,7 @@ export function FundsPage() {
             {fundsLoaderData?.funds &&
               fundsLoaderData.funds.length > 0 &&
               fundsLoaderData.funds.map((fund) => {
-                return <FundTile fundData={fund} />;
+                return <FundTile fundData={fund} key={fund.fund_id} />;
               })}
             <FundsPagination />
           </div>

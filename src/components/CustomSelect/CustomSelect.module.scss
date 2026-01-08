@@ -1,0 +1,63 @@
+$input-padding: 1rem;
+$field-border-radius: 0.5rem;
+$field-height: 3rem;
+$select-icon-size: 1.25rem;
+
+.wrapper {
+  width: 100%;
+}
+
+.field {
+  display: flex;
+  position: relative;
+  align-items: center;
+  border-radius: $field-border-radius;
+  background-color: $color-inputs;
+  width: inherit;
+  height: $field-height;
+
+  &--error {
+    box-shadow: inset 0 0 0 1px $color-error;
+  }
+
+  &__select {
+    appearance: none;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 0;
+    border-radius: $field-border-radius;
+    background-color: transparent;
+    padding: 0 ($input-padding + $select-icon-size) 0 $input-padding;
+    width: inherit;
+    height: $field-height;
+    color: inherit;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+    }
+
+    &::placeholder {
+      color: $color-subtext-gray;
+    }
+  }
+
+  &__icon {
+    position: absolute;
+    right: $input-padding;
+    width: $select-icon-size;
+    height: $select-icon-size;
+    pointer-events: none;
+    color: $color-subtext-gray;
+  }
+}
+
+.error {
+  display: flex;
+  margin-top: 0.5rem;
+  min-height: 1rem;
+  color: $color-error;
+  font-weight: 400;
+  font-size: 0.85rem;
+  user-select: none;
+}
