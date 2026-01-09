@@ -18,6 +18,7 @@ import { getUserData } from '@lib/session';
 import type { AsideLayoutData } from '@routes/_authenticated.route';
 import type { WalletData } from '@lib/constants';
 import { useEffect, useState } from 'react';
+import type { ParentResponseDto } from '@dtos/ParentResponseDto';
 
 export function AppAside() {
   const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
@@ -31,7 +32,10 @@ export function AppAside() {
             alt="SchoolMoney logo"
             className={styles['top-side__logo']}
           />
-          <UserInfo userAvatar={asideLayoutData.userAvatar} />
+          <UserInfo
+            userAvatar={asideLayoutData.userAvatar}
+            userData={asideLayoutData.userData}
+          />
           <Wallet walletData={asideLayoutData.walletData} />
           <hr className={styles['top-side__divider']} />
           <NavList />
@@ -53,10 +57,11 @@ export function AppAside() {
 
 type UserInfoProps = {
   userAvatar: Blob | null;
+  userData: ParentResponseDto | null;
 };
 
-function UserInfo({ userAvatar }: UserInfoProps) {
-  const userData = getUserData();
+function UserInfo({ userAvatar, userData }: UserInfoProps) {
+  const storedUserData = getUserData();
   const [userAvatarUrl, setUserAvatarUrl] = useState<string>(defaultUser);
 
   useEffect(() => {
@@ -79,9 +84,12 @@ function UserInfo({ userAvatar }: UserInfoProps) {
       />
       <div className={styles['user-info__info']}>
         <span className={styles['info__names']}>
-          {userData?.firstName} {userData?.lastName}
+          {userData?.first_name || storedUserData?.firstName || 'No info'}{' '}
+          {userData?.last_name || storedUserData?.lastName || 'No info'}
         </span>
-        <span className={styles['info__email']}>{userData?.email}</span>
+        <span className={styles['info__email']}>
+          {userData?.email || storedUserData?.email || 'No info'}
+        </span>
       </div>
     </div>
   );

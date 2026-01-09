@@ -16,17 +16,21 @@ import {
 } from '@schemas/profile/resetPasswordForm.schema';
 import type { AsideLayoutData } from '@routes/_authenticated.route';
 import { useEffect, useRef, useState } from 'react';
+import type { ParentResponseDto } from '@dtos/ParentResponseDto';
+import { getUserData } from '@lib/session';
 
 export function ProfilePage() {
+  const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
+
   return (
     <>
       <div className={styles['page']}>
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__avatar']}>
-            <Avatar />
+            <Avatar userAvatar={asideLayoutData.userAvatar} />
           </div>
           <div className={styles['grid-container__basic-info-form']}>
-            <BasicInfoForm />
+            <BasicInfoForm userData={asideLayoutData.userData} />
           </div>
           <div className={styles['grid-container__password-form']}>
             <PasswordResetForm />
@@ -37,22 +41,25 @@ export function ProfilePage() {
   );
 }
 
-function Avatar() {
-  const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
+type AvatarProps = {
+  userAvatar: Blob | null;
+};
+
+function Avatar({ userAvatar }: AvatarProps) {
   const fetcher = useFetcher();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [userAvatarUrl, setUserAvatarUrl] = useState<string>(defaultUserPhoto);
 
   useEffect(() => {
-    if (!asideLayoutData.userAvatar) return;
+    if (!userAvatar) return;
 
-    const objectUrl = URL.createObjectURL(asideLayoutData.userAvatar);
+    const objectUrl = URL.createObjectURL(userAvatar);
     setUserAvatarUrl(objectUrl);
 
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, [asideLayoutData.userAvatar]);
+  }, [userAvatar]);
 
   const handleOverlayClick = () => {
     fileInputRef.current?.click();
@@ -104,20 +111,26 @@ function Avatar() {
   );
 }
 
-function BasicInfoForm() {
-  const userData = {
-    firstName: 'Andrew',
-    lastName: 'Smith',
-    emailAddress: 'andrew.smith@gmail.com',
+type BasicInfoFormProps = {
+  userData: ParentResponseDto | null;
+};
+
+function BasicInfoForm({ userData }: BasicInfoFormProps) {
+  const storedUserData = getUserData();
+  const currentUserData = userData ?? {
+    user_id: storedUserData?.userId ?? 'Error',
+    first_name: storedUserData?.firstName ?? 'Error',
+    last_name: storedUserData?.lastName ?? 'Error',
+    email: storedUserData?.email ?? 'Error',
   };
   const fetcher = useFetcher();
   const formMethods = useForm<BasicInfoFormValues>({
     resolver: zodResolver(BasicInfoFormSchema),
     mode: 'onChange',
     defaultValues: {
-      firstName: userData?.firstName ?? '',
-      lastName: userData?.lastName ?? '',
-      emailAddress: userData?.emailAddress ?? '',
+      firstName: currentUserData.first_name ?? '',
+      lastName: currentUserData.last_name ?? '',
+      emailAddress: currentUserData.email ?? '',
     },
   });
 
@@ -129,7 +142,11 @@ function BasicInfoForm() {
 
   const onSubmit = (values: BasicInfoFormValues) => {
     fetcher.submit(
-      { ...values, formType: PROFILE_FORM_TYPE_ENUM.basicInfoForm },
+      {
+        ...values,
+        formType: PROFILE_FORM_TYPE_ENUM.basicInfoForm,
+        changeEmail: values.emailAddress !== currentUserData.email,
+      },
       { method: 'post', action: '/profile' }
     );
   };
