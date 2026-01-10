@@ -9,7 +9,7 @@ $bento-gap: 1rem;
 
 .grid-container {
   display: grid;
-  grid-template-rows: 50px 50px repeat(4, 1fr);
+  grid-template-rows: 50px 50px 225px repeat(3, 1fr);
   grid-template-columns: repeat(2, 1fr);
   grid-template-areas:
     'top-bar treasurer'
@@ -175,6 +175,12 @@ $bento-gap: 1rem;
   }
 }
 
+.fund-list {
+  &__no-funds-info {
+    margin-top: 2rem;
+  }
+}
+
 .class-info__top-row {
   display: flex;
   gap: 1rem;
@@ -213,6 +219,10 @@ $bento-gap: 1rem;
     font-weight: 500;
     font-size: 0.9rem;
     text-align: center;
+  }
+
+  &__no-children-info {
+    margin-top: 1rem;
   }
 }
 

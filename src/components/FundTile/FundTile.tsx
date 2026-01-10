@@ -1,20 +1,22 @@
 import styles from './FundTile.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
-import type { FundResponseDTO } from '@dtos/FundResponseDto';
-import { Baby, BanknoteX } from 'lucide-react';
+import type { PagedModelParentChildUnpaidFundResponseDto } from '@dtos/PagedModelParentChildUnpaidFundResponseDto';
+import { Baby, BanknoteX, School } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 type FundTileProps = {
-  fundData: FundResponseDTO;
+  fundData: PagedModelParentChildUnpaidFundResponseDto;
   showBudget?: boolean;
 };
 
 export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   const navigate = useNavigate();
   const amountPerChild = Number(
-    (fundData.amount_per_child_in_cents / 100).toFixed(0)
+    (fundData.fund.amount_per_child_in_cents / 100).toFixed(0)
   );
+  const childNames = `${fundData.child.first_name} ${fundData.child.last_name}`;
+  const childSchoolClass = `${fundData.fund.school_class.school_class_name} (${fundData.fund.school_class.school_class_year})`;
 
   return (
     <div className={styles['fund-tile']}>
@@ -26,22 +28,28 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
       <div className={styles['fund-tile__details']}>
         <div className={styles['details__top']}>
           <div>
-            <h2 className={styles['fund-title']}>{fundData.title}</h2>
+            <h2 className={styles['fund-title']}>{fundData.fund.title}</h2>
             <div className={styles['fund-child']}>
               <Baby />
-              <span>John Millers 3C 18/19</span>
+              <span>{childNames}</span>
+            </div>
+            <div className={styles['fund-child-class']}>
+              <School />
+              <span>{childSchoolClass}</span>
             </div>
           </div>
           <div>
             <h2>{`${amountPerChild} PLN`}</h2>
           </div>
         </div>
-        <p className={styles['details__description']}>{fundData.description}</p>
+        <p className={styles['details__description']}>
+          {fundData.fund.description}
+        </p>
         <HorizontalProgressBar
           type="date"
           title="Time"
-          start={fundData.starts_at}
-          end={fundData.ends_at}
+          start={fundData.fund.starts_at}
+          end={fundData.fund.ends_at}
           textStart="Created:"
           textEnd="Due to:"
           className={styles['details__time']}
@@ -51,7 +59,12 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
             type="numeric"
             title="Bugdet"
             start={0}
-            current={fundData.fund_progress}
+            current={parseInt(
+              (
+                fundData.fund.fund_progress.current_amount_in_cents / 100
+              ).toFixed(2),
+              10
+            )}
             end={amountPerChild * 6}
             textStart="Raised:"
             textEnd="Goal:"

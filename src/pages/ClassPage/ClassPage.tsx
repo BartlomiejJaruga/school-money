@@ -5,16 +5,21 @@ import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
-import { useLoaderData, useLocation, useNavigate } from 'react-router-dom';
-import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import { useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
 import type { ClassLoaderData } from '@routes/class.route';
 import type { ChildWithParentInfoResponseDto } from '@dtos/ChildWithParentInfoResponseDto';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
+import { NothingToShowInformation } from '@components/NothingToShowInformation';
 
 export function ClassPage() {
   const classLoaderData = useLoaderData() as ClassLoaderData;
+  const classData = classLoaderData.classData;
   const navigate = useNavigate();
-  const location = useLocation();
-  const classData = location.state.classData as SchoolClassResponseDto;
+  const navigation = useNavigation();
+  const isFetchingFunds =
+    navigation.state == 'loading' &&
+    navigation.location.search.includes('fundsPage');
 
   return (
     <>
@@ -24,7 +29,7 @@ export function ClassPage() {
             <button
               className={styles['top-bar__return-btn']}
               onClick={() => {
-                navigate(-1);
+                navigate('/classes');
               }}
             >
               <MoveLeft />
@@ -35,21 +40,42 @@ export function ClassPage() {
             </button>
             <div
               className={styles['top-bar__class-name']}
-            >{`${classData.school_class_name} ${classData.school_class_year}`}</div>
+            >{`${classData?.school_class_name} ${classData?.school_class_year}`}</div>
           </div>
           <div className={styles['grid-container__fund-list']}>
-            {classLoaderData.funds &&
-              classLoaderData.funds?.length > 0 &&
-              classLoaderData.funds.map((fund) => {
-                return (
-                  <FundTile
-                    fundData={fund}
-                    showBudget={true}
-                    key={fund.fund_id}
+            {isFetchingFunds && <FundTileSkeletonLoader skeletonsNumber={3} />}
+
+            {!isFetchingFunds &&
+              classLoaderData.funds &&
+              classLoaderData.funds.content.length > 0 && (
+                <>
+                  {classLoaderData.funds.content.map((fundTileInfo) => {
+                    return (
+                      <FundTile
+                        fundData={fundTileInfo}
+                        showBudget={true}
+                        key={
+                          fundTileInfo.fund.fund_id +
+                          fundTileInfo.child.child_id
+                        }
+                      />
+                    );
+                  })}
+                  <FundsPagination
+                    totalPages={classLoaderData.funds.page.totalPages}
+                    currentPage={classLoaderData.funds.page.number}
                   />
-                );
-              })}
-            <FundsPagination />
+                </>
+              )}
+
+            {!isFetchingFunds &&
+              classLoaderData.funds &&
+              classLoaderData.funds.content.length < 1 && (
+                <NothingToShowInformation
+                  message="Class has no active funds or you have already paid all of them."
+                  className={styles['fund-list__no-funds-info']}
+                />
+              )}
           </div>
           <div className={styles['grid-container__treasurer']}>
             <h5 className={styles['treasurer__label']}>Treasurer</h5>
@@ -61,15 +87,20 @@ export function ClassPage() {
                   alt="treasurer photo"
                 />
                 <div className={styles['treasurer__info']}>
-                  <h4>{`${classData.treasurer.first_name} ${classData.treasurer.last_name}`}</h4>
-                  <span>{classData.treasurer.email}</span>
+                  <h4>{`${classData?.treasurer.first_name} ${classData?.treasurer.last_name}`}</h4>
+                  <span>{classData?.treasurer.email}</span>
                 </div>
               </div>
-              <ClassCode code={classData.invitation_code} />
+              <ClassCode
+                code={classData?.invitation_code ?? 'Failed to load'}
+              />
             </div>
           </div>
           <div className={styles['grid-container__class-info']}>
-            <ClassInfo />
+            <ClassInfo
+              classData={classData}
+              children={classLoaderData.children}
+            />
           </div>
           <div className={styles['grid-container__children']}>
             <div className={styles['children__label']}>
@@ -90,7 +121,10 @@ export function ClassPage() {
 
             {classLoaderData?.children &&
               classLoaderData?.children?.length < 1 && (
-                <div>No children yet</div>
+                <NothingToShowInformation
+                  message="No children yet."
+                  className={styles['children__no-children-info']}
+                />
               )}
           </div>
         </div>
@@ -127,31 +161,56 @@ function ClassCode({ code }: ClassCodeProps) {
   );
 }
 
-function ClassInfo() {
+type ClassInfoProps = {
+  classData: SchoolClassResponseDto | null;
+  children: ChildWithParentInfoResponseDto[] | null;
+};
+
+function ClassInfo({ classData, children }: ClassInfoProps) {
+  const classFundsInCents = classData?.active_funds_current_balance_in_cents;
+  const classFunds =
+    typeof classFundsInCents == 'number'
+      ? (classFundsInCents / 100).toFixed(2)
+      : 'Unknown';
+
+  const activeFundsCounter =
+    typeof classData?.number_of_active_funds == 'number'
+      ? classData?.number_of_active_funds
+      : 'Unknown';
+
+  const parentsCounter = children
+    ? new Set(children.map((child) => child.parent.user_id)).size
+    : 0;
+
+  const childrenCounter =
+    typeof classData?.number_of_children == 'number'
+      ? classData?.number_of_children
+      : 'Unknown';
+
   return (
     <>
       <div className={styles['class-info__top-row']}>
         <div>
-          <span>Historical funds</span>
-          <h2>21090 PLN</h2>
+          <span>Class balance</span>
+          <h2>{`${classFunds} PLN`}</h2>
         </div>
         <div>
-          <span>Funds</span>
-          <h2>32</h2>
+          <span>Active Funds</span>
+          <h2>{activeFundsCounter}</h2>
         </div>
       </div>
       <div className={styles['class-info__bottom-row']}>
         <div>
           <span>Kids</span>
           <div>
-            <h2>21</h2>
+            <h2>{childrenCounter}</h2>
             <Baby />
           </div>
         </div>
         <div>
           <span>Parents</span>
           <div>
-            <h2>19</h2>
+            <h2>{parentsCounter > 0 ? parentsCounter : 1}</h2>
             <User />
           </div>
         </div>

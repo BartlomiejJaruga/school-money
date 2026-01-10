@@ -1,7 +1,6 @@
 import styles from './CreatedFundsPage.module.scss';
 import clsx from 'clsx';
 import {
-  PackageOpen,
   Ticket,
   TicketCheck,
   TicketX,
@@ -34,7 +33,7 @@ export function CreatedFundsPage() {
   return (
     <>
       <div className={styles['page']}>
-        {/* <NothingToShowInformation /> */}
+        {/* <NothingToShowInformation message="You are not a treasurer in any of your classes"/> */}
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__classes']}>
             <ClassButton name="1A 22/23" active={true} />
@@ -75,19 +74,6 @@ export function CreatedFundsPage() {
           classesData={createdFundsLoaderData.classes}
         />
       </ModalTemplate>
-    </>
-  );
-}
-
-function NothingToShowInformation() {
-  return (
-    <>
-      <div className={styles['nothing-to-show-info-wrapper']}>
-        <PackageOpen className={styles['nothing-to-show-info-wrapper__icon']} />
-        <p className={styles['nothing-to-show-info-wrapper__text']}>
-          You are not a treasurer in any of your classes
-        </p>
-      </div>
     </>
   );
 }

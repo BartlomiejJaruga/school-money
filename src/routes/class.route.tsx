@@ -1,5 +1,7 @@
+import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
 import type { ChildWithParentInfoResponseDto } from '@dtos/ChildWithParentInfoResponseDto';
-import type { FundResponseDTO } from '@dtos/FundResponseDto';
+import type { PagedModelParentChildUnpaidFundResponseDto } from '@dtos/PagedModelParentChildUnpaidFundResponseDto';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import { ClassPage } from '@pages/ClassPage';
 import axiosInstance from '@services/axiosInstance';
 import type {
@@ -9,24 +11,45 @@ import type {
 } from 'react-router-dom';
 
 export type ClassLoaderData = {
+  classData: SchoolClassResponseDto | null;
   children: ChildWithParentInfoResponseDto[] | null;
-  funds: FundResponseDTO[] | null;
+  funds: PageableResponseDTO<PagedModelParentChildUnpaidFundResponseDto> | null;
 };
 
 export const loader: LoaderFunction = async ({
   params,
+  request,
 }: LoaderFunctionArgs) => {
   const classId = params.classId ?? null;
 
-  const children = await fetchClassChildren(classId);
-  const funds = await fetchClassFunds(classId);
+  const [classData, children, funds] = await Promise.all([
+    fetchClassData(classId),
+    fetchClassChildren(classId),
+    fetchUnpaidClassFunds(classId, request),
+  ]);
 
   const classLoaderData: ClassLoaderData = {
+    classData: classData,
     children: children,
     funds: funds,
   };
 
   return classLoaderData;
+};
+
+const fetchClassData = async (
+  classId: string | null
+): Promise<SchoolClassResponseDto | null> => {
+  if (!classId) return null;
+
+  try {
+    const response = await axiosInstance.get(`/v1/school-classes/${classId}`);
+
+    return response.data ?? null;
+  } catch (error) {
+    console.error('Error', error);
+    return null;
+  }
 };
 
 const fetchClassChildren = async (
@@ -53,24 +76,27 @@ const fetchClassChildren = async (
   }
 };
 
-const fetchClassFunds = async (
-  classId: string | null
-): Promise<FundResponseDTO[] | null> => {
+const fetchUnpaidClassFunds = async (
+  classId: string | null,
+  request: Request
+): Promise<PageableResponseDTO<PagedModelParentChildUnpaidFundResponseDto> | null> => {
   if (!classId) return null;
+
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get('fundsPage') || '0', 10);
 
   try {
     const response = await axiosInstance.get(
-      `/v1/school-classes/${classId}/funds`,
+      `/v1/school-classes/${classId}/funds/unpaid`,
       {
         params: {
-          page: 0,
-          size: 50,
-          sort: 'endsAt,ASC',
+          page: page,
+          size: 3,
         },
       }
     );
 
-    return response.data?.content ?? null;
+    return response.data ?? null;
   } catch (error) {
     console.error('Error', error);
     return null;
