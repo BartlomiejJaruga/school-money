@@ -44,6 +44,12 @@ $bento-gap: 1rem;
   }
 }
 
+.fund-list {
+  &__no-funds-info {
+    margin-top: 2rem;
+  }
+}
+
 .children-report {
   display: flex;
   gap: $bento-gap;

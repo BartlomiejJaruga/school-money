@@ -8,23 +8,55 @@ import { CircularProgressBar } from '@components/CircularProgressBar';
 import { useState } from 'react';
 import { FundTile } from '@components/FundTile';
 import { FundsPagination } from '@components/FundsPagination';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
 import type { FundsLoaderData } from '@routes/funds.route';
+import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
+import { NothingToShowInformation } from '@components/NothingToShowInformation';
 
 export function FundsPage() {
   const fundsLoaderData = useLoaderData() as FundsLoaderData;
+  const navigation = useNavigation();
+  const isFetchingFunds =
+    navigation.state == 'loading' &&
+    navigation.location.search.includes('fundsPage');
 
   return (
     <>
       <div className={styles['page']}>
         <div className={styles['grid-container']}>
           <div className={styles['grid-container__fund-list']}>
-            {fundsLoaderData?.funds &&
-              fundsLoaderData.funds.length > 0 &&
-              fundsLoaderData.funds.map((fund) => {
-                return <FundTile fundData={fund} key={fund.fund_id} />;
-              })}
-            <FundsPagination />
+            {isFetchingFunds && <FundTileSkeletonLoader skeletonsNumber={3} />}
+
+            {!isFetchingFunds &&
+              fundsLoaderData.funds &&
+              fundsLoaderData.funds.content.length > 0 && (
+                <>
+                  {fundsLoaderData.funds.content.map((fundTileInfo) => {
+                    return (
+                      <FundTile
+                        fundData={fundTileInfo}
+                        key={
+                          fundTileInfo.fund.fund_id +
+                          fundTileInfo.child.child_id
+                        }
+                      />
+                    );
+                  })}
+                  <FundsPagination
+                    totalPages={fundsLoaderData.funds.page.totalPages}
+                    currentPage={fundsLoaderData.funds.page.number}
+                  />
+                </>
+              )}
+
+            {!isFetchingFunds &&
+              fundsLoaderData.funds &&
+              fundsLoaderData.funds.content.length < 1 && (
+                <NothingToShowInformation
+                  message="No active funds or you have already paid all of them."
+                  className={styles['fund-list__no-funds-info']}
+                />
+              )}
           </div>
           <div className={styles['grid-container__children']}>
             <ChildrenReportSection />
