@@ -71,7 +71,7 @@ export function CreatedFundsPage() {
           type="create"
           onClose={handleCancelCreateFundModal}
           onConfirm={handleConfirmCreateFundModal}
-          classesData={createdFundsLoaderData.classes}
+          classesData={createdFundsLoaderData.treasurerClasses}
         />
       </ModalTemplate>
     </>

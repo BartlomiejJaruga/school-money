@@ -12,7 +12,7 @@ import {
 } from 'react-router-dom';
 
 export type CreatedFundsLoaderData = {
-  classes: SchoolClassResponseDto[] | null;
+  treasurerClasses: SchoolClassResponseDto[] | null;
 };
 
 export const loader: LoaderFunction = async () => {
@@ -26,11 +26,11 @@ export const loader: LoaderFunction = async () => {
       )
     : null;
 
-  const classesLoaderData: CreatedFundsLoaderData = {
-    classes: treasurerClasses,
+  const createdFundsLoaderData: CreatedFundsLoaderData = {
+    treasurerClasses: treasurerClasses,
   };
 
-  return classesLoaderData;
+  return createdFundsLoaderData;
 };
 
 const fetchChildrenClasses = async (): Promise<

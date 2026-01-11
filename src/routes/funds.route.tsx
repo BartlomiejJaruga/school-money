@@ -9,6 +9,7 @@ import {
   type LoaderFunction,
   type LoaderFunctionArgs,
   type RouteObject,
+  type ShouldRevalidateFunction,
 } from 'react-router-dom';
 
 export type FundsLoaderData = {
@@ -83,10 +84,20 @@ const fetchHistoricalChildrenFunds = async (
   }
 };
 
+export const fundsShouldRevalidate: ShouldRevalidateFunction = ({
+  currentUrl,
+  nextUrl,
+  defaultShouldRevalidate,
+}) => {
+  if (currentUrl.pathname !== nextUrl.pathname) return false;
+  return defaultShouldRevalidate;
+};
+
 const FundsRoute: RouteObject = {
   path: '/funds',
   element: <FundsPage />,
   loader: loader,
+  shouldRevalidate: fundsShouldRevalidate,
 };
 
 export default FundsRoute;
