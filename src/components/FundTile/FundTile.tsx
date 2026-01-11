@@ -3,7 +3,7 @@ import defaultFundPhoto from '@assets/default-fund.jpg';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import type { PagedModelParentChildUnpaidFundResponseDto } from '@dtos/PagedModelParentChildUnpaidFundResponseDto';
 import { Baby, BanknoteX, School } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useFetcher, useNavigate } from 'react-router-dom';
 
 type FundTileProps = {
   fundData: PagedModelParentChildUnpaidFundResponseDto;
@@ -12,11 +12,19 @@ type FundTileProps = {
 
 export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   const navigate = useNavigate();
+  const fetcher = useFetcher();
   const amountPerChild = Number(
     (fundData.fund.amount_per_child_in_cents / 100).toFixed(0)
   );
   const childNames = `${fundData.child.first_name} ${fundData.child.last_name}`;
   const childSchoolClass = `${fundData.fund.school_class.school_class_name} (${fundData.fund.school_class.school_class_year})`;
+
+  const handlePayment = () => {
+    fetcher.submit(
+      { fundId: fundData.fund.fund_id, childId: fundData.child.child_id },
+      { method: 'post', action: '/fundPayment' }
+    );
+  };
 
   return (
     <div className={styles['fund-tile']}>
@@ -65,7 +73,13 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
               ).toFixed(2),
               10
             )}
-            end={amountPerChild * 6}
+            end={parseInt(
+              (
+                amountPerChild *
+                fundData.fund.fund_progress.participating_children_count
+              ).toFixed(2),
+              10
+            )}
             textStart="Raised:"
             textEnd="Goal:"
             className={styles['details__bugdet']}
@@ -80,7 +94,11 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
           >
             More info
           </button>
-          <button className={styles['actions-bar__make-payment']}>
+          <button
+            className={styles['actions-bar__make-payment']}
+            onClick={handlePayment}
+            disabled={fetcher.state !== 'idle'}
+          >
             Make payment
           </button>
           <button className={styles['actions-bar__reject']}>

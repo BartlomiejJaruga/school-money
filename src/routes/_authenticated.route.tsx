@@ -14,9 +14,11 @@ export const loader: LoaderFunction = async () => {
   const userData = getUserData();
   if (!userData) return redirect('/');
 
-  const walletData = await fetchWallet();
-  const userAvatar = await fetchUserAvatar(userData.userId);
-  const fetchedUserData = await fetchUserData();
+  const [walletData, userAvatar, fetchedUserData] = await Promise.all([
+    fetchWallet(),
+    fetchUserAvatar(userData.userId),
+    fetchUserData(),
+  ]);
 
   const asideLayoutData: AsideLayoutData = {
     walletData: walletData,

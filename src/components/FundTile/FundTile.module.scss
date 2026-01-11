@@ -113,7 +113,7 @@ $bento-border-radius: 0.75rem;
       }
 
       .actions-bar__make-payment {
-        @include default-button(
+        @include default-button-with-spinner(
           $color-accent-primary,
           $color-accent-primary-hover,
           $color-text-white

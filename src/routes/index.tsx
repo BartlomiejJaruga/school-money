@@ -13,6 +13,7 @@ import FundRoute from '@routes/fund.route';
 import PaymentHistoryRoute from '@routes/paymentHistory.route';
 import ProfileRoute from '@routes/profile.route';
 import { loader as authenticationLoader } from '@routes/_authenticated.route';
+import FundPaymentRoute from '@routes/_fundPayment.route';
 
 export const router = createBrowserRouter([
   {
@@ -35,6 +36,7 @@ export const router = createBrowserRouter([
       FundRoute,
       PaymentHistoryRoute,
       ProfileRoute,
+      FundPaymentRoute,
     ],
   },
 ]);
