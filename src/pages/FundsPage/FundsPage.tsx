@@ -46,6 +46,7 @@ export function FundsPage() {
                     return (
                       <FundTile
                         fundData={fundTileInfo}
+                        showBudget={true}
                         key={
                           fundTileInfo.fund.fund_id +
                           fundTileInfo.child.child_id

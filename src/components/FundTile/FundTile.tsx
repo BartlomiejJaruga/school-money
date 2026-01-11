@@ -19,10 +19,17 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   const childNames = `${fundData.child.first_name} ${fundData.child.last_name}`;
   const childSchoolClass = `${fundData.fund.school_class.school_class_name} (${fundData.fund.school_class.school_class_year})`;
 
-  const handlePayment = () => {
+  const handleFundPayment = () => {
     fetcher.submit(
       { fundId: fundData.fund.fund_id, childId: fundData.child.child_id },
       { method: 'post', action: '/fundPayment' }
+    );
+  };
+
+  const handleFundReject = () => {
+    fetcher.submit(
+      { fundId: fundData.fund.fund_id, childId: fundData.child.child_id },
+      { method: 'post', action: '/fundReject' }
     );
   };
 
@@ -96,12 +103,16 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
           </button>
           <button
             className={styles['actions-bar__make-payment']}
-            onClick={handlePayment}
+            onClick={handleFundPayment}
             disabled={fetcher.state !== 'idle'}
           >
             Make payment
           </button>
-          <button className={styles['actions-bar__reject']}>
+          <button
+            className={styles['actions-bar__reject']}
+            onClick={handleFundReject}
+            disabled={fetcher.state !== 'idle'}
+          >
             <BanknoteX />
           </button>
         </div>
