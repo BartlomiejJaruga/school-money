@@ -4,7 +4,7 @@ import { useState } from 'react';
 import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
-import { FundsPagination } from '@components/FundsPagination';
+import { Pagination } from '@components/Pagination';
 import { useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
 import type { ClassLoaderData } from '@routes/class.route';
 import type { ChildWithParentInfoResponseDto } from '@dtos/ChildWithParentInfoResponseDto';
@@ -60,7 +60,8 @@ export function ClassPage() {
                       />
                     );
                   })}
-                  <FundsPagination
+                  <Pagination
+                    urlPagesName="fundsPage"
                     totalPages={classLoaderData.funds.page.totalPages}
                     currentPage={classLoaderData.funds.page.number}
                   />

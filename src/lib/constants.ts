@@ -26,7 +26,8 @@ export type FUND_PAYMENT_STATUS_TYPE = ValueOf<typeof FUND_PAYMENT_STATUS_ENUM>;
 export const FUND_PAYMENT_STATUS_ENUM = {
   paid: 'PAID',
   unpaid: 'UNPAID',
-  rejected: 'DECLINED',
+  rejected: 'IGNORED',
+  unknown: 'UNKNOWN',
 } as const;
 
 export type FUND_STATUS_TYPE = ValueOf<typeof FUND_STATUS_ENUM>;

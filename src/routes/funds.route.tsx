@@ -1,4 +1,5 @@
 import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
+import type { PagedModelParentChildHistoryFundResponseDto } from '@dtos/PagedModelParentChildHistoryFundResponseDto';
 import type { PagedModelParentChildUnpaidFundResponseDto } from '@dtos/PagedModelParentChildUnpaidFundResponseDto';
 import { getUserData } from '@lib/session';
 import { FundsPage } from '@pages/FundsPage';
@@ -12,6 +13,7 @@ import {
 
 export type FundsLoaderData = {
   funds: PageableResponseDTO<PagedModelParentChildUnpaidFundResponseDto> | null;
+  historicalFunds: PageableResponseDTO<PagedModelParentChildHistoryFundResponseDto> | null;
 };
 
 export const loader: LoaderFunction = async ({
@@ -20,10 +22,14 @@ export const loader: LoaderFunction = async ({
   const userData = getUserData();
   if (!userData) return redirect('/');
 
-  const funds = await fetchUnpaidChildrenFunds(request);
+  const [funds, historicalFunds] = await Promise.all([
+    fetchUnpaidChildrenFunds(request),
+    fetchHistoricalChildrenFunds(request),
+  ]);
 
   const fundsLoaderData: FundsLoaderData = {
     funds: funds,
+    historicalFunds: historicalFunds,
   };
 
   return fundsLoaderData;
@@ -42,6 +48,30 @@ const fetchUnpaidChildrenFunds = async (
         params: {
           page: page,
           size: 3,
+        },
+      }
+    );
+
+    return response.data ?? null;
+  } catch (error) {
+    console.error('Error', error);
+    return null;
+  }
+};
+
+const fetchHistoricalChildrenFunds = async (
+  request: Request
+): Promise<PageableResponseDTO<PagedModelParentChildHistoryFundResponseDto> | null> => {
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get('historicalFundsPage') || '0', 10);
+
+  try {
+    const response = await axiosInstance.get(
+      `/v1/school-classes/funds/history`,
+      {
+        params: {
+          page: page,
+          size: 5,
         },
       }
     );

@@ -4,6 +4,7 @@ $bento-border-radius: 0.75rem;
   display: flex;
   border-radius: $bento-border-radius;
   background-color: $color-bento-background;
+  width: 100%;
   min-width: 500px;
   min-height: 200px;
   overflow: hidden;

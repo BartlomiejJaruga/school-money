@@ -1,16 +1,20 @@
-import styles from './FundsPagination.module.scss';
+import styles from './Pagination.module.scss';
 import clsx from 'clsx';
 import { MoveLeft, MoveRight } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 
 type FundsPaginationProps = {
+  urlPagesName: string;
   totalPages: number;
   currentPage: number;
+  resetScrollPosition?: boolean;
 };
 
-export function FundsPagination({
+export function Pagination({
   totalPages,
   currentPage,
+  urlPagesName,
+  resetScrollPosition = true,
 }: FundsPaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const pages = Array.from({ length: totalPages }, (_, i) => i);
@@ -18,11 +22,13 @@ export function FundsPagination({
   const handlePageChange = (newPage: number) => {
     if (newPage < 0 || newPage >= totalPages) return;
 
-    searchParams.set('fundsPage', newPage.toString());
+    searchParams.set(urlPagesName, newPage.toString());
     setSearchParams(searchParams);
 
-    const mainScrollableContainer = document.querySelector('main');
-    mainScrollableContainer?.scrollTo({ top: 0, behavior: 'smooth' });
+    if (resetScrollPosition) {
+      const mainScrollableContainer = document.querySelector('main');
+      mainScrollableContainer?.scrollTo({ top: 0, behavior: 'smooth' });
+    }
   };
 
   if (totalPages <= 1) return null;

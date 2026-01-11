@@ -1,24 +1,35 @@
 import styles from './FundsPage.module.scss';
-import { Baby } from 'lucide-react';
+import { Baby, School } from 'lucide-react';
 import clsx from 'clsx';
 import defaultFundPhoto from '@assets/default-fund.jpg';
-import { FUND_PAYMENT_STATUS_ENUM } from '@lib/constants';
 import { FundStatusTile } from '@components/FundStatusTile';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 import { useState } from 'react';
 import { FundTile } from '@components/FundTile';
-import { FundsPagination } from '@components/FundsPagination';
-import { useLoaderData, useNavigate, useNavigation } from 'react-router-dom';
+import { Pagination } from '@components/Pagination';
+import {
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
 import type { FundsLoaderData } from '@routes/funds.route';
 import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
+import type { PagedModelParentChildHistoryFundResponseDto } from '@dtos/PagedModelParentChildHistoryFundResponseDto';
+import { formatISOToDate, isParamChanging } from '@lib/utils';
+import { HistoryFundTileSkeletonLoader } from '@components/HistoryFundTileSkeletonLoader';
 
 export function FundsPage() {
   const fundsLoaderData = useLoaderData() as FundsLoaderData;
   const navigation = useNavigation();
-  const isFetchingFunds =
-    navigation.state == 'loading' &&
-    navigation.location.search.includes('fundsPage');
+  const location = useLocation();
+  const isFetchingFunds = isParamChanging(navigation, location, 'fundsPage');
+  const isFetchingHistoricalFunds = isParamChanging(
+    navigation,
+    location,
+    'historicalFundsPage'
+  );
 
   return (
     <>
@@ -42,7 +53,8 @@ export function FundsPage() {
                       />
                     );
                   })}
-                  <FundsPagination
+                  <Pagination
+                    urlPagesName="fundsPage"
                     totalPages={fundsLoaderData.funds.page.totalPages}
                     currentPage={fundsLoaderData.funds.page.number}
                   />
@@ -63,9 +75,44 @@ export function FundsPage() {
           </div>
           <div className={styles['grid-container__history']}>
             <h5 className={styles['history__label']}>Historical funds</h5>
-            <HistoryFundTile />
-            <HistoryFundTile />
-            <HistoryFundTile />
+            {isFetchingHistoricalFunds && (
+              <HistoryFundTileSkeletonLoader skeletonsNumber={5} />
+            )}
+
+            {!isFetchingHistoricalFunds &&
+              fundsLoaderData.historicalFunds &&
+              fundsLoaderData.historicalFunds.content.length > 0 && (
+                <>
+                  {fundsLoaderData.historicalFunds.content.map(
+                    (historicalFundTileInfo) => {
+                      return (
+                        <HistoryFundTile
+                          historicalFundData={historicalFundTileInfo}
+                          key={
+                            historicalFundTileInfo.fund.fund_id +
+                            historicalFundTileInfo.child.child_id
+                          }
+                        />
+                      );
+                    }
+                  )}
+                  <Pagination
+                    urlPagesName="historicalFundsPage"
+                    totalPages={fundsLoaderData.historicalFunds.page.totalPages}
+                    currentPage={fundsLoaderData.historicalFunds.page.number}
+                    resetScrollPosition={false}
+                  />
+                </>
+              )}
+
+            {!isFetchingHistoricalFunds &&
+              fundsLoaderData.historicalFunds &&
+              fundsLoaderData.historicalFunds.content.length < 1 && (
+                <NothingToShowInformation
+                  message="No active funds or you have already paid all of them."
+                  className={styles['fund-list__no-funds-info']}
+                />
+              )}
           </div>
         </div>
       </div>
@@ -132,8 +179,14 @@ function ChildrenReportTile({ selected }: ChildrenReportTileProps) {
   );
 }
 
-function HistoryFundTile() {
+type HistoryFundTileProps = {
+  historicalFundData: PagedModelParentChildHistoryFundResponseDto;
+};
+
+function HistoryFundTile({ historicalFundData }: HistoryFundTileProps) {
   const navigate = useNavigate();
+  const childNames = `${historicalFundData.child.first_name} ${historicalFundData.child.last_name}`;
+  const childSchoolClass = `${historicalFundData.fund.school_class.school_class_name} (${historicalFundData.fund.school_class.school_class_year})`;
 
   return (
     <div className={styles['history-fund-tile']}>
@@ -143,21 +196,27 @@ function HistoryFundTile() {
         className={styles['history-fund-tile__photo']}
       />
       <div className={styles['history-fund-tile__details']}>
-        <h2 className={styles['details__fund-title']}>Museum trip</h2>
+        <h2 className={styles['details__fund-title']}>
+          {historicalFundData.fund.title}
+        </h2>
         <div className={styles['details__fund-child']}>
           <Baby />
-          <span>John Millers 3C 18/19</span>
+          <span>{childNames}</span>
         </div>
-        <span>Created: 01.10.2025</span>
-        <span>Due to: 08.10.2025</span>
+        <div className={styles['details__fund-child-class']}>
+          <School />
+          <span>{childSchoolClass}</span>
+        </div>
+        <span>{`Created: ${formatISOToDate(historicalFundData.fund.starts_at)}`}</span>
+        <span>{`Due to: ${formatISOToDate(historicalFundData.fund.ends_at)}`}</span>
       </div>
       <div className={styles['history-fund-tile__info']}>
         <FundStatusTile
-          status={FUND_PAYMENT_STATUS_ENUM.paid}
+          status={historicalFundData.child_status}
           className={styles['info__fund-status']}
         />
         <CircularProgressBar
-          percent={75}
+          percent={historicalFundData.fund.fund_progress.progress_percentage}
           className={styles['info__payment-percent']}
         />
         <button
