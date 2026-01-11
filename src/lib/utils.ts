@@ -48,7 +48,13 @@ export const isParamChanging = (
   location: Location,
   paramName: string
 ): boolean => {
-  if (navigation.state !== 'loading' || !navigation.location) return false;
+  if (
+    navigation.state !== 'loading' ||
+    !navigation.location ||
+    navigation.location.pathname !== location.pathname
+  ) {
+    return false;
+  }
 
   const currentParams = new URLSearchParams(location.search);
   const nextParams = new URLSearchParams(navigation.location.search);
