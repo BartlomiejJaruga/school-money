@@ -63,7 +63,7 @@ export type ChildFundStatusType = ValueOf<typeof CHILD_FUND_STATUS_ENUM>;
 export const CHILD_FUND_STATUS_ENUM = {
   paid: 'PAID',
   unpaid: 'UNPAID',
-  rejected: 'REJECTED',
+  declined: 'DECLINED',
 } as const;
 
 export type PaymentHistoryOperationType = ValueOf<

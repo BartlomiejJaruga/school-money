@@ -94,6 +94,7 @@ export const fundsShouldRevalidate: ShouldRevalidateFunction = ({
 };
 
 const FundsRoute: RouteObject = {
+  index: true,
   path: '/funds',
   element: <FundsPage />,
   loader: loader,

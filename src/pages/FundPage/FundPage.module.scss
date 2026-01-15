@@ -324,6 +324,10 @@ $bento-gap: 1rem;
   &__label {
     @include section-small-label;
   }
+
+  &__no-children-statuses-info {
+    margin-top: 2rem;
+  }
 }
 
 .children-info {

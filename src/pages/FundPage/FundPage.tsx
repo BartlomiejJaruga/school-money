@@ -19,7 +19,12 @@ import {
   User,
   Video,
 } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import {
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useNavigation,
+} from 'react-router-dom';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { CircularProgressBar } from '@components/CircularProgressBar';
 import {
@@ -30,8 +35,15 @@ import {
   type FundDocumentsType,
 } from '@lib/constants';
 import { EventLogRecord } from '@components/EventLogRecord';
+import type { FundLoaderData } from '@routes/fund.route';
+import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
+import type { PagedModelFundChildStatusResponseDto } from '@dtos/PagedModelFundChildStatusResponseDto';
+import { isParamChanging } from '@lib/utils';
+import { Pagination } from '@components/Pagination';
+import { NothingToShowInformation } from '@components/NothingToShowInformation';
 
 export function FundPage() {
+  const FundLoaderData = useLoaderData() as FundLoaderData;
   const isParentTreasurer = true;
 
   return (
@@ -44,15 +56,23 @@ export function FundPage() {
             : styles['grid-container--parent']
         )}
       >
-        {isParentTreasurer && <TreasurerFundPageVariant />}
+        {isParentTreasurer && (
+          <TreasurerFundPageVariant fundLoaderData={FundLoaderData} />
+        )}
 
-        {!isParentTreasurer && <ParentFundPageVariant />}
+        {!isParentTreasurer && (
+          <ParentFundPageVariant fundLoaderData={FundLoaderData} />
+        )}
       </div>
     </div>
   );
 }
 
-function ParentFundPageVariant() {
+type ParentFundPageVariantProps = {
+  fundLoaderData: FundLoaderData;
+};
+
+function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
   const navigate = useNavigate();
 
   return (
@@ -125,7 +145,13 @@ function ParentFundPageVariant() {
   );
 }
 
-function TreasurerFundPageVariant() {
+type TreasurerFundPageVariantProps = {
+  fundLoaderData: FundLoaderData;
+};
+
+function TreasurerFundPageVariant({
+  fundLoaderData,
+}: TreasurerFundPageVariantProps) {
   const navigate = useNavigate();
 
   return (
@@ -182,7 +208,7 @@ function TreasurerFundPageVariant() {
         <FundBudget />
       </div>
       <div className={styles['grid-container__children-info']}>
-        <ChildrenInfo />
+        <ChildrenInfo childrenStatuses={fundLoaderData.fundChildrenStatuses} />
       </div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
@@ -324,15 +350,55 @@ function EventLog() {
   );
 }
 
-function ChildrenInfo() {
+type ChildrenInfoProps = {
+  childrenStatuses: PageableResponseDTO<PagedModelFundChildStatusResponseDto> | null;
+};
+
+function ChildrenInfo({ childrenStatuses }: ChildrenInfoProps) {
+  const navigation = useNavigation();
+  const location = useLocation();
+  const isFetchingChildrenStatuses = isParamChanging(
+    navigation,
+    location,
+    'childrenStatusPage'
+  );
+
   return (
     <>
       <h5 className={styles['children-info__label']}>Children info</h5>
-      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.paid} />
-      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.rejected} />
-      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
-      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
-      <ChildrenInfoRow status={CHILD_FUND_STATUS_ENUM.unpaid} />
+      {/* {isFetchingChildrenStatuses && (
+              <ChildrenStatusesSkeletonLoader skeletonsNumber={10} />
+            )} */}
+
+      {!isFetchingChildrenStatuses &&
+        childrenStatuses &&
+        childrenStatuses.content.length > 0 && (
+          <>
+            {childrenStatuses.content.map((childStatusData) => {
+              return (
+                <ChildrenInfoRow
+                  childStatusData={childStatusData}
+                  key={childStatusData.child.child_id}
+                />
+              );
+            })}
+            <Pagination
+              urlPagesName="childrenStatusPage"
+              totalPages={childrenStatuses.page.totalPages}
+              currentPage={childrenStatuses.page.number}
+              resetScrollPosition={false}
+            />
+          </>
+        )}
+
+      {!isFetchingChildrenStatuses &&
+        childrenStatuses &&
+        childrenStatuses.content.length < 1 && (
+          <NothingToShowInformation
+            message="No children belong to this fund yet."
+            className={styles['event-log__no-children-statuses-info']}
+          />
+        )}
     </>
   );
 }
@@ -345,7 +411,7 @@ const getChildrenStatusString = (
     childFundStatusString = 'Paid';
   } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.unpaid) {
     childFundStatusString = 'Unpaid';
-  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.rejected) {
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.declined) {
     childFundStatusString = 'Rejected';
   } else {
     childFundStatusString = 'Error';
@@ -362,7 +428,7 @@ const getChildrenStatusClassName = (
     childFundStatusClass = 'paid';
   } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.unpaid) {
     childFundStatusClass = 'unpaid';
-  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.rejected) {
+  } else if (childFundStatus == CHILD_FUND_STATUS_ENUM.declined) {
     childFundStatusClass = 'rejected';
   } else {
     childFundStatusClass = 'error';
@@ -372,12 +438,13 @@ const getChildrenStatusClassName = (
 };
 
 type ChildrenInfoRowProps = {
-  status: ChildFundStatusType;
+  childStatusData: PagedModelFundChildStatusResponseDto;
 };
 
-function ChildrenInfoRow({ status }: ChildrenInfoRowProps) {
-  const statusString = getChildrenStatusString(status);
-  const statusClassname = getChildrenStatusClassName(status);
+function ChildrenInfoRow({ childStatusData }: ChildrenInfoRowProps) {
+  const statusString = getChildrenStatusString(childStatusData.status);
+  const statusClassname = getChildrenStatusClassName(childStatusData.status);
+  const childNames = `${childStatusData.child.first_name} ${childStatusData.child.last_name}`;
 
   return (
     <div className={styles['children-info-row']}>
@@ -387,7 +454,7 @@ function ChildrenInfoRow({ status }: ChildrenInfoRowProps) {
           alt="child photo"
           className={styles['children-info-row__image']}
         />
-        <span className={styles['children-info-row__names']}>John Millers</span>
+        <span className={styles['children-info-row__names']}>{childNames}</span>
       </div>
       <span
         className={clsx(

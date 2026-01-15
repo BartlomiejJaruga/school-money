@@ -96,7 +96,7 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
           <button
             className={styles['actions-bar__more-info']}
             onClick={() => {
-              navigate('/funds/fund');
+              navigate(`/funds/${fundData.fund.fund_id}`);
             }}
           >
             More info
