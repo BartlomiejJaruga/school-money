@@ -29,7 +29,7 @@ export function ClassPage() {
             <button
               className={styles['top-bar__return-btn']}
               onClick={() => {
-                navigate('/classes');
+                navigate(-1);
               }}
             >
               <MoveLeft />

@@ -23,7 +23,9 @@ export function Pagination({
     if (newPage < 0 || newPage >= totalPages) return;
 
     searchParams.set(urlPagesName, newPage.toString());
-    setSearchParams(searchParams);
+    setSearchParams(searchParams, {
+      replace: true,
+    });
 
     if (resetScrollPosition) {
       const mainScrollableContainer = document.querySelector('main');
