@@ -38,9 +38,10 @@ import { EventLogRecord } from '@components/EventLogRecord';
 import type { FundLoaderData } from '@routes/fund.route';
 import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
 import type { PagedModelFundChildStatusResponseDto } from '@dtos/PagedModelFundChildStatusResponseDto';
-import { isParamChanging } from '@lib/utils';
+import { formatISOToDate, isParamChanging } from '@lib/utils';
 import { Pagination } from '@components/Pagination';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
+import type { FundResponseDTO } from '@dtos/FundResponseDto';
 
 export function FundPage() {
   const FundLoaderData = useLoaderData() as FundLoaderData;
@@ -108,7 +109,7 @@ function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
       <div className={styles['grid-container__fund-details']}>
-        <FundDetails />
+        <FundDetails fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__fund-cost']}>24 PLN</div>
       <div className={styles['grid-container__child-info']}>
@@ -117,7 +118,7 @@ function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
         <span className={styles['child-info__class']}>3C 18/19</span>
       </div>
       <div className={styles['grid-container__fund-budget']}>
-        <FundBudget />
+        <FundBudget fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__event-log']}>
         <EventLog />
@@ -195,7 +196,7 @@ function TreasurerFundPageVariant({
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
       <div className={styles['grid-container__fund-details']}>
-        <FundDetails />
+        <FundDetails fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__available-funds']}>
         <span>Available funds</span>
@@ -205,7 +206,7 @@ function TreasurerFundPageVariant({
         <EventLog />
       </div>
       <div className={styles['grid-container__fund-budget']}>
-        <FundBudget />
+        <FundBudget fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__children-info']}>
         <ChildrenInfo childrenStatuses={fundLoaderData.fundChildrenStatuses} />
@@ -236,22 +237,27 @@ function TreasurerFundPageVariant({
   );
 }
 
-function FundDetails() {
+type FundDetailsProps = {
+  fundData: FundResponseDTO | null;
+};
+
+function FundDetails({ fundData }: FundDetailsProps) {
+  const title = fundData?.title ?? 'Unknown fund title';
+  const description = fundData?.description ?? 'Unknown fund description';
+  const startDate = fundData?.starts_at ?? '';
+  const endDate = fundData?.ends_at ?? '';
+
   return (
     <div className={styles['fund-details']}>
       <div>
-        <h1 className={styles['fund-details__title']}>Theater trip</h1>
-        <p className={styles['fund-details__description']}>
-          After the final words, the theater will self-ignite in an act of
-          despair and dramatic defiance, leaving only glowing ashes as a
-          monument to the performance that once was.
-        </p>
+        <h1 className={styles['fund-details__title']}>{title}</h1>
+        <p className={styles['fund-details__description']}>{description}</p>
       </div>
       <HorizontalProgressBar
         type="date"
         title="Time"
-        start="23.11.2025"
-        end="07.12.2025"
+        start={formatISOToDate(startDate)}
+        end={formatISOToDate(endDate)}
         textStart="Created:"
         textEnd="Due to:"
         className={styles['fund-details__time']}
@@ -260,25 +266,63 @@ function FundDetails() {
   );
 }
 
-function FundBudget() {
+type FundBudgetProps = {
+  fundData: FundResponseDTO | null;
+};
+
+function FundBudget({ fundData }: FundBudgetProps) {
+  const amountPerChildInCents = fundData?.amount_per_child_in_cents;
+  const paidChildrenCount = fundData?.fund_progress?.paid_children_count;
+  const amountPerChild =
+    typeof amountPerChildInCents == 'number'
+      ? (amountPerChildInCents / 100).toFixed(2)
+      : 'Unknown';
+  const raisedMoney =
+    typeof paidChildrenCount == 'number'
+      ? (paidChildrenCount / 100).toFixed(2)
+      : 'Unknown';
+  const fundGoal =
+    typeof fundData?.fund_progress?.target_amount_in_cents == 'number'
+      ? (fundData.fund_progress.target_amount_in_cents / 100).toFixed(2)
+      : 'Unknown';
+  const contributorsCount =
+    typeof paidChildrenCount == 'number' ? paidChildrenCount : 'Unknown';
+  const participantsCount =
+    typeof fundData?.fund_progress?.participating_children_count == 'number'
+      ? fundData.fund_progress.participating_children_count
+      : 'Unknown';
+  const ignoredChildrenCount =
+    typeof fundData?.fund_progress?.ignored_children_count == 'number'
+      ? fundData.fund_progress.ignored_children_count
+      : 'Unknown';
+  const totalChildrenCount =
+    typeof ignoredChildrenCount == 'number' &&
+    typeof participantsCount == 'number'
+      ? ignoredChildrenCount + participantsCount
+      : 'Unknown';
+  const fundGoalPercent =
+    typeof fundData?.fund_progress?.progress_percentage == 'number'
+      ? fundData.fund_progress.progress_percentage
+      : 0;
+
   return (
     <>
       <div className={styles['budget-info-tile']}>
         <h5 className={styles['budget-info-tile__label']}>Budget info</h5>
         <div className={styles['budget-info-tile__stats']}>
           <span>Raised:</span>
-          <span>48 PLN</span>
+          <span>{`${raisedMoney} PLN`}</span>
           <span>Goal:</span>
-          <span>240 PLN</span>
+          <span>{`${fundGoal} PLN`}</span>
           <span>Cost per person:</span>
-          <span>24 PLN</span>
+          <span>{`${amountPerChild} PLN`}</span>
           <span>Contributors:</span>
-          <span>2</span>
+          <span>{contributorsCount}</span>
           <span>Participants:</span>
-          <span>10</span>
+          <span>{participantsCount}</span>
         </div>
         <CircularProgressBar
-          percent={20}
+          percent={fundGoalPercent}
           className={styles['budget-info-tile__progress-ring']}
           backgroundClassName={
             styles['budget-info-tile__progress-ring-background']
@@ -291,14 +335,14 @@ function FundBudget() {
           <span>Children</span>
           <div>
             <Baby />
-            <h2>10</h2>
+            <h2>{totalChildrenCount}</h2>
           </div>
         </div>
         <div className={styles['budget-participants-tiles__parents']}>
           <span>Parents</span>
           <div>
             <User />
-            <h2>10</h2>
+            <h2>{'Unknown'}</h2>
           </div>
         </div>
       </div>
