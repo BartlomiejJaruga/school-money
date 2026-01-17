@@ -1,12 +1,15 @@
 import type { Location, Navigation } from 'react-router-dom';
+import type { SimpleDateString } from './constants';
 
 /**
  * Converts date in format "YYYY-MM-DD" to full ISO format.
  * @param dateString - date in format "YYYY-MM-DD"
- * @param useCurrentTime - boolean if time in date should be set to current time or set to 0
+ * @param delta - number of milliseconds added to date (default = 0)
+ * @param useCurrentTime - boolean if time in date should be set to current time or set to 0 (default = false)
  */
 export const formatDateToISO = (
   dateString: string,
+  delta: number = 0,
   useCurrentTime: boolean = false
 ): string => {
   const date = new Date(dateString);
@@ -16,14 +19,14 @@ export const formatDateToISO = (
     date.setHours(now.getHours());
     date.setMinutes(now.getMinutes());
     date.setSeconds(now.getSeconds());
-    date.setMilliseconds(now.getMilliseconds());
+    date.setMilliseconds(now.getMilliseconds() + delta);
   }
 
   return date.toISOString();
 };
 
 /**
- * Converts full ISO string or Date object to "YYYY-MM-DD" format.
+ * Converts full ISO 8601 string or Date object to "YYYY-MM-DD" format.
  * @param isoString - date in ISO format or Date object
  */
 export const formatISOToDate = (isoString: string | Date): string => {
@@ -34,6 +37,24 @@ export const formatISOToDate = (isoString: string | Date): string => {
   }
 
   return date.toISOString().split('T')[0];
+};
+
+/**
+ * Converts full ISO 8601 string or Date object to "DD-MM-YYYY" format.
+ * @param isoString - date in ISO format or Date object
+ */
+export const formatISOtoEuropeanDate = (
+  isoString: string | Date
+): SimpleDateString | '' => {
+  const date = new Date(isoString);
+  if (isNaN(date.getTime())) {
+    return '';
+  }
+
+  const datePart = date.toISOString().split('T')[0];
+  const [year, month, day] = datePart.split('-').map(Number);
+
+  return `${day}.${month}.${year}` as SimpleDateString;
 };
 
 /**

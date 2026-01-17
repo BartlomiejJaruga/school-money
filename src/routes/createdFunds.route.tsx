@@ -57,16 +57,16 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const costPerChild = Number(formData.get('costPerChild'));
 
   try {
-    const response = await axiosInstance.post('/v1/funds', {
+    const requestBody = {
       school_class_id: schoolClassId,
       title: title,
       description: description,
-      starts_at: formatDateToISO(startDate, true),
+      starts_at: formatDateToISO(startDate),
       ends_at: formatDateToISO(endDate),
       amount_per_child_in_cents: costPerChild * 100,
-    });
+    };
 
-    console.log('Creating fund:', response);
+    await axiosInstance.post('/v1/funds', requestBody);
   } catch (error) {
     console.error('Error', error);
   }

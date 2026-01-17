@@ -30,7 +30,6 @@ import { CircularProgressBar } from '@components/CircularProgressBar';
 import {
   CHILD_FUND_STATUS_ENUM,
   FUND_DOCUMENTS_TYPE_ENUM,
-  FUND_OPERATION_TYPE_ENUM,
   type ChildFundStatusType,
   type FundDocumentsType,
 } from '@lib/constants';
@@ -42,6 +41,8 @@ import { formatISOToDate, isParamChanging } from '@lib/utils';
 import { Pagination } from '@components/Pagination';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
 import type { FundResponseDTO } from '@dtos/FundResponseDto';
+import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
+import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
 
 export function FundPage() {
   const FundLoaderData = useLoaderData() as FundLoaderData;
@@ -129,7 +130,7 @@ function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
         <FundBudget fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__event-log']}>
-        <EventLog />
+        <EventLog fundLogs={fundLoaderData.fundLogs} />
       </div>
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
@@ -217,7 +218,7 @@ function TreasurerFundPageVariant({
         <h2>{`${fundBalance} PLN`}</h2>
       </div>
       <div className={styles['grid-container__event-log']}>
-        <EventLog />
+        <EventLog fundLogs={fundLoaderData.fundLogs} />
       </div>
       <div className={styles['grid-container__fund-budget']}>
         <FundBudget fundData={fundLoaderData.fundData} />
@@ -364,46 +365,44 @@ function FundBudget({ fundData }: FundBudgetProps) {
   );
 }
 
-function EventLog() {
+type EventLogProps = {
+  fundLogs: PageableResponseDTO<PagedModelFundLogViewDto> | null;
+};
+
+function EventLog({ fundLogs }: EventLogProps) {
+  const navigation = useNavigation();
+  const location = useLocation();
+  const isFetchingLogs = isParamChanging(navigation, location, 'logsPage');
+
   return (
     <>
       <h5 className={styles['event-log__label']}>Event log</h5>
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.payment,
-          date: '2025-11-27',
-        }}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.refund,
-          date: '2025-11-24',
-        }}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.deposit,
-          date: '2025-11-23',
-        }}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.withdrawal,
-          date: '2025-11-23',
-        }}
-      />
+      {isFetchingLogs && <EventLogRecordSkeleton skeletonsNumber={4} />}
+
+      {!isFetchingLogs && fundLogs && fundLogs.content.length > 0 && (
+        <>
+          {fundLogs.content.map((fundLog) => {
+            return (
+              <EventLogRecord
+                fundLog={fundLog}
+                key={fundLog.timestamp + fundLog.child_full_name}
+              />
+            );
+          })}
+          <Pagination
+            urlPagesName="logsPage"
+            totalPages={fundLogs.page.totalPages}
+            currentPage={fundLogs.page.number}
+          />
+        </>
+      )}
+
+      {!isFetchingLogs && fundLogs && fundLogs.content.length < 1 && (
+        <NothingToShowInformation
+          message="Nothing has happened yet."
+          className={styles['event-log__no-logs-info']}
+        />
+      )}
     </>
   );
 }

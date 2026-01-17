@@ -53,6 +53,7 @@ export type FundOperationType = ValueOf<typeof FUND_OPERATION_TYPE_ENUM>;
 
 export const FUND_OPERATION_TYPE_ENUM = {
   payment: 'FUND_PAYMENT',
+  rejection: 'FUND_REJECTION',
   refund: 'FUND_REFUND',
   deposit: 'FUND_DEPOSIT',
   withdrawal: 'FUND_WITHDRAWAL',

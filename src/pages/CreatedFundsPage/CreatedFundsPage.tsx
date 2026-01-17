@@ -9,18 +9,42 @@ import {
   User,
 } from 'lucide-react';
 import defaultFundPhoto from '@assets/default-fund.jpg';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import { useLoaderData, useNavigate } from 'react-router-dom';
-import { FUND_OPERATION_TYPE_ENUM } from '@lib/constants';
+import { FUND_STATUS_ENUM } from '@lib/constants';
 import { ModalTemplate } from '@components/ModalTemplate';
 import { FundInfoModal } from '@components/FundInfoModal';
 import type { CreatedFundsLoaderData } from '@routes/createdFunds.route';
+import axiosInstance from '@services/axiosInstance';
+import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
+import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
+import { Pagination } from '@components/Pagination';
+import { NothingToShowInformation } from '@components/NothingToShowInformation';
+import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
 
 export function CreatedFundsPage() {
   const createdFundsLoaderData = useLoaderData() as CreatedFundsLoaderData;
   const [isCreateFundModalOpen, setIsCreateFundModalOpen] = useState(false);
+  const treasurerClasses = createdFundsLoaderData.treasurerClasses;
+  const [currentSchoolClass, setCurrentSchoolClass] = useState(
+    treasurerClasses && treasurerClasses[0]
+  );
+
+  const handleSchoolClassChange = (newSchoolClassId: string) => {
+    if (!treasurerClasses) return;
+
+    const schoolClassResponseDto = treasurerClasses.find(
+      (schoolClass) => schoolClass.school_class_id == newSchoolClassId
+    );
+    if (!schoolClassResponseDto) {
+      setCurrentSchoolClass(treasurerClasses[0]);
+      return;
+    }
+
+    setCurrentSchoolClass(schoolClassResponseDto);
+  };
 
   const handleCancelCreateFundModal = () => {
     setIsCreateFundModalOpen(false);
@@ -33,35 +57,54 @@ export function CreatedFundsPage() {
   return (
     <>
       <div className={styles['page']}>
-        {/* <NothingToShowInformation message="You are not a treasurer in any of your classes"/> */}
-        <div className={styles['grid-container']}>
-          <div className={styles['grid-container__classes']}>
-            <ClassButton name="1A 22/23" active={true} />
-            <ClassButton name="3C 20/21" />
-            <ClassButton name="4B 19/20" />
-          </div>
-          <button
-            className={styles['grid-container__create-fund']}
-            onClick={() => {
-              setIsCreateFundModalOpen(true);
-            }}
-          >
-            Create fund
-          </button>
-          <div className={styles['grid-container__fund-list']}>
-            <FundListTopBar />
-            <div className={styles['fund-list__container']}>
-              <FundTile />
-              <FundTile />
+        {!treasurerClasses && (
+          <NothingToShowInformation message="You are not a treasurer in any of your classes" />
+        )}
+
+        {treasurerClasses && (
+          <div className={styles['grid-container']}>
+            <div className={styles['grid-container__classes']}>
+              {treasurerClasses.map((schoolClass) => {
+                return (
+                  <ClassButton
+                    schoolClassId={schoolClass.school_class_id}
+                    name={`${schoolClass.school_class_name} (${schoolClass.school_class_year})`}
+                    changeSchoolClass={handleSchoolClassChange}
+                    active={
+                      schoolClass.school_class_id ==
+                      currentSchoolClass?.school_class_id
+                    }
+                  />
+                );
+              })}
+            </div>
+            <button
+              className={styles['grid-container__create-fund']}
+              onClick={() => {
+                setIsCreateFundModalOpen(true);
+              }}
+            >
+              Create fund
+            </button>
+            <div className={styles['grid-container__fund-list']}>
+              <FundListTopBar />
+              <div className={styles['fund-list__container']}>
+                <FundTile />
+                <FundTile />
+              </div>
+            </div>
+            <div className={styles['grid-container__class-info']}>
+              <ClassInfo />
+            </div>
+            <div className={styles['grid-container__event-log']}>
+              <EventLog
+                activeSchoolClassId={
+                  currentSchoolClass?.school_class_id ?? null
+                }
+              />
             </div>
           </div>
-          <div className={styles['grid-container__class-info']}>
-            <ClassInfo />
-          </div>
-          <div className={styles['grid-container__event-log']}>
-            <EventLog />
-          </div>
-        </div>
+        )}
       </div>
       <ModalTemplate
         isOpen={isCreateFundModalOpen}
@@ -79,20 +122,27 @@ export function CreatedFundsPage() {
 }
 
 type ClassButtonProps = {
+  schoolClassId: string;
   name: string;
-  active?: boolean; // when connecting to backend change this
+  changeSchoolClass: (newSchoolClassId: string) => void;
+  active?: boolean;
 };
 
-function ClassButton({ name, active = false }: ClassButtonProps) {
-  const [isActive, setIsActive] = useState(active);
-
+function ClassButton({
+  schoolClassId,
+  name,
+  changeSchoolClass,
+  active = false,
+}: ClassButtonProps) {
   return (
     <button
       className={clsx(
         styles['classes__button'],
-        isActive && styles['classes__button--active']
+        active && styles['classes__button--active']
       )}
-      onClick={() => setIsActive(!isActive)}
+      onClick={() => {
+        changeSchoolClass(schoolClassId);
+      }}
     >
       {name}
     </button>
@@ -227,50 +277,75 @@ function ClassInfo() {
   );
 }
 
-function EventLog() {
+type EventLogProps = {
+  activeSchoolClassId: string | null;
+};
+
+function EventLog({ activeSchoolClassId }: EventLogProps) {
+  const [logs, setLogs] =
+    useState<PageableResponseDTO<PagedModelFundLogViewDto> | null>(null);
+  const [isFetchingLogs, setIsFetchingLogs] = useState(true);
+
+  useEffect(() => {
+    const currentSchoolClassLogs = async () => {
+      setIsFetchingLogs(true);
+
+      try {
+        const response = await axiosInstance.get(
+          `/v1/school-classes/${activeSchoolClassId}/funds/logs`,
+          {
+            params: {
+              fundStatus: FUND_STATUS_ENUM.active,
+              page: 0,
+              size: 10,
+            },
+          }
+        );
+
+        setLogs(response.data ?? null);
+        setIsFetchingLogs(false);
+      } catch (error) {
+        console.error('Error', error);
+        setLogs(null);
+        setIsFetchingLogs(false);
+      }
+    };
+
+    currentSchoolClassLogs();
+  }, [activeSchoolClassId]);
+
   return (
     <>
       <h3 className={styles['event-log__title']}>Event log</h3>
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.payment,
-          date: '2025-11-27',
-        }}
-        showFundName={true}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.refund,
-          date: '2025-11-24',
-        }}
-        showFundName={true}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.deposit,
-          date: '2025-11-23',
-        }}
-        showFundName={true}
-      />
-      <EventLogRecord
-        fundOperationDTO={{
-          fundOperationId: '1',
-          amountInCents: 2400,
-          currency: 'PLN',
-          operationType: FUND_OPERATION_TYPE_ENUM.withdrawal,
-          date: '2025-11-23',
-        }}
-        showFundName={true}
-      />
+      {isFetchingLogs && (
+        <EventLogRecordSkeleton skeletonsNumber={10} showFundTitle={true} />
+      )}
+
+      {!isFetchingLogs && logs && logs.content.length > 0 && (
+        <>
+          {logs.content.map((fundLog) => {
+            return (
+              <EventLogRecord
+                fundLog={fundLog}
+                showFundName={true}
+                key={fundLog.timestamp + fundLog.child_full_name}
+              />
+            );
+          })}
+          <Pagination
+            urlPagesName="logsPage"
+            totalPages={logs.page.totalPages}
+            currentPage={logs.page.number}
+          />
+        </>
+      )}
+
+      {!isFetchingLogs && logs && logs.content.length < 1 && (
+        <NothingToShowInformation
+          message="Nothing has happened yet."
+          className={styles['event-log__no-logs-info']}
+        />
+      )}
     </>
   );
 }

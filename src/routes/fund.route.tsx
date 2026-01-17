@@ -1,6 +1,7 @@
 import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
 import type { FundResponseDTO } from '@dtos/FundResponseDto';
 import type { PagedModelFundChildStatusResponseDto } from '@dtos/PagedModelFundChildStatusResponseDto';
+import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { FundPage } from '@pages/FundPage';
 import axiosInstance from '@services/axiosInstance';
 import type {
@@ -12,6 +13,7 @@ import type {
 export type FundLoaderData = {
   fundChildrenStatuses: PageableResponseDTO<PagedModelFundChildStatusResponseDto> | null;
   fundData: FundResponseDTO | null;
+  fundLogs: PageableResponseDTO<PagedModelFundLogViewDto> | null;
 };
 
 export const loader: LoaderFunction = async ({
@@ -20,14 +22,16 @@ export const loader: LoaderFunction = async ({
 }: LoaderFunctionArgs) => {
   const fundId = params.fundId ?? null;
 
-  const [fundChildrenStatuses, fundData] = await Promise.all([
+  const [fundChildrenStatuses, fundData, fundLogs] = await Promise.all([
     fetchFundChildrenStatuses(fundId, request),
     fetchFundData(fundId),
+    fetchFundLogs(fundId, request),
   ]);
 
   const fundLoaderData: FundLoaderData = {
     fundChildrenStatuses: fundChildrenStatuses,
     fundData: fundData,
+    fundLogs: fundLogs,
   };
 
   return fundLoaderData;
@@ -68,6 +72,30 @@ const fetchFundChildrenStatuses = async (
         },
       }
     );
+
+    return response.data ?? null;
+  } catch (error) {
+    console.error('Error', error);
+    return null;
+  }
+};
+
+const fetchFundLogs = async (
+  fundId: string | null,
+  request: Request
+): Promise<PageableResponseDTO<PagedModelFundLogViewDto> | null> => {
+  if (!fundId) return null;
+
+  const url = new URL(request.url);
+  const page = parseInt(url.searchParams.get('logsPage') || '0', 10);
+
+  try {
+    const response = await axiosInstance.get(`/v1/funds/${fundId}/logs`, {
+      params: {
+        page: page,
+        size: 4,
+      },
+    });
 
     return response.data ?? null;
   } catch (error) {

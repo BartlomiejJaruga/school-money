@@ -279,8 +279,14 @@ $bento-gap: 1rem;
   }
 }
 
-.event-log__title {
-  color: $color-subtext-gray;
-  font-weight: 500;
-  font-size: 1rem;
+.event-log {
+  &__title {
+    color: $color-subtext-gray;
+    font-weight: 500;
+    font-size: 1rem;
+  }
+
+  &__no-logs-info {
+    margin-top: 1rem;
+  }
 }
