@@ -75,6 +75,12 @@ type ParentFundPageVariantProps = {
 
 function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
   const navigate = useNavigate();
+  const costPerChildInCents =
+    fundLoaderData.fundData?.fund_current_balance_in_cents;
+  const costPerChild =
+    typeof costPerChildInCents == 'number'
+      ? (costPerChildInCents / 100).toFixed(2)
+      : 'Unknown';
 
   return (
     <>
@@ -111,7 +117,9 @@ function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
       <div className={styles['grid-container__fund-details']}>
         <FundDetails fundData={fundLoaderData.fundData} />
       </div>
-      <div className={styles['grid-container__fund-cost']}>24 PLN</div>
+      <div
+        className={styles['grid-container__fund-cost']}
+      >{`${costPerChild} PLN`}</div>
       <div className={styles['grid-container__child-info']}>
         <Baby className={styles['child-info__label-icon']} />
         <h3 className={styles['child-info__names']}>John Millers</h3>
@@ -154,6 +162,12 @@ function TreasurerFundPageVariant({
   fundLoaderData,
 }: TreasurerFundPageVariantProps) {
   const navigate = useNavigate();
+  const fundBalanceInCents =
+    fundLoaderData.fundData?.fund_current_balance_in_cents;
+  const fundBalance =
+    typeof fundBalanceInCents == 'number'
+      ? (fundBalanceInCents / 100).toFixed(2)
+      : 'Unknown';
 
   return (
     <>
@@ -199,8 +213,8 @@ function TreasurerFundPageVariant({
         <FundDetails fundData={fundLoaderData.fundData} />
       </div>
       <div className={styles['grid-container__available-funds']}>
-        <span>Available funds</span>
-        <h2>0 PLN</h2>
+        <span>Fund balance</span>
+        <h2>{`${fundBalance} PLN`}</h2>
       </div>
       <div className={styles['grid-container__event-log']}>
         <EventLog />
@@ -275,11 +289,11 @@ function FundBudget({ fundData }: FundBudgetProps) {
   const paidChildrenCount = fundData?.fund_progress?.paid_children_count;
   const amountPerChild =
     typeof amountPerChildInCents == 'number'
-      ? (amountPerChildInCents / 100).toFixed(2)
+      ? Number((amountPerChildInCents / 100).toFixed(2))
       : 'Unknown';
   const raisedMoney =
-    typeof paidChildrenCount == 'number'
-      ? (paidChildrenCount / 100).toFixed(2)
+    typeof paidChildrenCount == 'number' && typeof amountPerChild == 'number'
+      ? (paidChildrenCount * amountPerChild).toFixed(2)
       : 'Unknown';
   const fundGoal =
     typeof fundData?.fund_progress?.target_amount_in_cents == 'number'
@@ -315,7 +329,7 @@ function FundBudget({ fundData }: FundBudgetProps) {
           <span>Goal:</span>
           <span>{`${fundGoal} PLN`}</span>
           <span>Cost per person:</span>
-          <span>{`${amountPerChild} PLN`}</span>
+          <span>{`${typeof amountPerChild == 'number' ? amountPerChild.toFixed(2) : amountPerChild} PLN`}</span>
           <span>Contributors:</span>
           <span>{contributorsCount}</span>
           <span>Participants:</span>

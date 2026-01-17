@@ -10,11 +10,14 @@ export type FundResponseDTO = {
   };
   title: string;
   description: string;
+  created_at: string; // ISO 8601
   starts_at: string; // ISO 8601
   ends_at: string; // ISO 8601
+  ended_at: string; // ISO 8601
   amount_per_child_in_cents: number;
   iban: string;
   fund_status: FUND_STATUS_TYPE;
+  fund_current_balance_in_cents: number;
   fund_progress: {
     progress_percentage: number;
     current_amount_in_cents: number;

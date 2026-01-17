@@ -64,7 +64,7 @@ const fetchFundChildrenStatuses = async (
         params: {
           page: page,
           size: 10,
-          sort: 'lastName,ASC',
+          sort: 'lastName,firstName,birthDate,ASC',
         },
       }
     );
