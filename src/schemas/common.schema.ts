@@ -35,9 +35,17 @@ export const RepeatPassword = z
     `Password can't be longer than ${PASSWORD_MAX_LENGTH} characters`
   );
 
-export const FirstName = z.string().trim().min(1, 'This field is required');
+export const FirstName = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .max(30, "First name can't be longer than 30 characters");
 
-export const LastName = z.string().trim().min(1, 'This field is required');
+export const LastName = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .max(30, "Last name can't be longer than 30 characters");
 
 export const Birthday = z
   .string()
