@@ -9,30 +9,16 @@ $bento-gap: 1rem;
 
 .grid-container {
   display: grid;
-  grid-template-rows: 50px repeat(4, 100px) 1fr;
-  grid-template-columns: calc(2 * $bento-gap + 300px) 1fr 350px;
+  grid-template-rows: 50px 100px 200px 1fr auto;
+  grid-template-columns: calc($bento-gap + 300px) 1fr 350px;
+  grid-template-areas:
+    'top-bar top-bar top-bar'
+    'fund-photo fund-details available-funds'
+    'fund-photo fund-details event-log'
+    'fund-budget children-info event-log'
+    'fund-budget children-info fund-documents';
   gap: $bento-gap;
   min-height: inherit;
-
-  &--parent {
-    grid-template-areas:
-      'top-bar top-bar top-bar'
-      'fund-photo fund-details fund-cost'
-      'fund-photo fund-details child-info'
-      'fund-photo fund-details fund-documents'
-      'fund-budget event-log fund-documents'
-      'fund-budget event-log fund-documents';
-  }
-
-  &--treasurer {
-    grid-template-areas:
-      'top-bar top-bar top-bar'
-      'fund-photo fund-details available-funds'
-      'fund-photo fund-details event-log'
-      'fund-photo fund-details event-log'
-      'fund-budget children-info event-log'
-      'fund-budget children-info fund-documents';
-  }
 
   &__top-bar {
     display: flex;
@@ -198,11 +184,7 @@ $bento-gap: 1rem;
   }
 
   &__withdraw {
-    @include default-button(
-      $color-accent-primary,
-      $color-accent-primary-hover,
-      $color-text-white
-    );
+    @include default-button($color-info, $color-info-hover, $color-text-white);
   }
 
   &__make-payment {

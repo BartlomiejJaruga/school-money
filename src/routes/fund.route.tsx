@@ -99,7 +99,7 @@ const fetchFundLogs = async (
     const response = await axiosInstance.get(`/v1/funds/${fundId}/logs`, {
       params: {
         page: page,
-        size: 4,
+        size: 8,
       },
     });
 

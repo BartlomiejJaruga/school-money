@@ -44,6 +44,7 @@ import type { FundResponseDTO } from '@dtos/FundResponseDto';
 import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import { ChildrenStatusesSkeletonLoader } from '@components/ChildrenStatusesSkeletonLoader';
 
 export function FundPage() {
   const FundLoaderData = useLoaderData() as FundLoaderData;
@@ -51,121 +52,25 @@ export function FundPage() {
 
   return (
     <div className={styles['page']}>
-      <div
-        className={clsx(
-          styles['grid-container'],
-          isParentTreasurer
-            ? styles['grid-container--treasurer']
-            : styles['grid-container--parent']
-        )}
-      >
-        {isParentTreasurer && (
-          <TreasurerFundPageVariant fundLoaderData={FundLoaderData} />
-        )}
-
-        {!isParentTreasurer && (
-          <ParentFundPageVariant fundLoaderData={FundLoaderData} />
-        )}
+      <div className={styles['grid-container']}>
+        <FundPageContainer
+          fundLoaderData={FundLoaderData}
+          isParentTreasurer={isParentTreasurer}
+        />
       </div>
     </div>
   );
 }
 
-type ParentFundPageVariantProps = {
+type FundPageContainerProps = {
   fundLoaderData: FundLoaderData;
+  isParentTreasurer: boolean;
 };
 
-function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
-  const navigate = useNavigate();
-  const costPerChildInCents =
-    fundLoaderData.fundData?.fund_current_balance_in_cents;
-  const costPerChild =
-    typeof costPerChildInCents == 'number'
-      ? (costPerChildInCents / 100).toFixed(2)
-      : 'Unknown';
-
-  return (
-    <>
-      <div className={styles['grid-container__top-bar']}>
-        <div className={styles['top-bar__left-side']}>
-          <button
-            className={styles['top-bar__return']}
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-            <MoveLeft />
-            Return
-          </button>
-          <button className={styles['top-bar__generate-report']}>
-            <FileChartColumn />
-            Generate report
-          </button>
-        </div>
-        <div className={styles['top-bar__right-side']}>
-          <button className={styles['top-bar__make-payment']}>
-            <BanknoteArrowUp />
-            Make payment
-          </button>
-          <button className={styles['top-bar__reject']}>
-            <BanknoteX />
-            Reject
-          </button>
-        </div>
-      </div>
-      <div className={styles['grid-container__fund-photo']}>
-        <img src={defaultFundPhoto} alt="fund photo" />
-      </div>
-      <div className={styles['grid-container__fund-details']}>
-        <FundDetails fundData={fundLoaderData.fundData} />
-      </div>
-      <div
-        className={styles['grid-container__fund-cost']}
-      >{`${costPerChild} PLN`}</div>
-      <div className={styles['grid-container__child-info']}>
-        <Baby className={styles['child-info__label-icon']} />
-        <h3 className={styles['child-info__names']}>John Millers</h3>
-        <span className={styles['child-info__class']}>3C 18/19</span>
-      </div>
-      <div className={styles['grid-container__fund-budget']}>
-        <FundBudget
-          fundData={fundLoaderData.fundData}
-          schoolClassData={fundLoaderData.schoolClassData}
-        />
-      </div>
-      <div className={styles['grid-container__event-log']}>
-        <EventLog fundLogs={fundLoaderData.fundLogs} />
-      </div>
-      <div className={styles['grid-container__fund-documents']}>
-        <h5 className={styles['fund-documents__label']}>Fund documents</h5>
-        <FundDocument
-          isParentTreasurer={false}
-          fileType={FUND_DOCUMENTS_TYPE_ENUM.image}
-        />
-        <FundDocument
-          isParentTreasurer={false}
-          fileType={FUND_DOCUMENTS_TYPE_ENUM.pdf}
-        />
-        <FundDocument
-          isParentTreasurer={false}
-          fileType={FUND_DOCUMENTS_TYPE_ENUM.archive}
-        />
-        <FundDocument
-          isParentTreasurer={false}
-          fileType={FUND_DOCUMENTS_TYPE_ENUM.video}
-        />
-      </div>
-    </>
-  );
-}
-
-type TreasurerFundPageVariantProps = {
-  fundLoaderData: FundLoaderData;
-};
-
-function TreasurerFundPageVariant({
+function FundPageContainer({
   fundLoaderData,
-}: TreasurerFundPageVariantProps) {
+  isParentTreasurer,
+}: FundPageContainerProps) {
   const navigate = useNavigate();
   const fundBalanceInCents =
     fundLoaderData.fundData?.fund_current_balance_in_cents;
@@ -193,21 +98,33 @@ function TreasurerFundPageVariant({
           </button>
         </div>
         <div className={styles['top-bar__right-side']}>
-          <button className={styles['top-bar__edit']}>
-            <Pencil />
-            Edit
-          </button>
-          <button className={styles['top-bar__cancel']}>
-            <TicketX />
-            Cancel
-          </button>
-          <button className={styles['top-bar__deposit']}>
+          {isParentTreasurer && (
+            <>
+              <button className={styles['top-bar__edit']}>
+                <Pencil />
+                Edit
+              </button>
+              <button className={styles['top-bar__cancel']}>
+                <TicketX />
+                Cancel
+              </button>
+              <button className={styles['top-bar__withdraw']}>
+                <BanknoteArrowDown />
+                Withdraw
+              </button>
+              <button className={styles['top-bar__deposit']}>
+                <BanknoteArrowUp />
+                Deposit
+              </button>
+            </>
+          )}
+          <button className={styles['top-bar__make-payment']}>
             <BanknoteArrowUp />
-            Deposit
+            Make payment
           </button>
-          <button className={styles['top-bar__withdraw']}>
-            <BanknoteArrowDown />
-            Withdraw
+          <button className={styles['top-bar__reject']}>
+            <BanknoteX />
+            Reject
           </button>
         </div>
       </div>
@@ -389,7 +306,7 @@ function EventLog({ fundLogs }: EventLogProps) {
   return (
     <>
       <h5 className={styles['event-log__label']}>Event log</h5>
-      {isFetchingLogs && <EventLogRecordSkeleton skeletonsNumber={4} />}
+      {isFetchingLogs && <EventLogRecordSkeleton skeletonsNumber={12} />}
 
       {!isFetchingLogs && fundLogs && fundLogs.content.length > 0 && (
         <>
@@ -435,9 +352,9 @@ function ChildrenInfo({ childrenStatuses }: ChildrenInfoProps) {
   return (
     <>
       <h5 className={styles['children-info__label']}>Children info</h5>
-      {/* {isFetchingChildrenStatuses && (
-              <ChildrenStatusesSkeletonLoader skeletonsNumber={10} />
-            )} */}
+      {isFetchingChildrenStatuses && (
+        <ChildrenStatusesSkeletonLoader skeletonsNumber={10} />
+      )}
 
       {!isFetchingChildrenStatuses &&
         childrenStatuses &&

@@ -1,0 +1,64 @@
+.skeleton-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid $color-gray-lines;
+  padding: 0 0.5rem 0.5rem 0.5rem;
+
+  &__left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+}
+
+.skeleton-avatar {
+  background-color: $color-skeleton-background;
+  width: 2rem;
+  height: 2rem;
+  @include round-photo;
+}
+
+.skeleton-text {
+  border-radius: 0.25rem;
+  background-color: $color-skeleton-background;
+  height: 1rem;
+
+  &--names {
+    width: 120px;
+  }
+
+  &--status {
+    width: 60px;
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    animation: shimmer-effect 2s infinite;
+    background-image: linear-gradient(
+      90deg,
+      rgba($color-skeleton-shimmer, 0) 0,
+      rgba($color-skeleton-shimmer, 0.3) 20%,
+      rgba($color-skeleton-shimmer, 0.6) 60%,
+      rgba($color-skeleton-shimmer, 0)
+    );
+    content: '';
+  }
+}
+
+@keyframes shimmer-effect {
+  100% {
+    transform: translateX(100%);
+  }
+}
