@@ -2,6 +2,7 @@ import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
 import type { FundResponseDTO } from '@dtos/FundResponseDto';
 import type { PagedModelFundChildStatusResponseDto } from '@dtos/PagedModelFundChildStatusResponseDto';
 import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import { FundPage } from '@pages/FundPage';
 import axiosInstance from '@services/axiosInstance';
 import type {
@@ -14,6 +15,7 @@ export type FundLoaderData = {
   fundChildrenStatuses: PageableResponseDTO<PagedModelFundChildStatusResponseDto> | null;
   fundData: FundResponseDTO | null;
   fundLogs: PageableResponseDTO<PagedModelFundLogViewDto> | null;
+  schoolClassData: SchoolClassResponseDto | null;
 };
 
 export const loader: LoaderFunction = async ({
@@ -27,11 +29,15 @@ export const loader: LoaderFunction = async ({
     fetchFundData(fundId),
     fetchFundLogs(fundId, request),
   ]);
+  const schoolClassData = await fetchSchoolClassData(
+    fundData?.school_class?.school_class_id ?? null
+  );
 
   const fundLoaderData: FundLoaderData = {
     fundChildrenStatuses: fundChildrenStatuses,
     fundData: fundData,
     fundLogs: fundLogs,
+    schoolClassData: schoolClassData,
   };
 
   return fundLoaderData;
@@ -96,6 +102,23 @@ const fetchFundLogs = async (
         size: 4,
       },
     });
+
+    return response.data ?? null;
+  } catch (error) {
+    console.error('Error', error);
+    return null;
+  }
+};
+
+const fetchSchoolClassData = async (
+  schoolClassId: string | null
+): Promise<SchoolClassResponseDto | null> => {
+  if (!schoolClassId) return null;
+
+  try {
+    const response = await axiosInstance.get(
+      `/v1/school-classes/${schoolClassId}`
+    );
 
     return response.data ?? null;
   } catch (error) {

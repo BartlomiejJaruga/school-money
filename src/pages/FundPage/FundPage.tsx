@@ -43,6 +43,7 @@ import { NothingToShowInformation } from '@components/NothingToShowInformation';
 import type { FundResponseDTO } from '@dtos/FundResponseDto';
 import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 
 export function FundPage() {
   const FundLoaderData = useLoaderData() as FundLoaderData;
@@ -127,7 +128,10 @@ function ParentFundPageVariant({ fundLoaderData }: ParentFundPageVariantProps) {
         <span className={styles['child-info__class']}>3C 18/19</span>
       </div>
       <div className={styles['grid-container__fund-budget']}>
-        <FundBudget fundData={fundLoaderData.fundData} />
+        <FundBudget
+          fundData={fundLoaderData.fundData}
+          schoolClassData={fundLoaderData.schoolClassData}
+        />
       </div>
       <div className={styles['grid-container__event-log']}>
         <EventLog fundLogs={fundLoaderData.fundLogs} />
@@ -221,7 +225,10 @@ function TreasurerFundPageVariant({
         <EventLog fundLogs={fundLoaderData.fundLogs} />
       </div>
       <div className={styles['grid-container__fund-budget']}>
-        <FundBudget fundData={fundLoaderData.fundData} />
+        <FundBudget
+          fundData={fundLoaderData.fundData}
+          schoolClassData={fundLoaderData.schoolClassData}
+        />
       </div>
       <div className={styles['grid-container__children-info']}>
         <ChildrenInfo childrenStatuses={fundLoaderData.fundChildrenStatuses} />
@@ -283,9 +290,10 @@ function FundDetails({ fundData }: FundDetailsProps) {
 
 type FundBudgetProps = {
   fundData: FundResponseDTO | null;
+  schoolClassData: SchoolClassResponseDto | null;
 };
 
-function FundBudget({ fundData }: FundBudgetProps) {
+function FundBudget({ fundData, schoolClassData }: FundBudgetProps) {
   const amountPerChildInCents = fundData?.amount_per_child_in_cents;
   const paidChildrenCount = fundData?.fund_progress?.paid_children_count;
   const amountPerChild =
@@ -310,10 +318,14 @@ function FundBudget({ fundData }: FundBudgetProps) {
     typeof fundData?.fund_progress?.ignored_children_count == 'number'
       ? fundData.fund_progress.ignored_children_count
       : 'Unknown';
-  const totalChildrenCount =
+  const schoolClassChildrenCount =
     typeof ignoredChildrenCount == 'number' &&
     typeof participantsCount == 'number'
       ? ignoredChildrenCount + participantsCount
+      : 'Unknown';
+  const schoolClassParentsCount =
+    typeof schoolClassData?.number_of_parents == 'number'
+      ? schoolClassData.number_of_parents
       : 'Unknown';
   const fundGoalPercent =
     typeof fundData?.fund_progress?.progress_percentage == 'number'
@@ -350,14 +362,14 @@ function FundBudget({ fundData }: FundBudgetProps) {
           <span>Children</span>
           <div>
             <Baby />
-            <h2>{totalChildrenCount}</h2>
+            <h2>{schoolClassChildrenCount}</h2>
           </div>
         </div>
         <div className={styles['budget-participants-tiles__parents']}>
           <span>Parents</span>
           <div>
             <User />
-            <h2>{'Unknown'}</h2>
+            <h2>{schoolClassParentsCount}</h2>
           </div>
         </div>
       </div>
