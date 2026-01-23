@@ -19,8 +19,10 @@ import {
   Trash2,
   User,
   Video,
+  X,
 } from 'lucide-react';
 import {
+  useFetcher,
   useLoaderData,
   useLocation,
   useNavigate,
@@ -47,10 +49,20 @@ import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import { ChildrenStatusesSkeletonLoader } from '@components/ChildrenStatusesSkeletonLoader';
+import { ModalTemplate } from '@components/ModalTemplate';
+import { useEffect, useState } from 'react';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
+import {
+  FundEditModalSchema,
+  type FundEditModalValues,
+} from '@schemas/fund/fundEditModal.schema';
 
 export function FundPage() {
-  const FundLoaderData = useLoaderData() as FundLoaderData;
+  const fundLoaderData = useLoaderData() as FundLoaderData;
   const location = useLocation();
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const passedChildData = location.state?.childData as SimpleChildData;
   const childNames =
     passedChildData?.firstName && passedChildData?.lastName
@@ -58,16 +70,41 @@ export function FundPage() {
       : 'Unknown Unknown';
   const isParentTreasurer = true;
 
+  const handleOpenEditModal = () => {
+    if (fundLoaderData.fundData == null) return;
+
+    setIsEditModalOpen(true);
+  };
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false);
+  };
+
   return (
-    <div className={styles['page']}>
-      <div className={styles['grid-container']}>
-        <FundPageContainer
-          fundLoaderData={FundLoaderData}
-          isParentTreasurer={isParentTreasurer}
-          childNames={childNames}
-        />
+    <>
+      <div className={styles['page']}>
+        <div className={styles['grid-container']}>
+          <FundPageContainer
+            fundLoaderData={fundLoaderData}
+            isParentTreasurer={isParentTreasurer}
+            childNames={childNames}
+            handleOpenEditModal={handleOpenEditModal}
+          />
+        </div>
       </div>
-    </div>
+      {fundLoaderData.fundData && (
+        <ModalTemplate
+          isOpen={isEditModalOpen}
+          onOverlayClick={handleCloseEditModal}
+        >
+          <EditFundModal
+            onClose={handleCloseEditModal}
+            onConfirm={handleCloseEditModal}
+            fundData={fundLoaderData.fundData}
+          />
+        </ModalTemplate>
+      )}
+    </>
   );
 }
 
@@ -75,12 +112,14 @@ type FundPageContainerProps = {
   fundLoaderData: FundLoaderData;
   isParentTreasurer: boolean;
   childNames: string;
+  handleOpenEditModal: () => void;
 };
 
 function FundPageContainer({
   fundLoaderData,
   isParentTreasurer,
   childNames,
+  handleOpenEditModal,
 }: FundPageContainerProps) {
   const navigate = useNavigate();
   const fundBalanceInCents =
@@ -111,7 +150,10 @@ function FundPageContainer({
         <div className={styles['top-bar__right-side']}>
           {isParentTreasurer && (
             <>
-              <button className={styles['top-bar__edit']}>
+              <button
+                className={styles['top-bar__edit']}
+                onClick={handleOpenEditModal}
+              >
                 <Pencil />
                 Edit
               </button>
@@ -531,6 +573,90 @@ function FundDocument({
           </button>
         )}
       </div>
+    </div>
+  );
+}
+
+type EditFundModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  fundData: FundResponseDTO;
+};
+
+function EditFundModal({ onClose, onConfirm, fundData }: EditFundModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<FundEditModalValues>({
+    resolver: zodResolver(FundEditModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      title: fundData.title ?? '',
+      description: fundData.description ?? '',
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      onConfirm();
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: FundEditModalValues) => {
+    fetcher.submit(
+      { fundId: fundData.fund_id, ...values },
+      {
+        method: 'post',
+        action: `/funds/${fundData.fund_id}`,
+      }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['fund-edit-modal']}>
+      <div className={styles['fund-edit-modal__top']}>
+        <h2 className={styles['top__title']}>EDIT FUND</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['fund-edit-modal__form']}
+        >
+          <div>PHOTO</div>
+          <CustomInputWithLabel
+            label="Title"
+            name="title"
+            placeholder="Enter fund title"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            label="Description"
+            name="description"
+            placeholder="Enter fund description"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
     </div>
   );
 }

@@ -6,6 +6,8 @@ import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import { FundPage } from '@pages/FundPage';
 import axiosInstance from '@services/axiosInstance';
 import type {
+  ActionFunction,
+  ActionFunctionArgs,
   LoaderFunction,
   LoaderFunctionArgs,
   RouteObject,
@@ -127,10 +129,37 @@ const fetchSchoolClassData = async (
   }
 };
 
+const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
+  const formData = await request.formData();
+
+  const fundId = formData.get('fundId') as string;
+  const title = formData.get('title') as string;
+  const description = formData.get('description') as string;
+
+  try {
+    await axiosInstance.patch(`/v1/funds/${fundId}`, {
+      title: title,
+      description: description,
+    });
+
+    return {
+      ok: true,
+      message: 'Fund successfully edited',
+    };
+  } catch (error) {
+    console.error('Error', error);
+    return {
+      ok: false,
+      message: 'Failed to edit fund',
+    };
+  }
+};
+
 const FundRoute: RouteObject = {
   path: '/funds/:fundId',
   element: <FundPage />,
   loader: loader,
+  action: action,
 };
 
 export default FundRoute;
