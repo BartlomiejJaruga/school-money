@@ -1,13 +1,14 @@
 import styles from './Pagination.module.scss';
 import clsx from 'clsx';
 import { MoveLeft, MoveRight } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useLocation, useSearchParams } from 'react-router-dom';
 
 type FundsPaginationProps = {
   urlPagesName: string;
   totalPages: number;
   currentPage: number;
   resetScrollPosition?: boolean;
+  stateToPass?: Record<string, any>;
 };
 
 export function Pagination({
@@ -15,8 +16,10 @@ export function Pagination({
   currentPage,
   urlPagesName,
   resetScrollPosition = true,
+  stateToPass,
 }: FundsPaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
+  const location = useLocation();
   const pages = Array.from({ length: totalPages }, (_, i) => i);
 
   const handlePageChange = (newPage: number) => {
@@ -25,6 +28,10 @@ export function Pagination({
     searchParams.set(urlPagesName, newPage.toString());
     setSearchParams(searchParams, {
       replace: true,
+      state: {
+        ...location.state,
+        ...stateToPass,
+      },
     });
 
     if (resetScrollPosition) {
