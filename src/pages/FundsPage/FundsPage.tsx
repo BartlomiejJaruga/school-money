@@ -223,7 +223,15 @@ function HistoryFundTile({ historicalFundData }: HistoryFundTileProps) {
         <button
           className={styles['info__more-info']}
           onClick={() => {
-            navigate(`/funds/${historicalFundData.fund.fund_id}`);
+            navigate(`/funds/${historicalFundData.fund.fund_id}`, {
+              state: {
+                childData: {
+                  id: historicalFundData.child.child_id,
+                  firstName: historicalFundData.child.first_name,
+                  lastName: historicalFundData.child.last_name,
+                },
+              },
+            });
           }}
         >
           More info

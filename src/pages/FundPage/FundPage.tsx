@@ -14,6 +14,7 @@ import {
   Image,
   MoveLeft,
   Pencil,
+  School,
   TicketX,
   Trash2,
   User,
@@ -32,6 +33,7 @@ import {
   FUND_DOCUMENTS_TYPE_ENUM,
   type ChildFundStatusType,
   type FundDocumentsType,
+  type SimpleChildData,
 } from '@lib/constants';
 import { EventLogRecord } from '@components/EventLogRecord';
 import type { FundLoaderData } from '@routes/fund.route';
@@ -48,6 +50,12 @@ import { ChildrenStatusesSkeletonLoader } from '@components/ChildrenStatusesSkel
 
 export function FundPage() {
   const FundLoaderData = useLoaderData() as FundLoaderData;
+  const location = useLocation();
+  const passedChildData = location.state?.childData as SimpleChildData;
+  const childNames =
+    passedChildData?.firstName && passedChildData?.lastName
+      ? `${passedChildData.firstName} ${passedChildData.lastName}`
+      : 'Unknown Unknown';
   const isParentTreasurer = true;
 
   return (
@@ -56,6 +64,7 @@ export function FundPage() {
         <FundPageContainer
           fundLoaderData={FundLoaderData}
           isParentTreasurer={isParentTreasurer}
+          childNames={childNames}
         />
       </div>
     </div>
@@ -65,11 +74,13 @@ export function FundPage() {
 type FundPageContainerProps = {
   fundLoaderData: FundLoaderData;
   isParentTreasurer: boolean;
+  childNames: string;
 };
 
 function FundPageContainer({
   fundLoaderData,
   isParentTreasurer,
+  childNames,
 }: FundPageContainerProps) {
   const navigate = useNavigate();
   const fundBalanceInCents =
@@ -132,7 +143,11 @@ function FundPageContainer({
         <img src={defaultFundPhoto} alt="fund photo" />
       </div>
       <div className={styles['grid-container__fund-details']}>
-        <FundDetails fundData={fundLoaderData.fundData} />
+        <FundDetails
+          fundData={fundLoaderData.fundData}
+          schoolClassData={fundLoaderData.schoolClassData}
+          childNames={childNames}
+        />
       </div>
       <div className={styles['grid-container__available-funds']}>
         <span>Fund balance</span>
@@ -178,10 +193,20 @@ function FundPageContainer({
 
 type FundDetailsProps = {
   fundData: FundResponseDTO | null;
+  schoolClassData: SchoolClassResponseDto | null;
+  childNames: string;
 };
 
-function FundDetails({ fundData }: FundDetailsProps) {
+function FundDetails({
+  fundData,
+  schoolClassData,
+  childNames,
+}: FundDetailsProps) {
   const title = fundData?.title ?? 'Unknown fund title';
+  const schoolClassName =
+    schoolClassData?.school_class_name && schoolClassData.school_class_year
+      ? `${schoolClassData?.school_class_name} (${schoolClassData.school_class_year})`
+      : 'Unknown (Unknown)';
   const description = fundData?.description ?? 'Unknown fund description';
   const startDate = fundData?.starts_at ?? '';
   const endDate = fundData?.ends_at ?? '';
@@ -190,6 +215,14 @@ function FundDetails({ fundData }: FundDetailsProps) {
     <div className={styles['fund-details']}>
       <div>
         <h1 className={styles['fund-details__title']}>{title}</h1>
+        <div className={styles['fund-details__child']}>
+          <Baby />
+          <span>{childNames}</span>
+        </div>
+        <div className={styles['fund-details__class-name']}>
+          <School />
+          <span>{schoolClassName}</span>
+        </div>
         <p className={styles['fund-details__description']}>{description}</p>
       </div>
       <HorizontalProgressBar

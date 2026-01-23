@@ -96,7 +96,15 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
           <button
             className={styles['actions-bar__more-info']}
             onClick={() => {
-              navigate(`/funds/${fundData.fund.fund_id}`);
+              navigate(`/funds/${fundData.fund.fund_id}`, {
+                state: {
+                  childData: {
+                    id: fundData.child.child_id,
+                    firstName: fundData.child.first_name,
+                    lastName: fundData.child.last_name,
+                  },
+                },
+              });
             }}
           >
             More info

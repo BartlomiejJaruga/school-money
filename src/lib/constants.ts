@@ -121,3 +121,9 @@ export type ChildData = {
   lastName: string;
   birthday: SimpleDateString;
 };
+
+export type SimpleChildData = {
+  id: string;
+  firstName: string;
+  lastName: string;
+};
