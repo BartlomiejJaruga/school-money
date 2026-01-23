@@ -43,7 +43,7 @@
     width: 100%;
 
     .buttons__cancel {
-      @include default-button();
+      @include default-button-with-spinner();
     }
 
     .buttons__confirm {

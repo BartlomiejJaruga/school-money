@@ -11,6 +11,7 @@ type ConfirmationModalProps = Omit<ModalTemplateProps, 'children'> & {
   highlightedPart?: string;
   onCancel: () => void;
   onConfirm: () => void;
+  isConfirming: boolean;
 };
 
 export function ConfirmationModal({
@@ -22,6 +23,7 @@ export function ConfirmationModal({
   highlightedPart,
   onCancel,
   onConfirm,
+  isConfirming,
 }: ConfirmationModalProps) {
   const renderMessage = () => {
     if (!highlightedPart || !text.includes(highlightedPart)) {
@@ -50,10 +52,18 @@ export function ConfirmationModal({
             <p className={styles['modal__warning-subtext']}>{warningSubtext}</p>
           )}
           <div className={styles['modal__buttons']}>
-            <button className={styles['buttons__cancel']} onClick={onCancel}>
+            <button
+              className={styles['buttons__cancel']}
+              onClick={onCancel}
+              disabled={isConfirming}
+            >
               Cancel
             </button>
-            <button className={styles['buttons__confirm']} onClick={onConfirm}>
+            <button
+              className={styles['buttons__confirm']}
+              onClick={onConfirm}
+              disabled={isConfirming}
+            >
               Confirm
             </button>
           </div>

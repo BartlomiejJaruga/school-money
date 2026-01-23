@@ -58,11 +58,16 @@ import {
   FundEditModalSchema,
   type FundEditModalValues,
 } from '@schemas/fund/fundEditModal.schema';
+import { ConfirmationModal } from '@components/ConfirmationModal';
 
 export function FundPage() {
   const fundLoaderData = useLoaderData() as FundLoaderData;
+  const fundData = fundLoaderData.fundData;
   const location = useLocation();
+  const fetcher = useFetcher();
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isFundCancelModalOpen, setIsFundCancelModalOpen] =
+    useState<boolean>(false);
   const passedChildData = location.state?.childData as SimpleChildData;
   const childNames =
     passedChildData?.firstName && passedChildData?.lastName
@@ -70,14 +75,35 @@ export function FundPage() {
       : 'Unknown Unknown';
   const isParentTreasurer = true;
 
+  const isFetcherBusy = fetcher.state != 'idle';
+
   const handleOpenEditModal = () => {
-    if (fundLoaderData.fundData == null) return;
+    if (fundData == null) return;
 
     setIsEditModalOpen(true);
   };
 
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
+  };
+
+  const handleOpenFundCancelModal = () => {
+    if (fundData == null) return;
+
+    setIsFundCancelModalOpen(true);
+  };
+
+  const handleCloseFundCancelModal = () => {
+    setIsFundCancelModalOpen(false);
+  };
+
+  const handleFundCancel = () => {
+    if (fundData == null) return;
+
+    fetcher.submit(
+      { fundId: fundData.fund_id },
+      { method: 'post', action: '/fundCancel' }
+    );
   };
 
   return (
@@ -89,20 +115,33 @@ export function FundPage() {
             isParentTreasurer={isParentTreasurer}
             childNames={childNames}
             handleOpenEditModal={handleOpenEditModal}
+            handleOpenFundCancelModal={handleOpenFundCancelModal}
           />
         </div>
       </div>
-      {fundLoaderData.fundData && (
-        <ModalTemplate
-          isOpen={isEditModalOpen}
-          onOverlayClick={handleCloseEditModal}
-        >
-          <EditFundModal
-            onClose={handleCloseEditModal}
-            onConfirm={handleCloseEditModal}
-            fundData={fundLoaderData.fundData}
+      {fundData && (
+        <>
+          <ModalTemplate
+            isOpen={isEditModalOpen}
+            onOverlayClick={handleCloseEditModal}
+          >
+            <EditFundModal
+              onClose={handleCloseEditModal}
+              onConfirm={handleCloseEditModal}
+              fundData={fundData}
+            />
+          </ModalTemplate>
+          <ConfirmationModal
+            isOpen={isFundCancelModalOpen}
+            onOverlayClick={handleCloseFundCancelModal}
+            onCancel={handleCloseFundCancelModal}
+            onConfirm={handleFundCancel}
+            text={`Are you sure you want to cancel fund ${fundData.title}?`}
+            warningSubtext="This operation is irreversible!"
+            highlightedPart={`${fundData.title}`}
+            isConfirming={isFetcherBusy}
           />
-        </ModalTemplate>
+        </>
       )}
     </>
   );
@@ -113,6 +152,7 @@ type FundPageContainerProps = {
   isParentTreasurer: boolean;
   childNames: string;
   handleOpenEditModal: () => void;
+  handleOpenFundCancelModal: () => void;
 };
 
 function FundPageContainer({
@@ -120,6 +160,7 @@ function FundPageContainer({
   isParentTreasurer,
   childNames,
   handleOpenEditModal,
+  handleOpenFundCancelModal,
 }: FundPageContainerProps) {
   const navigate = useNavigate();
   const fundBalanceInCents =
@@ -157,7 +198,10 @@ function FundPageContainer({
                 <Pencil />
                 Edit
               </button>
-              <button className={styles['top-bar__cancel']}>
+              <button
+                className={styles['top-bar__cancel']}
+                onClick={handleOpenFundCancelModal}
+              >
                 <TicketX />
                 Cancel
               </button>

@@ -206,6 +206,7 @@ function KidTile({ handleEditChild, childData }: KidTileProps) {
         onOverlayClick={handleDeleteCancel}
         onCancel={handleDeleteCancel}
         onConfirm={handleDeleteConfirm}
+        isConfirming={false}
       />
     </>
   );
