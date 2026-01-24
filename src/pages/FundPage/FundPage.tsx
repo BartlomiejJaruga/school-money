@@ -68,6 +68,7 @@ import {
   type FundDepositModalValues,
 } from '@schemas/fund/fundDepositModal.schema';
 import axiosInstance from '@services/axiosInstance';
+import { getUserData } from '@lib/session';
 
 export function FundPage() {
   const fundLoaderData = useLoaderData() as FundLoaderData;
@@ -81,7 +82,11 @@ export function FundPage() {
   const [isFundCancelModalOpen, setIsFundCancelModalOpen] =
     useState<boolean>(false);
   const passedChildData = location.state?.childData as SimpleChildData;
-  const isParentTreasurer = true;
+  const loggedUserData = getUserData();
+  const isParentTreasurer =
+    loggedUserData && fundLoaderData.fundData
+      ? fundLoaderData.fundData.author_id == loggedUserData.userId
+      : false;
 
   const isFetcherBusy = fetcher.state != 'idle';
 
