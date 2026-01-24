@@ -8,6 +8,11 @@ type ValueOf<T> = T[keyof T];
 export const PASSWORD_MIN_LENGTH = 4;
 export const PASSWORD_MAX_LENGTH = 20;
 
+export const WITHDRAWAL_NOTE_MIN_LENGTH = 1;
+export const WITHDRAWAL_NOTE_MAX_LENGTH = 250;
+export const DEPOSIT_NOTE_MIN_LENGTH = 1;
+export const DEPOSIT_NOTE_MAX_LENGTH = 250;
+
 // === ENUMS AND TYPES ===
 
 export type AuthenticationPageAsideType = ValueOf<

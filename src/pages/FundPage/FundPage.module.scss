@@ -489,7 +489,9 @@ $bento-gap: 1rem;
   }
 }
 
-.fund-edit-modal {
+.fund-edit-modal,
+.fund-withdrawal-modal,
+.fund-deposit-modal {
   display: flex;
   flex-direction: column;
   align-items: center;

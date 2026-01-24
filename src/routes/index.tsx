@@ -16,6 +16,8 @@ import { loader as authenticationLoader } from '@routes/_authenticated.route';
 import FundPaymentRoute from '@routes/_fundPayment.route';
 import FundRejectRoute from '@routes/_fundReject.route';
 import FundCancelRoute from './_fundCancel.route';
+import FundWithdrawalRoute from './_fundWithdrawal.route';
+import FundDepositRoute from './_fundDeposit.route';
 
 export const router = createBrowserRouter([
   {
@@ -41,6 +43,8 @@ export const router = createBrowserRouter([
       FundPaymentRoute,
       FundRejectRoute,
       FundCancelRoute,
+      FundWithdrawalRoute,
+      FundDepositRoute,
     ],
   },
 ]);

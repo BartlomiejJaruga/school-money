@@ -1,5 +1,12 @@
 import { z, ZodObject, type ZodRawShape } from 'zod';
-import { PASSWORD_MIN_LENGTH, PASSWORD_MAX_LENGTH } from '@lib/constants';
+import {
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_MAX_LENGTH,
+  WITHDRAWAL_NOTE_MIN_LENGTH,
+  WITHDRAWAL_NOTE_MAX_LENGTH,
+  DEPOSIT_NOTE_MIN_LENGTH,
+  DEPOSIT_NOTE_MAX_LENGTH,
+} from '@lib/constants';
 
 // consts
 
@@ -91,6 +98,20 @@ export const InvitationCode = z
   .regex(/^[A-Z0-9]{12}$/, 'Invalid code format')
   .optional()
   .or(z.literal(''));
+
+export const WithdrawalNote = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .min(WITHDRAWAL_NOTE_MIN_LENGTH, 'Note is too short')
+  .max(WITHDRAWAL_NOTE_MAX_LENGTH, 'Note is too long');
+
+export const DepositNote = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .min(DEPOSIT_NOTE_MIN_LENGTH, 'Note is too short')
+  .max(DEPOSIT_NOTE_MAX_LENGTH, 'Note is too long');
 
 // functions
 

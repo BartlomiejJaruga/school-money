@@ -59,6 +59,14 @@ import {
   type FundEditModalValues,
 } from '@schemas/fund/fundEditModal.schema';
 import { ConfirmationModal } from '@components/ConfirmationModal';
+import {
+  FundWithdrawalModalSchema,
+  type FundWithdrawalModalValues,
+} from '@schemas/fund/fundWithdrawalModal.schema';
+import {
+  FundDepositModalSchema,
+  type FundDepositModalValues,
+} from '@schemas/fund/fundDepositModal.schema';
 
 export function FundPage() {
   const fundLoaderData = useLoaderData() as FundLoaderData;
@@ -66,6 +74,9 @@ export function FundPage() {
   const location = useLocation();
   const fetcher = useFetcher();
   const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] =
+    useState<boolean>(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState<boolean>(false);
   const [isFundCancelModalOpen, setIsFundCancelModalOpen] =
     useState<boolean>(false);
   const passedChildData = location.state?.childData as SimpleChildData;
@@ -102,6 +113,26 @@ export function FundPage() {
     );
   };
 
+  const handleOpenWithdrawalModal = () => {
+    if (fundData == null) return;
+
+    setIsWithdrawalModalOpen(true);
+  };
+
+  const handleCloseWithdrawalModal = () => {
+    setIsWithdrawalModalOpen(false);
+  };
+
+  const handleOpenDepositModal = () => {
+    if (fundData == null) return;
+
+    setIsDepositModalOpen(true);
+  };
+
+  const handleCloseDepositModal = () => {
+    setIsDepositModalOpen(false);
+  };
+
   return (
     <>
       <div className={styles['page']}>
@@ -112,6 +143,8 @@ export function FundPage() {
             childData={passedChildData}
             handleOpenEditModal={handleOpenEditModal}
             handleOpenFundCancelModal={handleOpenFundCancelModal}
+            handleOpenWithdrawalModal={handleOpenWithdrawalModal}
+            handleOpenDepositModal={handleOpenDepositModal}
           />
         </div>
       </div>
@@ -137,6 +170,26 @@ export function FundPage() {
             highlightedPart={`${fundData.title}`}
             isConfirming={isFetcherBusy}
           />
+          <ModalTemplate
+            isOpen={isWithdrawalModalOpen}
+            onOverlayClick={handleCloseWithdrawalModal}
+          >
+            <WithdrawFundModal
+              onClose={handleCloseWithdrawalModal}
+              onConfirm={handleCloseWithdrawalModal}
+              fundData={fundData}
+            />
+          </ModalTemplate>
+          <ModalTemplate
+            isOpen={isDepositModalOpen}
+            onOverlayClick={handleCloseDepositModal}
+          >
+            <DepositFundModal
+              onClose={handleCloseDepositModal}
+              onConfirm={handleCloseDepositModal}
+              fundData={fundData}
+            />
+          </ModalTemplate>
         </>
       )}
     </>
@@ -149,6 +202,8 @@ type FundPageContainerProps = {
   childData: SimpleChildData;
   handleOpenEditModal: () => void;
   handleOpenFundCancelModal: () => void;
+  handleOpenWithdrawalModal: () => void;
+  handleOpenDepositModal: () => void;
 };
 
 function FundPageContainer({
@@ -157,6 +212,8 @@ function FundPageContainer({
   childData,
   handleOpenEditModal,
   handleOpenFundCancelModal,
+  handleOpenWithdrawalModal,
+  handleOpenDepositModal,
 }: FundPageContainerProps) {
   const navigate = useNavigate();
   const fetcher = useFetcher();
@@ -226,11 +283,17 @@ function FundPageContainer({
                 <TicketX />
                 Cancel
               </button>
-              <button className={styles['top-bar__withdraw']}>
+              <button
+                className={styles['top-bar__withdraw']}
+                onClick={handleOpenWithdrawalModal}
+              >
                 <BanknoteArrowDown />
                 Withdraw
               </button>
-              <button className={styles['top-bar__deposit']}>
+              <button
+                className={styles['top-bar__deposit']}
+                onClick={handleOpenDepositModal}
+              >
                 <BanknoteArrowUp />
                 Deposit
               </button>
@@ -713,6 +776,182 @@ function EditFundModal({ onClose, onConfirm, fundData }: EditFundModalProps) {
             label="Description"
             name="description"
             placeholder="Enter fund description"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
+  );
+}
+
+type WithdrawFundModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  fundData: FundResponseDTO;
+};
+
+function WithdrawFundModal({
+  onClose,
+  onConfirm,
+  fundData,
+}: WithdrawFundModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<FundWithdrawalModalValues>({
+    resolver: zodResolver(FundWithdrawalModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      amount: 0,
+      note: '',
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      onConfirm();
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: FundWithdrawalModalValues) => {
+    fetcher.submit(
+      { fundId: fundData.fund_id, ...values },
+      {
+        method: 'post',
+        action: '/fundWithdrawal',
+      }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['fund-withdrawal-modal']}>
+      <div className={styles['fund-withdrawal-modal__top']}>
+        <h2 className={styles['top__title']}>WITHDRAW MONEY</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['fund-withdrawal-modal__form']}
+        >
+          <CustomInputWithLabel
+            type="number"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount to withdraw"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            label="Note"
+            name="note"
+            placeholder="Enter short note for this action"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
+  );
+}
+
+type DepositFundModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  fundData: FundResponseDTO;
+};
+
+function DepositFundModal({
+  onClose,
+  onConfirm,
+  fundData,
+}: DepositFundModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<FundDepositModalValues>({
+    resolver: zodResolver(FundDepositModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      amount: 0,
+      note: '',
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      onConfirm();
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: FundDepositModalValues) => {
+    fetcher.submit(
+      { fundId: fundData.fund_id, ...values },
+      {
+        method: 'post',
+        action: '/fundDeposit',
+      }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['fund-deposit-modal']}>
+      <div className={styles['fund-deposit-modal__top']}>
+        <h2 className={styles['top__title']}>DEPOSIT MONEY</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['fund-deposit-modal__form']}
+        >
+          <CustomInputWithLabel
+            type="number"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount to deposited"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            label="Note"
+            name="note"
+            placeholder="Enter short note for this action"
             autoComplete="off"
           />
           <div className={styles['form__actions']}>
