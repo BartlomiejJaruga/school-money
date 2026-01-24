@@ -38,7 +38,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     return { ok: true, message: 'Fund rejected successfully.' };
   } catch (error) {
     console.error('Error', error);
-    return null;
+    return { ok: false, message: 'Failed to reject fund.' };
   }
 };
 

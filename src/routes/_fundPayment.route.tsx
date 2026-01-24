@@ -43,7 +43,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
     return { ok: true, message: 'Fund paid successfully.' };
   } catch (error) {
     console.error('Error', error);
-    return null;
+    return { ok: false, message: 'Failed to paid fund.' };
   }
 };
 

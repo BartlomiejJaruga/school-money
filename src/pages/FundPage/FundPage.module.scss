@@ -188,7 +188,7 @@ $bento-gap: 1rem;
   }
 
   &__make-payment {
-    @include default-button(
+    @include default-button-with-spinner(
       $color-accent-primary,
       $color-accent-primary-hover,
       $color-text-white
@@ -196,7 +196,7 @@ $bento-gap: 1rem;
   }
 
   &__reject {
-    @include default-button(
+    @include default-button-with-spinner(
       $color-rejected,
       $color-rejected-hover,
       $color-text-white

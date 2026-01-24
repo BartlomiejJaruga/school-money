@@ -69,10 +69,6 @@ export function FundPage() {
   const [isFundCancelModalOpen, setIsFundCancelModalOpen] =
     useState<boolean>(false);
   const passedChildData = location.state?.childData as SimpleChildData;
-  const childNames =
-    passedChildData?.firstName && passedChildData?.lastName
-      ? `${passedChildData.firstName} ${passedChildData.lastName}`
-      : 'Unknown Unknown';
   const isParentTreasurer = true;
 
   const isFetcherBusy = fetcher.state != 'idle';
@@ -113,7 +109,7 @@ export function FundPage() {
           <FundPageContainer
             fundLoaderData={fundLoaderData}
             isParentTreasurer={isParentTreasurer}
-            childNames={childNames}
+            childData={passedChildData}
             handleOpenEditModal={handleOpenEditModal}
             handleOpenFundCancelModal={handleOpenFundCancelModal}
           />
@@ -150,7 +146,7 @@ export function FundPage() {
 type FundPageContainerProps = {
   fundLoaderData: FundLoaderData;
   isParentTreasurer: boolean;
-  childNames: string;
+  childData: SimpleChildData;
   handleOpenEditModal: () => void;
   handleOpenFundCancelModal: () => void;
 };
@@ -158,17 +154,42 @@ type FundPageContainerProps = {
 function FundPageContainer({
   fundLoaderData,
   isParentTreasurer,
-  childNames,
+  childData,
   handleOpenEditModal,
   handleOpenFundCancelModal,
 }: FundPageContainerProps) {
   const navigate = useNavigate();
+  const fetcher = useFetcher();
   const fundBalanceInCents =
     fundLoaderData.fundData?.fund_current_balance_in_cents;
   const fundBalance =
     typeof fundBalanceInCents == 'number'
       ? (fundBalanceInCents / 100).toFixed(2)
       : 'Unknown';
+  const childNames =
+    childData?.firstName && childData?.lastName
+      ? `${childData.firstName} ${childData.lastName}`
+      : 'Unknown Unknown';
+
+  const handleFundPayment = () => {
+    if (fundLoaderData.fundData == null || typeof childData.id !== 'string')
+      return;
+
+    fetcher.submit(
+      { fundId: fundLoaderData.fundData.fund_id, childId: childData.id },
+      { method: 'post', action: '/fundPayment' }
+    );
+  };
+
+  const handleFundReject = () => {
+    if (fundLoaderData.fundData == null || typeof childData.id !== 'string')
+      return;
+
+    fetcher.submit(
+      { fundId: fundLoaderData.fundData.fund_id, childId: childData.id },
+      { method: 'post', action: '/fundReject' }
+    );
+  };
 
   return (
     <>
@@ -215,11 +236,19 @@ function FundPageContainer({
               </button>
             </>
           )}
-          <button className={styles['top-bar__make-payment']}>
+          <button
+            className={styles['top-bar__make-payment']}
+            onClick={handleFundPayment}
+            disabled={fetcher.state != 'idle'}
+          >
             <BanknoteArrowUp />
             Make payment
           </button>
-          <button className={styles['top-bar__reject']}>
+          <button
+            className={styles['top-bar__reject']}
+            onClick={handleFundReject}
+            disabled={fetcher.state != 'idle'}
+          >
             <BanknoteX />
             Reject
           </button>
