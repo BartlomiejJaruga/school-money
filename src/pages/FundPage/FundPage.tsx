@@ -393,19 +393,19 @@ function FundPageContainer({
       <div className={styles['grid-container__fund-documents']}>
         <h5 className={styles['fund-documents__label']}>Fund documents</h5>
         <FundDocument
-          isParentTreasurer={true}
+          isParentTreasurer={isParentTreasurer}
           fileType={FUND_DOCUMENTS_TYPE_ENUM.image}
         />
         <FundDocument
-          isParentTreasurer={true}
+          isParentTreasurer={isParentTreasurer}
           fileType={FUND_DOCUMENTS_TYPE_ENUM.pdf}
         />
         <FundDocument
-          isParentTreasurer={true}
+          isParentTreasurer={isParentTreasurer}
           fileType={FUND_DOCUMENTS_TYPE_ENUM.archive}
         />
         <FundDocument
-          isParentTreasurer={true}
+          isParentTreasurer={isParentTreasurer}
           fileType={FUND_DOCUMENTS_TYPE_ENUM.video}
         />
         {isParentTreasurer && (
