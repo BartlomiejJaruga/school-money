@@ -408,9 +408,11 @@ function FundPageContainer({
           isParentTreasurer={true}
           fileType={FUND_DOCUMENTS_TYPE_ENUM.video}
         />
-        <button className={styles['fund-documents__upload-files']}>
-          Upload files
-        </button>
+        {isParentTreasurer && (
+          <button className={styles['fund-documents__upload-files']}>
+            Upload files
+          </button>
+        )}
       </div>
     </>
   );
