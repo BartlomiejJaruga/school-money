@@ -67,6 +67,7 @@ import {
   FundDepositModalSchema,
   type FundDepositModalValues,
 } from '@schemas/fund/fundDepositModal.schema';
+import axiosInstance from '@services/axiosInstance';
 
 export function FundPage() {
   const fundLoaderData = useLoaderData() as FundLoaderData;
@@ -217,6 +218,7 @@ function FundPageContainer({
 }: FundPageContainerProps) {
   const navigate = useNavigate();
   const fetcher = useFetcher();
+  const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
   const fundBalanceInCents =
     fundLoaderData.fundData?.fund_current_balance_in_cents;
   const fundBalance =
@@ -227,6 +229,42 @@ function FundPageContainer({
     childData?.firstName && childData?.lastName
       ? `${childData.firstName} ${childData.lastName}`
       : 'Unknown Unknown';
+
+  const handleFundReportDownload = async () => {
+    if (fundLoaderData.fundData == null) return;
+
+    try {
+      setIsGeneratingReport(true);
+      const response = await axiosInstance.get(
+        `/v1/funds/${fundLoaderData.fundData.fund_id}/report`,
+        {
+          responseType: 'blob',
+        }
+      );
+
+      const today = new Date();
+      const formattedToday = formatISOToDate(today.toISOString());
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute(
+        'download',
+        `Report-${fundLoaderData.fundData.title}-${formattedToday}.pdf`
+      );
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setIsGeneratingReport(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsGeneratingReport(false);
+    }
+  };
 
   const handleFundPayment = () => {
     if (fundLoaderData.fundData == null || typeof childData.id !== 'string')
@@ -261,7 +299,11 @@ function FundPageContainer({
             <MoveLeft />
             Return
           </button>
-          <button className={styles['top-bar__generate-report']}>
+          <button
+            className={styles['top-bar__generate-report']}
+            onClick={handleFundReportDownload}
+            disabled={isGeneratingReport}
+          >
             <FileChartColumn />
             Generate report
           </button>

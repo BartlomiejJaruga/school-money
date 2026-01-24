@@ -156,7 +156,7 @@ $bento-gap: 1rem;
   }
 
   &__generate-report {
-    @include default-button;
+    @include default-button-with-spinner;
   }
 
   &__edit {
