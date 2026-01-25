@@ -250,13 +250,20 @@ function FundPageContainer({
       const today = new Date();
       const formattedToday = formatISOToDate(today.toISOString());
 
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = `Report-${fundLoaderData.fundData.title.replaceAll(' ', '_')}-${formattedToday}.pdf`;
+
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (fileNameMatch && fileNameMatch[1]) {
+          fileName = fileNameMatch[1];
+        }
+      }
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute(
-        'download',
-        `Report-${fundLoaderData.fundData.title}-${formattedToday}.pdf`
-      );
+      link.setAttribute('download', fileName);
 
       document.body.appendChild(link);
       link.click();
