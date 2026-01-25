@@ -15,9 +15,11 @@ import ProfileRoute from '@routes/profile.route';
 import { loader as authenticationLoader } from '@routes/_authenticated.route';
 import FundPaymentRoute from '@routes/_fundPayment.route';
 import FundRejectRoute from '@routes/_fundReject.route';
-import FundCancelRoute from './_fundCancel.route';
-import FundWithdrawalRoute from './_fundWithdrawal.route';
-import FundDepositRoute from './_fundDeposit.route';
+import FundCancelRoute from '@routes/_fundCancel.route';
+import FundWithdrawalRoute from '@routes/_fundWithdrawal.route';
+import FundDepositRoute from '@routes/_fundDeposit.route';
+import WalletWithdrawalRoute from '@routes/_walletWithdrawal.route';
+import WalletTopUpRoute from './_walletTopUp.route';
 
 export const router = createBrowserRouter([
   {
@@ -45,6 +47,8 @@ export const router = createBrowserRouter([
       FundCancelRoute,
       FundWithdrawalRoute,
       FundDepositRoute,
+      WalletWithdrawalRoute,
+      WalletTopUpRoute,
     ],
   },
 ]);

@@ -1,4 +1,4 @@
-import { NavLink, useRouteLoaderData } from 'react-router-dom';
+import { NavLink, useFetcher, useRouteLoaderData } from 'react-router-dom';
 import styles from './AppAside.module.scss';
 import logoWhite from '@assets/logo-white.svg';
 import defaultUser from '@assets/default-user.png';
@@ -12,6 +12,7 @@ import {
   GraduationCap,
   UserPen,
   LogOut,
+  X,
 } from 'lucide-react';
 import clsx from 'clsx';
 import { getUserData } from '@lib/session';
@@ -19,9 +20,40 @@ import type { AsideLayoutData } from '@routes/_authenticated.route';
 import type { WalletData } from '@lib/constants';
 import { useEffect, useState } from 'react';
 import type { ParentResponseDto } from '@dtos/ParentResponseDto';
+import { ModalTemplate } from '@components/ModalTemplate';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
+import {
+  WalletWithdrawalModalSchema,
+  type WalletWithdrawalModalValues,
+} from '@schemas/wallet/walletWithdrawalModal.schema';
+import {
+  WalletTopUpModalSchema,
+  type WalletTopUpModalValues,
+} from '@schemas/wallet/walletTopUpModal.schema';
 
 export function AppAside() {
   const asideLayoutData = useRouteLoaderData('aside-layout') as AsideLayoutData;
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] =
+    useState<boolean>(false);
+  const [isTopUpModalOpen, setIsTopUpModalOpen] = useState<boolean>(false);
+
+  const handleOpenWithdrawalModal = () => {
+    setIsWithdrawalModalOpen(true);
+  };
+
+  const handleCloseWithdrawalModal = () => {
+    setIsWithdrawalModalOpen(false);
+  };
+
+  const handleOpenTopUpModal = () => {
+    setIsTopUpModalOpen(true);
+  };
+
+  const handleCloseTopUpModal = () => {
+    setIsTopUpModalOpen(false);
+  };
 
   return (
     <>
@@ -36,7 +68,11 @@ export function AppAside() {
             userAvatar={asideLayoutData.userAvatar}
             userData={asideLayoutData.userData}
           />
-          <Wallet walletData={asideLayoutData.walletData} />
+          <Wallet
+            walletData={asideLayoutData.walletData}
+            handleOpenWithdrawalModal={handleOpenWithdrawalModal}
+            handleOpenTopUpModal={handleOpenTopUpModal}
+          />
           <hr className={styles['top-side__divider']} />
           <NavList />
         </div>
@@ -51,6 +87,24 @@ export function AppAside() {
           </SingleNavLink>
         </div>
       </aside>
+      <ModalTemplate
+        isOpen={isWithdrawalModalOpen}
+        onOverlayClick={handleCloseWithdrawalModal}
+      >
+        <WithdrawWalletModal
+          onClose={handleCloseWithdrawalModal}
+          onConfirm={handleCloseWithdrawalModal}
+        />
+      </ModalTemplate>
+      <ModalTemplate
+        isOpen={isTopUpModalOpen}
+        onOverlayClick={handleCloseTopUpModal}
+      >
+        <TopUpWalletModal
+          onClose={handleCloseTopUpModal}
+          onConfirm={handleCloseTopUpModal}
+        />
+      </ModalTemplate>
     </>
   );
 }
@@ -97,9 +151,15 @@ function UserInfo({ userAvatar, userData }: UserInfoProps) {
 
 type WalletProps = {
   walletData: WalletData | null;
+  handleOpenWithdrawalModal: () => void;
+  handleOpenTopUpModal: () => void;
 };
 
-function Wallet({ walletData }: WalletProps) {
+function Wallet({
+  walletData,
+  handleOpenWithdrawalModal,
+  handleOpenTopUpModal,
+}: WalletProps) {
   const walletBalance = walletData?.balanceInCents
     ? walletData.balanceInCents / 100
     : 'No info';
@@ -113,11 +173,17 @@ function Wallet({ walletData }: WalletProps) {
         </h3>
       </div>
       <div className={styles['wallet__operations']}>
-        <button className={styles['operations__button']}>
+        <button
+          className={styles['operations__button']}
+          onClick={handleOpenTopUpModal}
+        >
           <BanknoteArrowUp className={styles['button__icon']} />
           Top up
         </button>
-        <button className={styles['operations__button']}>
+        <button
+          className={styles['operations__button']}
+          onClick={handleOpenWithdrawalModal}
+        >
           <BanknoteArrowDown className={styles['button__icon']} />
           Withdraw
         </button>
@@ -176,5 +242,162 @@ function SingleNavLink({ to, type, children }: SingleNavLinkProps) {
     >
       {children}
     </NavLink>
+  );
+}
+
+type WithdrawWalletModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+function WithdrawWalletModal({ onClose, onConfirm }: WithdrawWalletModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<WalletWithdrawalModalValues>({
+    resolver: zodResolver(WalletWithdrawalModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      amount: 1,
+      iban: '',
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      onConfirm();
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: WalletWithdrawalModalValues) => {
+    fetcher.submit(values, {
+      method: 'post',
+      action: '/walletWithdrawal',
+    });
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['wallet-withdrawal-modal']}>
+      <div className={styles['wallet-withdrawal-modal__top']}>
+        <h2 className={styles['top__title']}>WITHDRAW MONEY</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['wallet-withdrawal-modal__form']}
+        >
+          <CustomInputWithLabel
+            label="IBAN"
+            name="iban"
+            placeholder="Enter IBAN of account"
+            autoComplete="on"
+          />
+          <CustomInputWithLabel
+            type="number"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount to withdraw"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
+  );
+}
+
+type TopUpWalletModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+};
+
+function TopUpWalletModal({ onClose, onConfirm }: TopUpWalletModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<WalletTopUpModalValues>({
+    resolver: zodResolver(WalletTopUpModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      amount: 1,
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data && fetcher.data.checkoutUrl) {
+      onConfirm();
+      window.location.assign(fetcher.data.checkoutUrl);
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: WalletTopUpModalValues) => {
+    fetcher.submit(
+      { currentAppLocation: window.location.href, ...values },
+      {
+        method: 'post',
+        action: '/walletTopUp',
+      }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['wallet-top-up-modal']}>
+      <div className={styles['wallet-top-up-modal__top']}>
+        <h2 className={styles['top__title']}>TOP UP MONEY</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['wallet-top-up-modal__form']}
+        >
+          <CustomInputWithLabel
+            type="number"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount to top up"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
 }

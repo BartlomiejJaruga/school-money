@@ -113,6 +113,37 @@ export const DepositNote = z
   .min(DEPOSIT_NOTE_MIN_LENGTH, 'Note is too short')
   .max(DEPOSIT_NOTE_MAX_LENGTH, 'Note is too long');
 
+export const IBAN = z
+  .string()
+  .trim()
+  .min(1, 'This field is required')
+  .transform((v) => v.replace(/\s+/g, ''))
+  .refine((v) => {
+    // First regex: 2 country letters + 2 control digits + 11 to 30 alphanumeric characters
+    const ibanRegex = /^[A-Z]{2}[0-9]{2}[A-Z0-9]{11,30}$/;
+    return ibanRegex.test(v);
+  }, 'Invalid IBAN format')
+  .refine((v) => {
+    /**
+     * Modulo 97 Algorithm (ISO 7064)
+     */
+    const rearranged = v.slice(4) + v.slice(0, 4);
+
+    const numeric = rearranged
+      .split('')
+      .map((char) => {
+        const code = char.charCodeAt(0);
+        return code >= 65 && code <= 90 ? (code - 55).toString() : char;
+      })
+      .join('');
+
+    try {
+      return BigInt(numeric) % 97n === 1n;
+    } catch {
+      return false;
+    }
+  }, 'Invalid IBAN checksum');
+
 // functions
 
 export function checkFieldsEquality<

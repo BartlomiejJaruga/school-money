@@ -5,6 +5,9 @@ type ValueOf<T> = T[keyof T];
 
 // === CONSTANTS ===
 
+export const SUCCESSFUL_WALLET_TOP_UP_REDIRECT_URL = 'https://for/future/use';
+export const CANCELLED_WALLET_TOP_UP_REDIRECT_URL = 'https://for/future/use';
+
 export const PASSWORD_MIN_LENGTH = 4;
 export const PASSWORD_MAX_LENGTH = 20;
 
@@ -132,3 +135,10 @@ export type SimpleChildData = {
   firstName: string;
   lastName: string;
 };
+
+export type PaymentProviderType = ValueOf<typeof PAYMENT_PROVIDER_ENUM>;
+
+export const PAYMENT_PROVIDER_ENUM = {
+  stripe: 'STRIPE',
+  internal: 'INTERNAL',
+} as const;
