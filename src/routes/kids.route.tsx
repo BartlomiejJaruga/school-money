@@ -31,7 +31,7 @@ const fetchParentChildren = async (): Promise<ChildData[] | null> => {
   try {
     const response = await axiosInstance.get('/v1/children');
 
-    const children: ChildData[] = response.data.content.map((child: any) => {
+    const children: ChildData[] = response.data.map((child: any) => {
       const childData: ChildData = {
         id: child.child_id,
         schoolClass: {

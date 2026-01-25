@@ -80,6 +80,7 @@ export type PaymentHistoryOperationType = ValueOf<
 >;
 
 export const PAYMENT_HISTORY_OPERATION_TYPE_ENUM = {
+  welcomeBonus: 'WELCOME_BONUS',
   walletTopUp: 'WALLET_TOP_UP',
   walletWithdrawal: 'WALLET_WITHDRAWAL',
   fundPayment: 'FUND_PAYMENT',
@@ -93,8 +94,10 @@ export type PaymentHistoryOperationStatusType = ValueOf<
 >;
 
 export const PAYMENT_HISTORY_OPERATION_STATUS_ENUM = {
-  success: 'success',
-  fail: 'fail',
+  success: 'SUCCESS',
+  fail: 'FAIL',
+  pending: 'PENDING',
+  expired: 'EXPIRED',
 } as const;
 
 export const PROFILE_FORM_TYPE_ENUM = {

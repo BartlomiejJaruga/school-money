@@ -1,5 +1,5 @@
 import styles from './FundsPage.module.scss';
-import { Baby, School } from 'lucide-react';
+import { Baby, FileChartColumn, School } from 'lucide-react';
 import clsx from 'clsx';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { FundStatusTile } from '@components/FundStatusTile';
@@ -19,6 +19,8 @@ import { NothingToShowInformation } from '@components/NothingToShowInformation';
 import type { PagedModelParentChildHistoryFundResponseDto } from '@dtos/PagedModelParentChildHistoryFundResponseDto';
 import { formatISOToDate, isParamChanging } from '@lib/utils';
 import { HistoryFundTileSkeletonLoader } from '@components/HistoryFundTileSkeletonLoader';
+import type { ChildWithSchoolClassInfoResponseDto } from '@dtos/ChildWithSchoolClassInfoResponseDto';
+import axiosInstance from '@services/axiosInstance';
 
 export function FundsPage() {
   const fundsLoaderData = useLoaderData() as FundsLoaderData;
@@ -72,7 +74,9 @@ export function FundsPage() {
               )}
           </div>
           <div className={styles['grid-container__children']}>
-            <ChildrenReportSection />
+            <ChildrenReportSection
+              parentsChildren={fundsLoaderData.parentsChildren}
+            />
           </div>
           <div className={styles['grid-container__history']}>
             <h5 className={styles['history__label']}>Historical funds</h5>
@@ -121,27 +125,91 @@ export function FundsPage() {
   );
 }
 
-function ChildrenReportSection() {
+type ChildrenReportSectionProps = {
+  parentsChildren: ChildWithSchoolClassInfoResponseDto[] | null;
+};
+
+function ChildrenReportSection({
+  parentsChildren,
+}: ChildrenReportSectionProps) {
+  const [currentlySelectedChildId, setCurrentlySelectedChildId] =
+    useState<string>('');
+  const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
+
+  const handleFundReportDownload = async () => {
+    if (!currentlySelectedChildId) return;
+
+    try {
+      setIsGeneratingReport(true);
+      const response = await axiosInstance.get(
+        `/v1/children/${currentlySelectedChildId}/report`,
+        {
+          responseType: 'blob',
+        }
+      );
+
+      const today = new Date();
+      const formattedToday = formatISOToDate(today.toISOString());
+
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = `Report-${currentlySelectedChildId}-${formattedToday}.pdf`;
+
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (fileNameMatch && fileNameMatch[1]) {
+          fileName = fileNameMatch[1];
+        }
+      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setIsGeneratingReport(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsGeneratingReport(false);
+    }
+  };
+
   return (
     <div className={styles['children-report']}>
       <div className={styles['children-report__left-col']}>
         <div className={styles['left-col__scrollbar-container']}>
-          <ChildrenReportTile selected={true} />
-          <ChildrenReportTile selected={false} />
-          <ChildrenReportTile selected={false} />
-          <ChildrenReportTile selected={false} />
+          {parentsChildren &&
+            parentsChildren.map((child) => {
+              return (
+                <ChildrenReportTile
+                  childData={child}
+                  currentlySelectedChildId={currentlySelectedChildId}
+                  setCurrentlySelectedChild={setCurrentlySelectedChildId}
+                />
+              );
+            })}
         </div>
       </div>
       <div className={styles['children-report__right-col']}>
         <div className={styles['right-col__summary']}>
           <span>Total spend</span>
-          <span>1210.00 PLN</span>
+          <span>0.00 PLN</span>
           <span>Refunds</span>
-          <span>210.00 PLN</span>
+          <span>0.00 PLN</span>
           <span>Summary cost</span>
-          <span>1000.00 PLN</span>
+          <span>0.00 PLN</span>
         </div>
-        <button className={styles['right-col__generate-report']}>
+        <button
+          className={styles['right-col__generate-report']}
+          onClick={handleFundReportDownload}
+          disabled={isGeneratingReport}
+        >
+          <FileChartColumn />
           Generate report
         </button>
       </div>
@@ -150,11 +218,19 @@ function ChildrenReportSection() {
 }
 
 type ChildrenReportTileProps = {
-  selected: boolean;
+  childData: ChildWithSchoolClassInfoResponseDto;
+  currentlySelectedChildId: string;
+  setCurrentlySelectedChild: (childId: string) => void;
 };
 
-function ChildrenReportTile({ selected }: ChildrenReportTileProps) {
-  const [isSelected, setIsSelected] = useState<boolean>(selected);
+function ChildrenReportTile({
+  childData,
+  currentlySelectedChildId,
+  setCurrentlySelectedChild,
+}: ChildrenReportTileProps) {
+  const isSelected = childData.child_id === currentlySelectedChildId;
+  const childNames = `${childData.first_name} ${childData.last_name}`;
+  const schoolClassName = `${childData?.school_class?.school_class_name ?? 'No class'} (${childData?.school_class?.school_class_year ?? 'year'})`;
 
   return (
     <div
@@ -164,16 +240,16 @@ function ChildrenReportTile({ selected }: ChildrenReportTileProps) {
       )}
       onClick={(e) => {
         e.stopPropagation();
-        setIsSelected(!isSelected);
+        setCurrentlySelectedChild(childData.child_id);
       }}
     >
-      <h3 className={styles['child-tile__name']}>John Millers</h3>
-      <h3 className={styles['child-tile__class']}>3C 18/19</h3>
+      <h3 className={styles['child-tile__name']}>{childNames}</h3>
+      <h3 className={styles['child-tile__class']}>{schoolClassName}</h3>
       <div className={styles['child-tile__details']}>
         <span>Spend</span>
-        <span>670 PLN</span>
+        <span>0 PLN</span>
         <span>Funds</span>
-        <span>11</span>
+        <span>0</span>
       </div>
       <h6 className={styles['child-tile__info-to-click']}>Click to select</h6>
     </div>
