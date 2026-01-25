@@ -53,8 +53,6 @@ async function registerUser(
   const firstName = String(formData.get('firstName') ?? '');
   const lastName = String(formData.get('lastName') ?? '');
 
-  console.log({ email, password, firstName, lastName });
-
   try {
     const requestBody = {
       first_name: firstName,
@@ -63,8 +61,7 @@ async function registerUser(
       password: password,
     };
 
-    const response = await axiosInstance.post('/v1/auth/register', requestBody);
-    console.log(response);
+    await axiosInstance.post('/v1/auth/register', requestBody);
 
     return redirect(`/?asideType=${AUTHENTICATION_PAGE_ASIDE_TYPE_ENUM.Login}`);
   } catch (error) {
@@ -93,8 +90,6 @@ async function loginUser(
   const email = String(formData.get('email') ?? '');
   const password = String(formData.get('password') ?? '');
 
-  console.log({ email, password });
-
   try {
     const requestBody = {
       email: email,
@@ -105,7 +100,6 @@ async function loginUser(
       '/v1/auth/authenticate',
       requestBody
     );
-    console.log(response);
 
     const userData: UserData = {
       userId: response.data.user_id,

@@ -32,7 +32,6 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
 
       const changeEmail = formData.get('changeEmail') == 'true';
       if (changeEmail) {
-        console.log('changing email!');
         await axiosInstance.post(
           '/v1/users/email/change/request',
           {},
@@ -86,7 +85,7 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
       }
     }
   } else {
-    console.log('[PROFILE ACTION] Other form type submitted.');
+    console.error('[PROFILE ACTION] Other form type submitted.');
   }
 
   return {
