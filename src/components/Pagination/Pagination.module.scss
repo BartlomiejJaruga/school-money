@@ -29,10 +29,12 @@
   }
 
   &__prev {
+    margin-right: 0.5rem;
     padding-right: 0.7rem;
   }
 
   &__next {
+    margin-left: 0.5rem;
     padding-left: 0.7rem;
   }
 
@@ -62,6 +64,20 @@
           background-color: $color-buttons-black;
         }
       }
+    }
+
+    .pages__ellipsis {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: default;
+      aspect-ratio: 1/1;
+      height: 100%;
+      color: $color-text-black;
+      font-weight: 500;
+      font-size: 1.25rem;
+      letter-spacing: 1px;
+      user-select: none;
     }
   }
 }
