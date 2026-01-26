@@ -69,6 +69,16 @@ $bento-gap: 1rem;
       max-width: 24vw;
       height: 100%;
       overflow-x: auto;
+      scrollbar-color: $color-switch-buttons-background transparent;
+
+      &::-webkit-scrollbar {
+        height: 1rem;
+      }
+
+      &::-webkit-scrollbar-track {
+        border-radius: 1rem;
+        background: transparent;
+      }
     }
   }
 
