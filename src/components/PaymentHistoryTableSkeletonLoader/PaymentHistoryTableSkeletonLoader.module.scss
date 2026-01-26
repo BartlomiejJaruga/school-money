@@ -1,0 +1,98 @@
+$elements-border-radius: 0.75rem;
+$table-spacings: 1rem;
+$table-min-width: 400px;
+$table-max-width: 1024px;
+
+.history-table-wrapper {
+  border: 1px solid $color-gray-lines;
+  border-radius: $elements-border-radius;
+  width: clamp($table-min-width, 100%, $table-max-width);
+  overflow: hidden;
+}
+
+.history-table {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: $color-bento-background;
+  width: 100%;
+
+  &__header {
+    background-color: transparent;
+
+    & > tr > th {
+      border-bottom: 1px solid $color-gray-lines;
+      padding: $table-spacings 0 $table-spacings $table-spacings;
+      color: $color-text-black;
+      font-weight: 500;
+      text-align: left;
+
+      &:last-child {
+        padding-right: $table-spacings;
+      }
+    }
+  }
+
+  &__row {
+    border-bottom: 1px solid $color-gray-lines;
+
+    &:last-child {
+      border: 0;
+    }
+  }
+
+  &__cell {
+    padding: $table-spacings 0 $table-spacings $table-spacings;
+
+    &:last-child {
+      padding-right: $table-spacings;
+    }
+  }
+}
+
+.skeleton-bar {
+  border-radius: 4px;
+  background-color: $color-skeleton-background;
+  height: 1rem;
+
+  &--date {
+    width: 140px;
+  }
+  &--amount {
+    width: 80px;
+  }
+  &--operation {
+    width: 120px;
+  }
+  &--status {
+    width: 100px;
+  }
+}
+
+.shimmer {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    transform: translateX(-100%);
+    animation: shimmer-effect 2s infinite;
+    background-image: linear-gradient(
+      90deg,
+      rgba($color-skeleton-shimmer, 0) 0,
+      rgba($color-skeleton-shimmer, 0.3) 20%,
+      rgba($color-skeleton-shimmer, 0.6) 60%,
+      rgba($color-skeleton-shimmer, 0)
+    );
+    content: '';
+  }
+}
+
+@keyframes shimmer-effect {
+  100% {
+    transform: translateX(100%);
+  }
+}

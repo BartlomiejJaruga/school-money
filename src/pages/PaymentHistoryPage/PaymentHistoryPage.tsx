@@ -7,111 +7,117 @@ import {
   type PaymentHistoryOperationType,
 } from '@lib/constants';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useLoaderData, useLocation, useNavigation } from 'react-router-dom';
+import type { PaymentHistoryLoaderData } from '@routes/paymentHistory.route';
+import type { PageableResponseDTO } from '@dtos/_PageableResponseDTO';
+import type { PagedModelFinancialOperationResponseDto } from '@dtos/PagedModelFinancialOperationResponseDto';
+import { Pagination } from '@components/Pagination';
+import { isParamChanging } from '@lib/utils';
+import { NothingToShowInformation } from '@components/NothingToShowInformation';
+import { PaymentHistoryTableSkeletonLoader } from '@components/PaymentHistoryTableSkeletonLoader';
 
-type PaymentHistoryRecord = {
-  date: string;
-  amountInCents: number;
-  operationType: PaymentHistoryOperationType;
-  operationStatus: PaymentHistoryOperationStatusType;
+const pad = (num: number) => num.toString().padStart(2, '0');
+
+/**
+ * Formats ISO 8601 date string using Date methods.
+ * Target format: 'DD.MM.YYYY, HH:mm'
+ */
+export const formatEventLogDate = (isoString: string): string => {
+  const date = new Date(isoString);
+
+  if (isNaN(date.getTime())) return '-';
+
+  const day = pad(date.getDate());
+  const month = pad(date.getMonth() + 1);
+  const year = date.getFullYear();
+  const hours = pad(date.getHours());
+  const minutes = pad(date.getMinutes());
+
+  return `${day}.${month}.${year}, ${hours}:${minutes}`;
 };
 
-const PAYMENT_HISTORY_DATA: PaymentHistoryRecord[] = [
-  {
-    date: '09.10.2025, 14:50',
-    amountInCents: -300,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.walletWithdrawal,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '09.10.2025, 14:47',
-    amountInCents: 300,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundWithdrawal,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '09.10.2025, 14:44',
-    amountInCents: -50,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '08.10.2025, 17:13',
-    amountInCents: -20,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '08.10.2025, 17:11',
-    amountInCents: -20,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.fail,
-  },
-  {
-    date: '07.10.2025, 15:57',
-    amountInCents: 150,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.walletTopUp,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '06.10.2025, 9:05',
-    amountInCents: -50,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '06.10.2025, 9:01',
-    amountInCents: -25,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-  {
-    date: '06.10.2025, 8:50',
-    amountInCents: 75,
-    operationType: PAYMENT_HISTORY_OPERATION_TYPE_ENUM.walletTopUp,
-    operationStatus: PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success,
-  },
-];
-
 export function PaymentHistoryPage() {
+  const paymentHistoryLoaderData = useLoaderData() as PaymentHistoryLoaderData;
+  const financialHistoryData = paymentHistoryLoaderData.financialHistoryData;
+
   return (
     <>
       <div className={styles['page']}>
         <h1 className={styles['page__label']}>Wallet and Funds history</h1>
-        <PaymentHistoryTable data={PAYMENT_HISTORY_DATA} />
-        <PaymentHistoryPagination
-          number={1}
-          size={10}
-          totalElements={267}
-          totalPages={27}
-        />
+        <PaymentHistoryTable financialHistoryData={financialHistoryData} />
       </div>
     </>
   );
 }
 
 type PaymentHistoryTableProps = {
-  data: PaymentHistoryRecord[];
+  financialHistoryData: PageableResponseDTO<PagedModelFinancialOperationResponseDto> | null;
 };
 
-function PaymentHistoryTable({ data }: PaymentHistoryTableProps) {
+function PaymentHistoryTable({
+  financialHistoryData,
+}: PaymentHistoryTableProps) {
+  const navigation = useNavigation();
+  const location = useLocation();
+  const isFetchingPaymentHistory = isParamChanging(
+    navigation,
+    location,
+    'financialHistoryPage'
+  );
+
   return (
-    <div className={styles['history-table-wrapper']}>
-      <table className={styles['history-table']}>
-        <thead className={styles['history-table__header']}>
-          <tr>
-            <th>Date</th>
-            <th>Amount</th>
-            <th>Operation</th>
-            <th>Status</th>
-          </tr>
-        </thead>
-        <tbody className={styles['history-table__body']}>
-          {data.map((record, index) => (
-            <PaymentHistoryTableRow record={record} index={index} />
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <>
+      {isFetchingPaymentHistory && (
+        <PaymentHistoryTableSkeletonLoader skeletonsNumber={10} />
+      )}
+
+      {!isFetchingPaymentHistory &&
+        financialHistoryData &&
+        financialHistoryData.content.length > 0 && (
+          <>
+            <div className={styles['history-table-wrapper']}>
+              <table className={styles['history-table']}>
+                <thead className={styles['history-table__header']}>
+                  <tr>
+                    <th>Date</th>
+                    <th>Amount</th>
+                    <th>Operation</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody className={styles['history-table__body']}>
+                  {financialHistoryData.content.map(
+                    (financialHistoryRecord) => {
+                      return (
+                        <PaymentHistoryTableRow
+                          record={financialHistoryRecord}
+                          key={financialHistoryRecord.started_at}
+                        />
+                      );
+                    }
+                  )}
+                </tbody>
+              </table>
+            </div>
+
+            <Pagination
+              urlPagesName="financialHistoryPage"
+              totalPages={financialHistoryData.page.totalPages}
+              currentPage={financialHistoryData.page.number}
+              className={styles['default-pagination-wrapper']}
+            />
+          </>
+        )}
+
+      {!isFetchingPaymentHistory &&
+        financialHistoryData &&
+        financialHistoryData.content.length < 1 && (
+          <NothingToShowInformation
+            message="Nothing to show here yet."
+            className={styles['nothing-to-show-information']}
+          />
+        )}
+    </>
   );
 }
 
@@ -135,6 +141,10 @@ const getPaymentHistoryOperationString = (
     operationString = 'Wallet Withdrawal';
   } else if (operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundRefund) {
     operationString = 'Fund Refund';
+  } else if (
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.welcomeBonus
+  ) {
+    operationString = 'Welcome Bonus';
   } else {
     operationString = 'Error';
   }
@@ -150,6 +160,10 @@ const getPaymentHistoryOperationStatusString = (
     operationStatusString = 'Success';
   } else if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.fail) {
     operationStatusString = 'Fail';
+  } else if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.pending) {
+    operationStatusString = 'Pending';
+  } else if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.expired) {
+    operationStatusString = 'Expired';
   } else {
     operationStatusString = 'Error';
   }
@@ -163,8 +177,13 @@ const getPaymentHistoryOperationStatusClassname = (
   let operationStatusClassname;
   if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.success) {
     operationStatusClassname = 'positive';
-  } else if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.fail) {
+  } else if (
+    operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.fail ||
+    operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.expired
+  ) {
     operationStatusClassname = 'negative';
+  } else if (operationStatus == PAYMENT_HISTORY_OPERATION_STATUS_ENUM.pending) {
+    operationStatusClassname = 'neutral';
   } else {
     operationStatusClassname = 'Error';
   }
@@ -172,29 +191,59 @@ const getPaymentHistoryOperationStatusClassname = (
   return operationStatusClassname;
 };
 
-type PaymentHistoryTableRowProps = {
-  record: PaymentHistoryRecord;
-  index: number;
+const getPaymentHistoryAmountClassname = (
+  operationType: PaymentHistoryOperationType
+): string => {
+  let amountClassname;
+  if (
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundRefund ||
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundWithdrawal ||
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.walletTopUp ||
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.welcomeBonus
+  ) {
+    amountClassname = 'positive';
+  } else if (
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundDeposit ||
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.fundPayment ||
+    operationType == PAYMENT_HISTORY_OPERATION_TYPE_ENUM.walletWithdrawal
+  ) {
+    amountClassname = 'negative';
+  } else {
+    amountClassname = 'Error';
+  }
+
+  return amountClassname;
 };
 
-function PaymentHistoryTableRow({
-  record,
-  index,
-}: PaymentHistoryTableRowProps) {
-  const amountClassname = record.amountInCents < 0 ? 'negative' : 'positive';
+type PaymentHistoryTableRowProps = {
+  record: PagedModelFinancialOperationResponseDto;
+};
+
+function PaymentHistoryTableRow({ record }: PaymentHistoryTableRowProps) {
   const operationString = getPaymentHistoryOperationString(
-    record.operationType
+    record.operation_type
   );
   const operationStatusString = getPaymentHistoryOperationStatusString(
-    record.operationStatus
+    record.operation_status
   );
   const operationStatusClassname = getPaymentHistoryOperationStatusClassname(
-    record.operationStatus
+    record.operation_status
   );
+  const amountClassname = getPaymentHistoryAmountClassname(
+    record.operation_type
+  );
+  const recordDate =
+    record.processed_at != null ? record.processed_at : record.started_at;
+  const amount =
+    typeof record.amount_in_cents == 'number'
+      ? record.amount_in_cents / 100
+      : 'Unknown';
 
   return (
-    <tr key={index} className={styles['history-table__row']}>
-      <td className={styles['history-table__cell']}>{record.date}</td>
+    <tr className={styles['history-table__row']}>
+      <td className={styles['history-table__cell']}>
+        {formatEventLogDate(recordDate)}
+      </td>
       <td
         className={clsx(
           styles['history-table__cell'],
@@ -202,7 +251,7 @@ function PaymentHistoryTableRow({
           styles[`history-table__cell--${amountClassname}`]
         )}
       >
-        {record.amountInCents} PLN
+        {amount} PLN
       </td>
       <td className={styles['history-table__cell']}>{operationString}</td>
       <td

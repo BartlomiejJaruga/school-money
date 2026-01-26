@@ -80,7 +80,15 @@ $table-max-width: 1024px;
     &--negative {
       color: $color-error;
     }
+
+    &--neutral {
+      color: $color-warning;
+    }
   }
+}
+
+.default-pagination-wrapper {
+  width: clamp($table-min-width, 100%, $table-max-width);
 }
 
 .payment-history-pagination-wrapper {
@@ -145,4 +153,8 @@ $table-max-width: 1024px;
   &__next {
     border-radius: 0 $elements-border-radius $elements-border-radius 0;
   }
+}
+
+.nothing-to-show-information {
+  margin-top: 2rem;
 }

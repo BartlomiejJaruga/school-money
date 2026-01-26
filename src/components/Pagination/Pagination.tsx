@@ -10,6 +10,7 @@ type FundsPaginationProps = {
   currentPage: number;
   resetScrollPosition?: boolean;
   stateToPass?: Record<string, any>;
+  className?: string;
 };
 
 export function Pagination({
@@ -18,6 +19,7 @@ export function Pagination({
   urlPagesName,
   resetScrollPosition = true,
   stateToPass,
+  className,
 }: FundsPaginationProps) {
   const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
@@ -76,7 +78,7 @@ export function Pagination({
   if (totalPages <= 1) return null;
 
   return (
-    <div className={styles['pagination']}>
+    <div className={clsx(styles['pagination'], className ?? '')}>
       <button
         className={styles['pagination__prev']}
         disabled={currentPage == 0}
