@@ -91,7 +91,7 @@ function PaymentHistoryTable({
                       return (
                         <PaymentHistoryTableRow
                           record={financialHistoryRecord}
-                          key={financialHistoryRecord.started_at}
+                          key={financialHistoryRecord.operation_id}
                         />
                       );
                     }

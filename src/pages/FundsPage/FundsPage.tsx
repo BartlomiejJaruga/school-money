@@ -190,6 +190,7 @@ function ChildrenReportSection({
                   childData={child}
                   currentlySelectedChildId={currentlySelectedChildId}
                   setCurrentlySelectedChild={setCurrentlySelectedChildId}
+                  key={child.child_id}
                 />
               );
             })}

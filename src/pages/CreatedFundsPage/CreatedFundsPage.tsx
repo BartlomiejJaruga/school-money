@@ -284,9 +284,11 @@ type EventLogProps = {
 function EventLog({ activeSchoolClassId }: EventLogProps) {
   const [logs, setLogs] =
     useState<PageableResponseDTO<PagedModelFundLogViewDto> | null>(null);
-  const [isFetchingLogs, setIsFetchingLogs] = useState(true);
+  const [isFetchingLogs, setIsFetchingLogs] = useState(false);
 
   useEffect(() => {
+    if (!activeSchoolClassId) return;
+
     const currentSchoolClassLogs = async () => {
       setIsFetchingLogs(true);
 

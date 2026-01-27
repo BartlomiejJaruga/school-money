@@ -4,6 +4,7 @@ import type {
 } from '@lib/constants';
 
 export type PagedModelFinancialOperationResponseDto = {
+  operation_id: string;
   started_at: string; // ISO 8601
   processed_at: string; // ISO 8601
   amount_in_cents: number;
