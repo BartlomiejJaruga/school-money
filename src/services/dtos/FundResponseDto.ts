@@ -1,4 +1,4 @@
-import type { FUND_STATUS_TYPE } from '@lib/constants';
+import type { FundStatusType } from '@lib/constants';
 
 export type FundResponseDTO = {
   fund_id: string;
@@ -16,7 +16,7 @@ export type FundResponseDTO = {
   ended_at: string; // ISO 8601
   amount_per_child_in_cents: number;
   iban: string;
-  fund_status: FUND_STATUS_TYPE;
+  fund_status: FundStatusType;
   fund_current_balance_in_cents: number;
   fund_progress: {
     progress_percentage: number;

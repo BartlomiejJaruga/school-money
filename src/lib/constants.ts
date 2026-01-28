@@ -38,7 +38,7 @@ export const FUND_PAYMENT_STATUS_ENUM = {
   unknown: 'UNKNOWN',
 } as const;
 
-export type FUND_STATUS_TYPE = ValueOf<typeof FUND_STATUS_ENUM>;
+export type FundStatusType = ValueOf<typeof FUND_STATUS_ENUM>;
 
 export const FUND_STATUS_ENUM = {
   scheduled: 'SCHEDULED',

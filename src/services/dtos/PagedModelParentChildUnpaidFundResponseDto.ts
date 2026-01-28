@@ -1,6 +1,6 @@
 import type {
   FUND_PAYMENT_STATUS_TYPE,
-  FUND_STATUS_TYPE,
+  FundStatusType,
   SimpleDateString,
 } from '@lib/constants';
 
@@ -26,7 +26,7 @@ export type PagedModelParentChildUnpaidFundResponseDto = {
     ends_at: string;
     amount_per_child_in_cents: number;
     iban: string;
-    fund_status: FUND_STATUS_TYPE;
+    fund_status: FundStatusType;
     fund_progress: {
       progress_percentage: number;
       current_amount_in_cents: number;

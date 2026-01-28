@@ -100,38 +100,6 @@ $bento-gap: 1rem;
   display: flex;
   gap: $bento-gap;
 
-  .top-bar__funds-summary {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.25rem;
-    border-radius: 0.75rem;
-    border-radius: 0.5rem;
-    background-color: $color-bento-background;
-    padding: 0.5rem 1rem;
-    text-align: center;
-
-    & > h2 {
-      color: $color-text-black;
-      font-weight: 600;
-      font-size: 1.25rem;
-    }
-
-    & > span {
-      color: $color-text-gray;
-      font-weight: 500;
-
-      &:first-child {
-        font-size: 0.8rem;
-      }
-
-      &:last-child {
-        font-size: 0.7rem;
-      }
-    }
-  }
-
   .top-bar__funds-type-button {
     display: flex;
     flex-grow: 2;

@@ -7,13 +7,20 @@ import {
   HeartHandshake,
   Baby,
   User,
+  Clock,
 } from 'lucide-react';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useEffect, useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
-import { useLoaderData, useNavigate } from 'react-router-dom';
-import { FUND_STATUS_ENUM } from '@lib/constants';
+import {
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useNavigation,
+  useSearchParams,
+} from 'react-router-dom';
+import { FUND_STATUS_ENUM, type FundStatusType } from '@lib/constants';
 import { ModalTemplate } from '@components/ModalTemplate';
 import { FundInfoModal } from '@components/FundInfoModal';
 import type { CreatedFundsLoaderData } from '@routes/createdFunds.route';
@@ -23,17 +30,35 @@ import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { Pagination } from '@components/Pagination';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
 import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
+import { isParamChanging } from '@lib/utils';
+import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 
 export function CreatedFundsPage() {
   const createdFundsLoaderData = useLoaderData() as CreatedFundsLoaderData;
-  const [isCreateFundModalOpen, setIsCreateFundModalOpen] = useState(false);
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isCreateFundModalOpen, setIsCreateFundModalOpen] =
+    useState<boolean>(false);
   const treasurerClasses = createdFundsLoaderData.treasurerClasses;
-  const [currentSchoolClass, setCurrentSchoolClass] = useState(
-    treasurerClasses && treasurerClasses[0]
+  const [currentSchoolClass, setCurrentSchoolClass] =
+    useState<SchoolClassResponseDto | null>(
+      treasurerClasses && treasurerClasses[0]
+    );
+  const [currentFundStatus, setCurrentFundStatus] = useState<FundStatusType>(
+    FUND_STATUS_ENUM.active
   );
+
+  const handleFundStatusChange = (newFundStatusType: FundStatusType) => {
+    setCurrentFundStatus(newFundStatusType);
+    searchParams.delete('logsPage');
+    setSearchParams(searchParams, {
+      replace: true,
+    });
+  };
 
   const handleSchoolClassChange = (newSchoolClassId: string) => {
     if (!treasurerClasses) return;
+
+    handleFundStatusChange(FUND_STATUS_ENUM.active);
 
     const schoolClassResponseDto = treasurerClasses.find(
       (schoolClass) => schoolClass.school_class_id == newSchoolClassId
@@ -87,7 +112,10 @@ export function CreatedFundsPage() {
               Create fund
             </button>
             <div className={styles['grid-container__fund-list']}>
-              <FundListTopBar />
+              <FundListTopBar
+                currentFundStatus={currentFundStatus}
+                handleFundStatusChange={handleFundStatusChange}
+              />
               <div className={styles['fund-list__container']}>
                 <FundTile />
                 <FundTile />
@@ -98,7 +126,8 @@ export function CreatedFundsPage() {
             </div>
             <div className={styles['grid-container__event-log']}>
               <EventLog
-                activeSchoolClassId={
+                currentFundStatus={currentFundStatus}
+                currentSchoolClassId={
                   currentSchoolClass?.school_class_id ?? null
                 }
               />
@@ -149,30 +178,71 @@ function ClassButton({
   );
 }
 
-function FundListTopBar() {
+type FundListTopBarProps = {
+  currentFundStatus: FundStatusType;
+  handleFundStatusChange: (newFundStatusType: FundStatusType) => void;
+};
+
+function FundListTopBar({
+  currentFundStatus,
+  handleFundStatusChange,
+}: FundListTopBarProps) {
   return (
     <div className={styles['fund-list__top-bar']}>
-      <div className={styles['top-bar__funds-summary']}>
-        <span>Total funds available</span>
-        <h2>2100 PLN</h2>
-        <span>in 10 funds</span>
-      </div>
       <div
         className={clsx(
           styles['top-bar__funds-type-button'],
-          styles['top-bar__funds-type-button--active']
+          currentFundStatus == FUND_STATUS_ENUM.active &&
+            styles['top-bar__funds-type-button--active']
         )}
+        onClick={() => {
+          handleFundStatusChange(FUND_STATUS_ENUM.active);
+        }}
       >
         <Ticket />
         <span>Active</span>
       </div>
-      <div className={styles['top-bar__funds-type-button']}>
+
+      <div
+        className={clsx(
+          styles['top-bar__funds-type-button'],
+          currentFundStatus == FUND_STATUS_ENUM.cancelled &&
+            styles['top-bar__funds-type-button--active']
+        )}
+        onClick={() => {
+          handleFundStatusChange(FUND_STATUS_ENUM.cancelled);
+        }}
+      >
         <TicketX />
-        <span>Refunded</span>
+        <span>Cancelled</span>
       </div>
-      <div className={styles['top-bar__funds-type-button']}>
+
+      <div
+        className={clsx(
+          styles['top-bar__funds-type-button'],
+          currentFundStatus == FUND_STATUS_ENUM.finished &&
+            styles['top-bar__funds-type-button--active']
+        )}
+        onClick={() => {
+          handleFundStatusChange(FUND_STATUS_ENUM.finished);
+        }}
+      >
         <TicketCheck />
         <span>Finished</span>
+      </div>
+
+      <div
+        className={clsx(
+          styles['top-bar__funds-type-button'],
+          currentFundStatus == FUND_STATUS_ENUM.scheduled &&
+            styles['top-bar__funds-type-button--active']
+        )}
+        onClick={() => {
+          handleFundStatusChange(FUND_STATUS_ENUM.scheduled);
+        }}
+      >
+        <Clock />
+        <span>Scheduled</span>
       </div>
     </div>
   );
@@ -278,52 +348,64 @@ function ClassInfo() {
 }
 
 type EventLogProps = {
-  activeSchoolClassId: string | null;
+  currentFundStatus: FundStatusType;
+  currentSchoolClassId: string | null;
 };
 
-function EventLog({ activeSchoolClassId }: EventLogProps) {
+function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
   const [logs, setLogs] =
     useState<PageableResponseDTO<PagedModelFundLogViewDto> | null>(null);
   const [isFetchingLogs, setIsFetchingLogs] = useState(false);
+  const [searchParams] = useSearchParams();
+  const navigation = useNavigation();
+  const location = useLocation();
+  const isPaginating = isParamChanging(navigation, location, 'logsPage');
+
+  const currentPage = parseInt(searchParams.get('logsPage') || '0');
 
   useEffect(() => {
-    if (!activeSchoolClassId) return;
+    if (!currentSchoolClassId) return;
 
     const currentSchoolClassLogs = async () => {
       setIsFetchingLogs(true);
 
+      console.log(currentFundStatus, currentSchoolClassId);
+
       try {
         const response = await axiosInstance.get(
-          `/v1/school-classes/${activeSchoolClassId}/funds/logs`,
+          `/v1/school-classes/${currentSchoolClassId}/funds/logs`,
           {
             params: {
-              fundStatus: FUND_STATUS_ENUM.active,
-              page: 0,
+              fundStatus: currentFundStatus,
+              page: currentPage,
               size: 10,
             },
           }
         );
 
         setLogs(response.data ?? null);
-        setIsFetchingLogs(false);
       } catch (error) {
         console.error('Error', error);
         setLogs(null);
+      } finally {
         setIsFetchingLogs(false);
       }
     };
 
     currentSchoolClassLogs();
-  }, [activeSchoolClassId]);
+  }, [currentSchoolClassId, currentFundStatus, currentPage]);
+
+  const isLoading = isFetchingLogs || isPaginating;
 
   return (
     <>
       <h3 className={styles['event-log__title']}>Event log</h3>
-      {isFetchingLogs && (
+
+      {isLoading && (
         <EventLogRecordSkeleton skeletonsNumber={10} showFundTitle={true} />
       )}
 
-      {!isFetchingLogs && logs && logs.content.length > 0 && (
+      {!isLoading && logs && logs.content.length > 0 && (
         <>
           {logs.content.map((fundLog) => {
             return (
@@ -338,11 +420,12 @@ function EventLog({ activeSchoolClassId }: EventLogProps) {
             urlPagesName="logsPage"
             totalPages={logs.page.totalPages}
             currentPage={logs.page.number}
+            resetScrollPosition={false}
           />
         </>
       )}
 
-      {!isFetchingLogs && logs && logs.content.length < 1 && (
+      {!isLoading && logs && logs.content.length < 1 && (
         <NothingToShowInformation
           message="Nothing has happened yet."
           className={styles['event-log__no-logs-info']}
