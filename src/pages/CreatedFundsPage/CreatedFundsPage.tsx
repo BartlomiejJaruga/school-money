@@ -8,12 +8,14 @@ import {
   Baby,
   User,
   Clock,
+  X,
 } from 'lucide-react';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { useEffect, useState } from 'react';
 import { EventLogRecord } from '@components/EventLogRecord';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import {
+  useFetcher,
   useLoaderData,
   useLocation,
   useNavigate,
@@ -34,6 +36,13 @@ import { formatISOToDate, isParamChanging } from '@lib/utils';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import type { FundWithChildrenResponseDto } from '@dtos/FundWithChildrenResponseDto';
 import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
+import { FormProvider, useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import {
+  FundWithdrawalModalSchema,
+  type FundWithdrawalModalValues,
+} from '@schemas/fund/fundWithdrawalModal.schema';
+import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
 
 export function CreatedFundsPage() {
   const createdFundsLoaderData = useLoaderData() as CreatedFundsLoaderData;
@@ -56,6 +65,10 @@ export function CreatedFundsPage() {
   const isPaginatingFunds = isParamChanging(navigation, location, 'fundsPage');
   const isLoadingFunds = isPaginatingFunds || isFetchingFunds;
   const currentFundsPage = parseInt(searchParams.get('fundsPage') || '0');
+  const [currentlyWithdrawaledFundData, setCurrentlyWithdrawaledFundData] =
+    useState<FundWithChildrenResponseDto | null>(null);
+  const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] =
+    useState<boolean>(false);
 
   useEffect(() => {
     if (!currentSchoolClass) return;
@@ -119,6 +132,18 @@ export function CreatedFundsPage() {
     setIsCreateFundModalOpen(false);
   };
 
+  const handleOpenWithdrawalModal = (fundData: FundWithChildrenResponseDto) => {
+    if (fundData == null) return;
+
+    setCurrentlyWithdrawaledFundData(fundData);
+    setIsWithdrawalModalOpen(true);
+  };
+
+  const handleCloseWithdrawalModal = () => {
+    setIsWithdrawalModalOpen(false);
+    setCurrentlyWithdrawaledFundData(null);
+  };
+
   return (
     <>
       <div className={styles['page']}>
@@ -165,7 +190,11 @@ export function CreatedFundsPage() {
                   <>
                     {funds.content.map((fundData) => {
                       return (
-                        <FundTile fundData={fundData} key={fundData.fund_id} />
+                        <FundTile
+                          fundData={fundData}
+                          handleOpenWithdrawalModal={handleOpenWithdrawalModal}
+                          key={fundData.fund_id}
+                        />
                       );
                     })}
                     <Pagination
@@ -207,6 +236,16 @@ export function CreatedFundsPage() {
           onClose={handleCancelCreateFundModal}
           onConfirm={handleConfirmCreateFundModal}
           classesData={createdFundsLoaderData.treasurerClasses}
+        />
+      </ModalTemplate>
+      <ModalTemplate
+        isOpen={isWithdrawalModalOpen}
+        onOverlayClick={handleCloseWithdrawalModal}
+      >
+        <WithdrawFundModal
+          onClose={handleCloseWithdrawalModal}
+          onConfirm={handleCloseWithdrawalModal}
+          fundData={currentlyWithdrawaledFundData!}
         />
       </ModalTemplate>
     </>
@@ -313,9 +352,10 @@ function FundListTopBar({
 
 type FundTileProps = {
   fundData: FundWithChildrenResponseDto;
+  handleOpenWithdrawalModal: (fundData: FundWithChildrenResponseDto) => void;
 };
 
-function FundTile({ fundData }: FundTileProps) {
+function FundTile({ fundData, handleOpenWithdrawalModal }: FundTileProps) {
   const navigate = useNavigate();
   const availableFunds = Number(
     (fundData.fund_progress.current_amount_in_cents / 100).toFixed(2)
@@ -367,7 +407,12 @@ function FundTile({ fundData }: FundTileProps) {
           textEnd="Goal:"
         />
         <div className={styles['details__actions-bar']}>
-          <button className={styles['actions-bar__withdraw']}>
+          <button
+            className={styles['actions-bar__withdraw']}
+            onClick={() => {
+              handleOpenWithdrawalModal(fundData);
+            }}
+          >
             Withdraw money
           </button>
           <button
@@ -507,5 +552,93 @@ function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
         />
       )}
     </>
+  );
+}
+
+type WithdrawFundModalProps = {
+  onClose: () => void;
+  onConfirm: () => void;
+  fundData: FundWithChildrenResponseDto;
+};
+
+function WithdrawFundModal({
+  onClose,
+  onConfirm,
+  fundData,
+}: WithdrawFundModalProps) {
+  const fetcher = useFetcher();
+  const formMethods = useForm<FundWithdrawalModalValues>({
+    resolver: zodResolver(FundWithdrawalModalSchema),
+    mode: 'onChange',
+    defaultValues: {
+      amount: 0,
+      note: '',
+    },
+  });
+
+  useEffect(() => {
+    if (fetcher.state === 'idle' && fetcher.data) {
+      onConfirm();
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  const {
+    handleSubmit,
+    formState: { isSubmitting },
+  } = formMethods;
+
+  const onSubmit = (values: FundWithdrawalModalValues) => {
+    fetcher.submit(
+      { fundId: fundData.fund_id, ...values },
+      {
+        method: 'post',
+        action: '/fundWithdrawal',
+      }
+    );
+  };
+
+  const busy = isSubmitting || fetcher.state != 'idle';
+
+  return (
+    <div className={styles['fund-withdrawal-modal']}>
+      <div className={styles['fund-withdrawal-modal__top']}>
+        <h2 className={styles['top__title']}>WITHDRAW MONEY</h2>
+        <X onClick={onClose} className={styles['top__close-icon-button']} />
+      </div>
+      <FormProvider {...formMethods}>
+        <form
+          noValidate
+          onSubmit={handleSubmit(onSubmit)}
+          className={styles['fund-withdrawal-modal__form']}
+        >
+          <CustomInputWithLabel
+            type="number"
+            label="Amount"
+            name="amount"
+            placeholder="Enter amount to withdraw"
+            autoComplete="off"
+          />
+          <CustomInputWithLabel
+            label="Note"
+            name="note"
+            placeholder="Enter short note for this action"
+            autoComplete="off"
+          />
+          <div className={styles['form__actions']}>
+            <button
+              type="button"
+              onClick={onClose}
+              className={styles['actions__cancel']}
+              disabled={busy}
+            >
+              Cancel
+            </button>
+            <button className={styles['actions__confirm']} disabled={busy}>
+              Confirm
+            </button>
+          </div>
+        </form>
+      </FormProvider>
+    </div>
   );
 }
