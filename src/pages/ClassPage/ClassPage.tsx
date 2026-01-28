@@ -1,4 +1,4 @@
-import { Baby, MoveLeft, User } from 'lucide-react';
+import { Baby, FileChartColumn, MoveLeft, User } from 'lucide-react';
 import styles from './ClassPage.module.scss';
 import { useState } from 'react';
 import clsx from 'clsx';
@@ -11,6 +11,8 @@ import type { ChildWithParentInfoResponseDto } from '@dtos/ChildWithParentInfoRe
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
 import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
+import axiosInstance from '@services/axiosInstance';
+import { formatISOToDate } from '@lib/utils';
 
 export function ClassPage() {
   const classLoaderData = useLoaderData() as ClassLoaderData;
@@ -20,6 +22,52 @@ export function ClassPage() {
   const isFetchingFunds =
     navigation.state == 'loading' &&
     navigation.location.search.includes('fundsPage');
+  const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
+
+  const handleFundReportDownload = async () => {
+    if (classData == null) return;
+
+    try {
+      setIsGeneratingReport(true);
+      const response = await axiosInstance.get(
+        `/v1/school-classes/${classData.school_class_id}/report`,
+        {
+          responseType: 'blob',
+        }
+      );
+
+      const today = new Date();
+      const formattedToday = formatISOToDate(today.toISOString());
+
+      const schoolClassName = `${classData.school_class_name}_${classData.school_class_year}`;
+
+      const contentDisposition = response.headers['content-disposition'];
+      let fileName = `Report-${schoolClassName.replaceAll(' ', '_')}-${formattedToday}.pdf`;
+
+      if (contentDisposition) {
+        const fileNameMatch = contentDisposition.match(/filename="?([^"]+)"?/);
+        if (fileNameMatch && fileNameMatch[1]) {
+          fileName = fileNameMatch[1];
+        }
+      }
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', fileName);
+
+      document.body.appendChild(link);
+      link.click();
+
+      link.parentNode?.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setIsGeneratingReport(false);
+    } catch (error) {
+      console.error('Error:', error);
+      setIsGeneratingReport(false);
+    }
+  };
 
   return (
     <>
@@ -35,7 +83,12 @@ export function ClassPage() {
               <MoveLeft />
               Return
             </button>
-            <button className={styles['top-bar__generate-report-btn']}>
+            <button
+              className={styles['top-bar__generate-report-btn']}
+              onClick={handleFundReportDownload}
+              disabled={isGeneratingReport}
+            >
+              <FileChartColumn />
               Generate report
             </button>
             <div

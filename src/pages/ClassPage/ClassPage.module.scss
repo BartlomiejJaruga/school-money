@@ -71,11 +71,21 @@ $bento-gap: 1rem;
 .top-bar {
   &__return-btn,
   &__generate-report-btn {
-    @include default-button;
+    @include default-button-with-spinner;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
     border-radius: $bento-border-radius;
     padding: 0.25rem min(1rem, 3%);
     font-weight: 400;
     font-size: 1.25rem;
+
+    & > svg {
+      stroke-width: 2px !important;
+      width: auto;
+      height: 1.5rem;
+    }
   }
 
   &__return-btn {
