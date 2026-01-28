@@ -353,22 +353,26 @@ function FundPageContainer({
               </button>
             </>
           )}
-          <button
-            className={styles['top-bar__make-payment']}
-            onClick={handleFundPayment}
-            disabled={fetcher.state != 'idle'}
-          >
-            <BanknoteArrowUp />
-            Make payment
-          </button>
-          <button
-            className={styles['top-bar__reject']}
-            onClick={handleFundReject}
-            disabled={fetcher.state != 'idle'}
-          >
-            <BanknoteX />
-            Reject
-          </button>
+          {childData && (
+            <>
+              <button
+                className={styles['top-bar__make-payment']}
+                onClick={handleFundPayment}
+                disabled={fetcher.state != 'idle'}
+              >
+                <BanknoteArrowUp />
+                Make payment
+              </button>
+              <button
+                className={styles['top-bar__reject']}
+                onClick={handleFundReject}
+                disabled={fetcher.state != 'idle'}
+              >
+                <BanknoteX />
+                Reject
+              </button>
+            </>
+          )}
         </div>
       </div>
       <div className={styles['grid-container__fund-photo']}>
@@ -378,7 +382,7 @@ function FundPageContainer({
         <FundDetails
           fundData={fundLoaderData.fundData}
           schoolClassData={fundLoaderData.schoolClassData}
-          childNames={childNames}
+          childNames={childData ? childNames : null}
         />
       </div>
       <div className={styles['grid-container__available-funds']}>
@@ -428,7 +432,7 @@ function FundPageContainer({
 type FundDetailsProps = {
   fundData: FundResponseDTO | null;
   schoolClassData: SchoolClassResponseDto | null;
-  childNames: string;
+  childNames: string | null;
 };
 
 function FundDetails({
@@ -449,10 +453,12 @@ function FundDetails({
     <div className={styles['fund-details']}>
       <div>
         <h1 className={styles['fund-details__title']}>{title}</h1>
-        <div className={styles['fund-details__child']}>
-          <Baby />
-          <span>{childNames}</span>
-        </div>
+        {childNames && (
+          <div className={styles['fund-details__child']}>
+            <Baby />
+            <span>{childNames}</span>
+          </div>
+        )}
         <div className={styles['fund-details__class-name']}>
           <School />
           <span>{schoolClassName}</span>
