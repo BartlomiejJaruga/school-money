@@ -93,7 +93,7 @@ export function FundInfoModal({
           onSubmit={handleSubmit(onSubmit)}
           className={styles['fund-info-modal__form']}
         >
-          <div>PHOTO</div>
+          <div style={{ fontStyle: 'italic', textAlign: 'center' }}>PHOTO</div>
           <CustomInputWithLabel
             label="Title"
             name="title"

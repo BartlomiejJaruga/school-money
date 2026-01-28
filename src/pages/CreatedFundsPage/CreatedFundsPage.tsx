@@ -30,11 +30,15 @@ import type { PagedModelFundLogViewDto } from '@dtos/PagedModelFundLogViewDto';
 import { Pagination } from '@components/Pagination';
 import { NothingToShowInformation } from '@components/NothingToShowInformation';
 import { EventLogRecordSkeleton } from '@components/EventLogRecordSkeleton';
-import { isParamChanging } from '@lib/utils';
+import { formatISOToDate, isParamChanging } from '@lib/utils';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import type { FundWithChildrenResponseDto } from '@dtos/FundWithChildrenResponseDto';
+import { FundTileSkeletonLoader } from '@components/FundTileSkeletonLoader';
 
 export function CreatedFundsPage() {
   const createdFundsLoaderData = useLoaderData() as CreatedFundsLoaderData;
+  const navigation = useNavigation();
+  const location = useLocation();
   const [searchParams, setSearchParams] = useSearchParams();
   const [isCreateFundModalOpen, setIsCreateFundModalOpen] =
     useState<boolean>(false);
@@ -46,6 +50,42 @@ export function CreatedFundsPage() {
   const [currentFundStatus, setCurrentFundStatus] = useState<FundStatusType>(
     FUND_STATUS_ENUM.active
   );
+  const [funds, setFunds] =
+    useState<PageableResponseDTO<FundWithChildrenResponseDto> | null>(null);
+  const [isFetchingFunds, setIsFetchingFunds] = useState<boolean>(false);
+  const isPaginatingFunds = isParamChanging(navigation, location, 'fundsPage');
+  const isLoadingFunds = isPaginatingFunds || isFetchingFunds;
+  const currentFundsPage = parseInt(searchParams.get('fundsPage') || '0');
+
+  useEffect(() => {
+    if (!currentSchoolClass) return;
+
+    const fetchRequestedFunds = async () => {
+      setIsFetchingFunds(true);
+
+      try {
+        const response = await axiosInstance.get(
+          `/v1/school-classes/${currentSchoolClass.school_class_id}/funds`,
+          {
+            params: {
+              status: currentFundStatus,
+              page: currentFundsPage,
+              size: 3,
+            },
+          }
+        );
+
+        setFunds(response.data ?? null);
+      } catch (error) {
+        console.error('Error', error);
+        setFunds(null);
+      } finally {
+        setIsFetchingFunds(false);
+      }
+    };
+
+    fetchRequestedFunds();
+  }, [currentSchoolClass, currentFundStatus, currentFundsPage]);
 
   const handleFundStatusChange = (newFundStatusType: FundStatusType) => {
     setCurrentFundStatus(newFundStatusType);
@@ -117,8 +157,31 @@ export function CreatedFundsPage() {
                 handleFundStatusChange={handleFundStatusChange}
               />
               <div className={styles['fund-list__container']}>
-                <FundTile />
-                <FundTile />
+                {isLoadingFunds && (
+                  <FundTileSkeletonLoader skeletonsNumber={3} />
+                )}
+
+                {!isLoadingFunds && funds && funds.content.length > 0 && (
+                  <>
+                    {funds.content.map((fundData) => {
+                      return (
+                        <FundTile fundData={fundData} key={fundData.fund_id} />
+                      );
+                    })}
+                    <Pagination
+                      urlPagesName="fundsPage"
+                      totalPages={funds.page.totalPages}
+                      currentPage={funds.page.number}
+                    />
+                  </>
+                )}
+
+                {!isLoadingFunds && funds && funds.content.length < 1 && (
+                  <NothingToShowInformation
+                    message="Nothing to show."
+                    className={styles['fund-list__nothing-to-show']}
+                  />
+                )}
               </div>
             </div>
             <div className={styles['grid-container__class-info']}>
@@ -248,8 +311,25 @@ function FundListTopBar({
   );
 }
 
-function FundTile() {
+type FundTileProps = {
+  fundData: FundWithChildrenResponseDto;
+};
+
+function FundTile({ fundData }: FundTileProps) {
   const navigate = useNavigate();
+  const availableFunds = Number(
+    (fundData.fund_progress.current_amount_in_cents / 100).toFixed(2)
+  );
+  const targetAmount = Number(
+    (fundData.fund_progress.target_amount_in_cents / 100).toFixed(2)
+  );
+  const currentAmount = Number(
+    (
+      (fundData.fund_progress.paid_children_count *
+        fundData.amount_per_child_in_cents) /
+      100
+    ).toFixed(2)
+  );
 
   return (
     <div className={styles['fund-tile']}>
@@ -261,22 +341,19 @@ function FundTile() {
       <div className={styles['fund-tile__details']}>
         <div className={styles['details__top']}>
           <div>
-            <h2 className={styles['fund-title']}>Theater trip</h2>
-            <p className={styles['fund-description']}>
-              After the play ends, the theater will self-ignite in an act of
-              despair and dramatic events.
-            </p>
+            <h2 className={styles['fund-title']}>{fundData.title}</h2>
+            <p className={styles['fund-description']}>{fundData.description}</p>
           </div>
           <div>
             <span>Funds available</span>
-            <h2>24 PLN</h2>
+            <h2>{`${availableFunds} PLN`}</h2>
           </div>
         </div>
         <HorizontalProgressBar
           type="date"
           title="Time"
-          start="23.11.2025"
-          end="30.11.2025"
+          start={formatISOToDate(fundData.starts_at)}
+          end={formatISOToDate(fundData.ends_at)}
           textStart="Created:"
           textEnd="Due to:"
         />
@@ -284,8 +361,8 @@ function FundTile() {
           type="numeric"
           title="Budget"
           start={0}
-          end={240}
-          current={24}
+          end={targetAmount}
+          current={currentAmount}
           textStart="Raised:"
           textEnd="Goal:"
         />
@@ -296,7 +373,7 @@ function FundTile() {
           <button
             className={styles['actions-bar__more-info']}
             onClick={() => {
-              navigate('/funds/fund');
+              navigate(`/funds/${fundData.fund_id}`);
             }}
           >
             More info
@@ -368,8 +445,6 @@ function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
 
     const currentSchoolClassLogs = async () => {
       setIsFetchingLogs(true);
-
-      console.log(currentFundStatus, currentSchoolClassId);
 
       try {
         const response = await axiosInstance.get(

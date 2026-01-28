@@ -21,6 +21,7 @@ $bento-gap: 1rem;
     'fund-list fund-list fund-list event-log event-log event-log'
     'fund-list fund-list fund-list event-log event-log event-log';
   gap: $bento-gap;
+  width: 100%;
   min-height: inherit;
 
   &__classes {
@@ -96,55 +97,63 @@ $bento-gap: 1rem;
   }
 }
 
-.fund-list__top-bar {
-  display: flex;
-  gap: $bento-gap;
-
-  .top-bar__funds-type-button {
+.fund-list {
+  &__top-bar {
     display: flex;
-    flex-grow: 2;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 0.25rem;
-    transition:
-      background-color 0.3s ease,
-      color 0.3s ease;
-    cursor: pointer;
-    box-sizing: border-box;
-    border-radius: 0.5rem;
-    background-color: $color-switch-buttons-background;
-    padding: 0.75rem 1.5rem;
-    width: max(20%, 80px);
+    gap: $bento-gap;
 
-    &:hover:not(&--active) {
-      background-color: $color-accent-secondary;
-    }
+    .top-bar__funds-type-button {
+      display: flex;
+      flex-grow: 2;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.25rem;
+      transition:
+        background-color 0.3s ease,
+        color 0.3s ease;
+      cursor: pointer;
+      box-sizing: border-box;
+      border-radius: 0.5rem;
+      background-color: $color-switch-buttons-background;
+      padding: 0.75rem 1.5rem;
+      width: max(20%, 80px);
 
-    &--active {
-      background-color: $color-aside-background;
-      color: $color-text-white;
-    }
+      &:hover:not(&--active) {
+        background-color: $color-accent-secondary;
+      }
 
-    & > svg {
-      stroke-width: 0.75px !important;
-      width: auto;
-      height: 2.5rem;
+      &--active {
+        background-color: $color-aside-background;
+        color: $color-text-white;
+      }
+
+      & > svg {
+        stroke-width: 0.75px !important;
+        width: auto;
+        height: 2.5rem;
+      }
     }
   }
-}
 
-.fund-list__container {
-  display: flex;
-  flex-direction: column;
-  gap: $bento-gap;
-  border-radius: $bento-border-radius;
+  &__container {
+    display: flex;
+    flex-direction: column;
+    gap: $bento-gap;
+    border-radius: $bento-border-radius;
+    width: 100%;
+
+    .fund-list__nothing-to-show {
+      margin-top: 2rem;
+    }
+  }
 }
 
 .fund-tile {
   display: flex;
   border-radius: $bento-border-radius;
   background-color: $color-bento-background;
+  width: 100%;
   min-height: 200px;
 
   &__photo {
@@ -155,12 +164,14 @@ $bento-gap: 1rem;
 
   &__details {
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 1.5rem;
     padding: 1rem;
 
     .details__top {
       display: flex;
+      justify-content: space-between;
       gap: 0.5rem;
 
       & > div:first-child {
@@ -213,7 +224,7 @@ $bento-gap: 1rem;
       }
 
       .actions-bar__more-info {
-        @include default-button;
+        @include default-button-with-spinner;
       }
     }
   }
