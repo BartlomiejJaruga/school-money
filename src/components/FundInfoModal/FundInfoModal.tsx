@@ -11,6 +11,7 @@ import {
 import type { SimpleDateString } from '@lib/constants';
 import { CustomSelect } from '@components/CustomSelect';
 import type { SchoolClassResponseDto } from '@dtos/SchoolClassResponseDto';
+import { DragAndDropPhotoInput } from '@components/DragAndDropPhotoInput';
 
 type FundInfoModalData = Omit<FundInfoModalValues, 'startDate' | 'endDate'> & {
   startDate: SimpleDateString;
@@ -59,8 +60,24 @@ export function FundInfoModal({
   } = formMethods;
 
   const onSubmit = (values: FundInfoModalValues) => {
+    const formData = new FormData();
+    formData.append('title', values.title);
+    formData.append('description', values.description);
+    formData.append('schoolClassId', values.schoolClassId);
+    formData.append('startDate', values.startDate);
+    formData.append('endDate', values.endDate);
+    formData.append('costPerChild', String(values.costPerChild));
+
+    if (values.logoFile) {
+      formData.append('logoFile', values.logoFile);
+    }
+
+    fetcher.submit(formData, {
+      method: 'post',
+      action: '/created-funds',
+      encType: 'multipart/form-data',
+    });
     onConfirm();
-    fetcher.submit(values, { method: 'post', action: '/created-funds' });
   };
 
   const costPerChildValue = watch('costPerChild');
@@ -93,7 +110,7 @@ export function FundInfoModal({
           onSubmit={handleSubmit(onSubmit)}
           className={styles['fund-info-modal__form']}
         >
-          <div style={{ fontStyle: 'italic', textAlign: 'center' }}>PHOTO</div>
+          <DragAndDropPhotoInput name="logoFile" />
           <CustomInputWithLabel
             label="Title"
             name="title"
