@@ -12,7 +12,8 @@ import {
   type NewClassValues,
 } from '@schemas/classes/newClass.schema';
 import { CustomInputWithLabel } from '@components/CustomInputWithLabel';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import axiosInstance from '@services/axiosInstance';
 
 export function ClassesPage() {
   const classesLoaderData = useLoaderData() as ClassesLoaderData;
@@ -72,6 +73,36 @@ type ClassTileProps = {
 
 function ClassTile({ classData }: ClassTileProps) {
   const navigate = useNavigate();
+  const [treasurerPhotoUrl, setTreasurerPhotoUrl] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (treasurerId: string) => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/parents/${treasurerId}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setTreasurerPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setTreasurerPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(classData.treasurer.user_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   return (
     <div className={styles['class-tile']}>
@@ -86,7 +117,7 @@ function ClassTile({ classData }: ClassTileProps) {
           <div className={styles['treasurer']}>
             <img
               className={styles['treasurer__photo']}
-              src={defaultUserImage}
+              src={treasurerPhotoUrl || defaultUserImage}
               alt="treasurer photo"
             />
             <div className={styles['treasurer__info']}>
