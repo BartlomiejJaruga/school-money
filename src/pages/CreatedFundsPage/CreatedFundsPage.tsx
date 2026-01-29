@@ -103,6 +103,7 @@ export function CreatedFundsPage() {
   const handleFundStatusChange = (newFundStatusType: FundStatusType) => {
     setCurrentFundStatus(newFundStatusType);
     searchParams.delete('logsPage');
+    searchParams.delete('fundsPage');
     setSearchParams(searchParams, {
       replace: true,
     });
@@ -370,11 +371,38 @@ function FundTile({ fundData, handleOpenWithdrawalModal }: FundTileProps) {
       100
     ).toFixed(2)
   );
+  const [fundPhotoUrl, setFundPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (fundId: string) => {
+      try {
+        const response = await axiosInstance.get(`/v1/funds/${fundId}/logo`, {
+          responseType: 'blob',
+        });
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setFundPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setFundPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(fundData.fund_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   return (
     <div className={styles['fund-tile']}>
       <img
-        src={defaultFundPhoto}
+        src={fundPhotoUrl || defaultFundPhoto}
         alt="fund photo"
         className={styles['fund-tile__photo']}
       />

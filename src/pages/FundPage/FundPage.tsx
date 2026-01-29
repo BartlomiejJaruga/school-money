@@ -234,6 +234,35 @@ function FundPageContainer({
     childData?.firstName && childData?.lastName
       ? `${childData.firstName} ${childData.lastName}`
       : 'Unknown Unknown';
+  const [fundPhotoUrl, setFundPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (fundId: string) => {
+      try {
+        const response = await axiosInstance.get(`/v1/funds/${fundId}/logo`, {
+          responseType: 'blob',
+        });
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setFundPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setFundPhotoUrl(null);
+      }
+    };
+
+    if (fundLoaderData.fundData?.fund_id) {
+      fetchAvatar(fundLoaderData.fundData.fund_id);
+    }
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   const handleFundReportDownload = async () => {
     if (fundLoaderData.fundData == null) return;
@@ -376,7 +405,7 @@ function FundPageContainer({
         </div>
       </div>
       <div className={styles['grid-container__fund-photo']}>
-        <img src={defaultFundPhoto} alt="fund photo" />
+        <img src={fundPhotoUrl || defaultFundPhoto} alt="fund photo" />
       </div>
       <div className={styles['grid-container__fund-details']}>
         <FundDetails
@@ -704,12 +733,40 @@ function ChildrenInfoRow({ childStatusData }: ChildrenInfoRowProps) {
   const statusString = getChildrenStatusString(childStatusData.status);
   const statusClassname = getChildrenStatusClassName(childStatusData.status);
   const childNames = `${childStatusData.child.first_name} ${childStatusData.child.last_name}`;
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (childId: string) => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/children/${childId}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(childStatusData.child.child_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   return (
     <div className={styles['children-info-row']}>
       <div>
         <img
-          src={defaultUserPhoto}
+          src={photoUrl || defaultUserPhoto}
           alt="child photo"
           className={styles['children-info-row__image']}
         />

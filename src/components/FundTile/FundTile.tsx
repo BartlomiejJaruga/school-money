@@ -2,7 +2,9 @@ import styles from './FundTile.module.scss';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { HorizontalProgressBar } from '@components/HorizontalProgressBar';
 import type { PagedModelParentChildUnpaidFundResponseDto } from '@dtos/PagedModelParentChildUnpaidFundResponseDto';
+import axiosInstance from '@services/axiosInstance';
 import { Baby, BanknoteX, School } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useFetcher, useNavigate } from 'react-router-dom';
 
 type FundTileProps = {
@@ -18,6 +20,33 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   );
   const childNames = `${fundData.child.first_name} ${fundData.child.last_name}`;
   const childSchoolClass = `${fundData.fund.school_class.school_class_name} (${fundData.fund.school_class.school_class_year})`;
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (fundId: string) => {
+      try {
+        const response = await axiosInstance.get(`/v1/funds/${fundId}/logo`, {
+          responseType: 'blob',
+        });
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(fundData.fund.fund_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   const handleFundPayment = () => {
     fetcher.submit(
@@ -36,7 +65,7 @@ export function FundTile({ fundData, showBudget = false }: FundTileProps) {
   return (
     <div className={styles['fund-tile']}>
       <img
-        src={defaultFundPhoto}
+        src={photoUrl || defaultFundPhoto}
         alt="fund photo"
         className={styles['fund-tile__photo']}
       />

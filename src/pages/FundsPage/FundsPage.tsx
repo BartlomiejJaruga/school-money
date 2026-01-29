@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import defaultFundPhoto from '@assets/default-fund.jpg';
 import { FundStatusTile } from '@components/FundStatusTile';
 import { CircularProgressBar } from '@components/CircularProgressBar';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FundTile } from '@components/FundTile';
 import { Pagination } from '@components/Pagination';
 import {
@@ -265,11 +265,38 @@ function HistoryFundTile({ historicalFundData }: HistoryFundTileProps) {
   const navigate = useNavigate();
   const childNames = `${historicalFundData.child.first_name} ${historicalFundData.child.last_name}`;
   const childSchoolClass = `${historicalFundData.fund.school_class.school_class_name} (${historicalFundData.fund.school_class.school_class_year})`;
+  const [fundPhotoUrl, setFundPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (fundId: string) => {
+      try {
+        const response = await axiosInstance.get(`/v1/funds/${fundId}/logo`, {
+          responseType: 'blob',
+        });
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setFundPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setFundPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(historicalFundData.fund.fund_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   return (
     <div className={styles['history-fund-tile']}>
       <img
-        src={defaultFundPhoto}
+        src={fundPhotoUrl ?? defaultFundPhoto}
         alt="fund photo"
         className={styles['history-fund-tile__photo']}
       />
