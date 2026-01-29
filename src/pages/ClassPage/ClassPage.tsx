@@ -1,6 +1,6 @@
 import { Baby, FileChartColumn, MoveLeft, User } from 'lucide-react';
 import styles from './ClassPage.module.scss';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 import defaultUserImage from '@assets/default-user.png';
 import { FundTile } from '@components/FundTile';
@@ -23,6 +23,38 @@ export function ClassPage() {
     navigation.state == 'loading' &&
     navigation.location.search.includes('fundsPage');
   const [isGeneratingReport, setIsGeneratingReport] = useState<boolean>(false);
+  const [treasurerPhotoUrl, setTreasurerPhotoUrl] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (treasurerId: string) => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/parents/${treasurerId}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setTreasurerPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setTreasurerPhotoUrl(null);
+      }
+    };
+
+    if (classData?.treasurer && classData.treasurer.user_id) {
+      fetchAvatar(classData.treasurer.user_id);
+    }
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
 
   const handleFundReportDownload = async () => {
     if (classData == null) return;
@@ -136,7 +168,7 @@ export function ClassPage() {
               <div className={styles['treasurer__card']}>
                 <img
                   className={styles['treasurer__photo']}
-                  src={defaultUserImage}
+                  src={treasurerPhotoUrl || defaultUserImage}
                   alt="treasurer photo"
                 />
                 <div className={styles['treasurer__info']}>
@@ -277,11 +309,40 @@ type ChildRowProps = {
 };
 
 function ChildRow({ childRowData }: ChildRowProps) {
+  const [photoUrl, setPhotoUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    let objectUrl: string | null = null;
+
+    const fetchAvatar = async (childId: string) => {
+      try {
+        const response = await axiosInstance.get(
+          `/v1/children/${childId}/avatar`,
+          { responseType: 'blob' }
+        );
+
+        if (response.data?.size == 0) return;
+
+        objectUrl = URL.createObjectURL(response.data);
+        setPhotoUrl(objectUrl);
+      } catch (error) {
+        console.error(error);
+        setPhotoUrl(null);
+      }
+    };
+
+    fetchAvatar(childRowData.child_id);
+
+    return () => {
+      if (objectUrl) URL.revokeObjectURL(objectUrl);
+    };
+  }, []);
+
   return (
     <div className={styles['child-row']}>
       <div className={styles['child-row__parent']}>
         <img
-          src={defaultUserImage}
+          src={photoUrl || defaultUserImage}
           alt="parent photo"
           className={styles['parent__photo']}
         />
