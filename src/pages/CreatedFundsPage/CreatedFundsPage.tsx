@@ -69,6 +69,7 @@ export function CreatedFundsPage() {
     useState<FundWithChildrenResponseDto | null>(null);
   const [isWithdrawalModalOpen, setIsWithdrawalModalOpen] =
     useState<boolean>(false);
+  const [refreshCounter, setRefreshCounter] = useState(0);
 
   useEffect(() => {
     if (!currentSchoolClass) return;
@@ -98,7 +99,7 @@ export function CreatedFundsPage() {
     };
 
     fetchRequestedFunds();
-  }, [currentSchoolClass, currentFundStatus, currentFundsPage]);
+  }, [currentSchoolClass, currentFundStatus, currentFundsPage, refreshCounter]);
 
   const handleFundStatusChange = (newFundStatusType: FundStatusType) => {
     setCurrentFundStatus(newFundStatusType);
@@ -143,6 +144,13 @@ export function CreatedFundsPage() {
   const handleCloseWithdrawalModal = () => {
     setIsWithdrawalModalOpen(false);
     setCurrentlyWithdrawaledFundData(null);
+  };
+
+  const handleConfirmWithdrawalModal = (shouldRefresh: boolean) => {
+    handleCloseWithdrawalModal();
+    if (shouldRefresh) {
+      setRefreshCounter((prev) => prev + 1);
+    }
   };
 
   return (
@@ -224,6 +232,7 @@ export function CreatedFundsPage() {
                 currentSchoolClassId={
                   currentSchoolClass?.school_class_id ?? null
                 }
+                refreshCounter={refreshCounter}
               />
             </div>
           </div>
@@ -246,7 +255,7 @@ export function CreatedFundsPage() {
       >
         <WithdrawFundModal
           onClose={handleCloseWithdrawalModal}
-          onConfirm={handleCloseWithdrawalModal}
+          onConfirm={handleConfirmWithdrawalModal}
           fundData={currentlyWithdrawaledFundData!}
         />
       </ModalTemplate>
@@ -360,7 +369,7 @@ type FundTileProps = {
 function FundTile({ fundData, handleOpenWithdrawalModal }: FundTileProps) {
   const navigate = useNavigate();
   const availableFunds = Number(
-    (fundData.fund_progress.current_amount_in_cents / 100).toFixed(2)
+    (fundData.fund_current_balance_in_cents / 100).toFixed(2)
   );
   const targetAmount = Number(
     (fundData.fund_progress.target_amount_in_cents / 100).toFixed(2)
@@ -501,9 +510,14 @@ function ClassInfo() {
 type EventLogProps = {
   currentFundStatus: FundStatusType;
   currentSchoolClassId: string | null;
+  refreshCounter: number;
 };
 
-function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
+function EventLog({
+  currentFundStatus,
+  currentSchoolClassId,
+  refreshCounter,
+}: EventLogProps) {
   const [logs, setLogs] =
     useState<PageableResponseDTO<PagedModelFundLogViewDto> | null>(null);
   const [isFetchingLogs, setIsFetchingLogs] = useState(false);
@@ -542,7 +556,7 @@ function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
     };
 
     currentSchoolClassLogs();
-  }, [currentSchoolClassId, currentFundStatus, currentPage]);
+  }, [currentSchoolClassId, currentFundStatus, currentPage, refreshCounter]);
 
   const isLoading = isFetchingLogs || isPaginating;
 
@@ -586,7 +600,7 @@ function EventLog({ currentFundStatus, currentSchoolClassId }: EventLogProps) {
 
 type WithdrawFundModalProps = {
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: (shouldRefresh: boolean) => void;
   fundData: FundWithChildrenResponseDto;
 };
 
@@ -607,7 +621,7 @@ function WithdrawFundModal({
 
   useEffect(() => {
     if (fetcher.state === 'idle' && fetcher.data) {
-      onConfirm();
+      onConfirm(true);
     }
   }, [fetcher.state, fetcher.data]);
 

@@ -21,6 +21,7 @@ export type FundWithChildrenResponseDto = {
   amount_per_child_in_cents: number;
   iban: string;
   fund_status: FundStatusType;
+  fund_current_balance_in_cents: number;
   fund_progress: {
     progress_percentage: number;
     current_amount_in_cents: number;
