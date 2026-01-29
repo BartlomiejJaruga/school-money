@@ -135,12 +135,32 @@ const action: ActionFunction = async ({ request }: ActionFunctionArgs) => {
   const fundId = formData.get('fundId') as string;
   const title = formData.get('title') as string;
   const description = formData.get('description') as string;
+  const logoFile = formData.get('logoFile') as File | null;
 
   try {
+    if (!fundId) {
+      console.error('Failed to edit fund');
+      return {
+        ok: false,
+        message: 'Failed to edit fund',
+      };
+    }
+
     await axiosInstance.patch(`/v1/funds/${fundId}`, {
       title: title,
       description: description,
     });
+
+    if (logoFile && logoFile.size > 0) {
+      const logoFormData = new FormData();
+      logoFormData.append('logoFile', logoFile);
+
+      await axiosInstance.patch(`/v1/funds/${fundId}/logo`, logoFormData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      });
+    }
 
     return {
       ok: true,

@@ -69,6 +69,7 @@ import {
 } from '@schemas/fund/fundDepositModal.schema';
 import axiosInstance from '@services/axiosInstance';
 import { getUserData } from '@lib/session';
+import { DragAndDropPhotoInput } from '@components/DragAndDropPhotoInput';
 
 export function FundPage() {
   const fundLoaderData = useLoaderData() as FundLoaderData;
@@ -262,7 +263,7 @@ function FundPageContainer({
     return () => {
       if (objectUrl) URL.revokeObjectURL(objectUrl);
     };
-  }, []);
+  }, [fundLoaderData]);
 
   const handleFundReportDownload = async () => {
     if (fundLoaderData.fundData == null) return;
@@ -861,13 +862,20 @@ function EditFundModal({ onClose, onConfirm, fundData }: EditFundModalProps) {
   } = formMethods;
 
   const onSubmit = (values: FundEditModalValues) => {
-    fetcher.submit(
-      { fundId: fundData.fund_id, ...values },
-      {
-        method: 'post',
-        action: `/funds/${fundData.fund_id}`,
-      }
-    );
+    const formData = new FormData();
+    formData.append('fundId', fundData.fund_id);
+    formData.append('title', values.title);
+    formData.append('description', values.description);
+
+    if (values.logoFile) {
+      formData.append('logoFile', values.logoFile);
+    }
+
+    fetcher.submit(formData, {
+      method: 'post',
+      action: `/funds/${fundData.fund_id}`,
+      encType: 'multipart/form-data',
+    });
   };
 
   const busy = isSubmitting || fetcher.state != 'idle';
@@ -884,7 +892,10 @@ function EditFundModal({ onClose, onConfirm, fundData }: EditFundModalProps) {
           onSubmit={handleSubmit(onSubmit)}
           className={styles['fund-edit-modal__form']}
         >
-          <div>PHOTO</div>
+          <DragAndDropPhotoInput
+            name="logoFile"
+            className={styles['form__photo']}
+          />
           <CustomInputWithLabel
             label="Title"
             name="title"

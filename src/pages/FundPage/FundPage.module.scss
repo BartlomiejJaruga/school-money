@@ -532,6 +532,10 @@ $bento-gap: 1rem;
     margin-top: 2rem;
     width: 100%;
 
+    .form__photo {
+      margin-bottom: 1.5rem;
+    }
+
     .form__actions {
       display: flex;
       justify-content: space-between;
