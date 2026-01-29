@@ -165,6 +165,7 @@ export function CreatedFundsPage() {
                       schoolClass.school_class_id ==
                       currentSchoolClass?.school_class_id
                     }
+                    key={schoolClass.school_class_id}
                   />
                 );
               })}

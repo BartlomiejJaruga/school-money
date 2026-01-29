@@ -110,73 +110,79 @@ export function FundInfoModal({
           onSubmit={handleSubmit(onSubmit)}
           className={styles['fund-info-modal__form']}
         >
-          <DragAndDropPhotoInput name="logoFile" />
-          <CustomInputWithLabel
-            label="Title"
-            name="title"
-            placeholder="Enter fund title"
-            autoComplete="off"
-          />
-          <CustomInputWithLabel
-            label="Description"
-            name="description"
-            placeholder="Enter fund description"
-            autoComplete="off"
-          />
-          {type == 'create' && (
-            <>
-              <CustomSelect name="schoolClassId">
-                <option value="">Select a class</option>
-                {classesData &&
-                  classesData.map((schoolClass) => {
-                    return (
-                      <option
-                        value={schoolClass.school_class_id}
-                        key={schoolClass.school_class_id}
-                      >{`${schoolClass.school_class_name} (${schoolClass.school_class_year})`}</option>
-                    );
-                  })}
-              </CustomSelect>
-              <div className={styles['form__dates']}>
+          <div className={styles['form__left-side']}>
+            <DragAndDropPhotoInput name="logoFile" />
+          </div>
+          <div className={styles['form__right-side']}>
+            <CustomInputWithLabel
+              label="Title"
+              name="title"
+              placeholder="Enter fund title"
+              autoComplete="off"
+            />
+            <CustomInputWithLabel
+              label="Description"
+              name="description"
+              placeholder="Enter fund description"
+              autoComplete="off"
+            />
+            {type == 'create' && (
+              <>
+                <CustomSelect name="schoolClassId">
+                  <option value="">Select a class</option>
+                  {classesData &&
+                    classesData.map((schoolClass) => {
+                      return (
+                        <option
+                          value={schoolClass.school_class_id}
+                          key={schoolClass.school_class_id}
+                        >{`${schoolClass.school_class_name} (${schoolClass.school_class_year})`}</option>
+                      );
+                    })}
+                </CustomSelect>
+                <div className={styles['form__dates']}>
+                  <CustomInputWithLabel
+                    type="date"
+                    label="Start date"
+                    name="startDate"
+                  />
+                  <CustomInputWithLabel
+                    type="date"
+                    label="End date"
+                    name="endDate"
+                  />
+                </div>
                 <CustomInputWithLabel
-                  type="date"
-                  label="Start date"
-                  name="startDate"
+                  type="number"
+                  label="Cost per child"
+                  name="costPerChild"
+                  placeholder="Enter cost per child"
+                  autoComplete="off"
+                  min={1}
                 />
-                <CustomInputWithLabel
-                  type="date"
-                  label="End date"
-                  name="endDate"
-                />
-              </div>
-              <CustomInputWithLabel
-                type="number"
-                label="Cost per child"
-                name="costPerChild"
-                placeholder="Enter cost per child"
-                autoComplete="off"
-                min={1}
-              />
-              <div className={styles['form__payment-info']}>
-                <h5 className={styles['payment-info__label']}>Payment info</h5>
-                <span>{`Cost per child: ${trueCostPerChild.toFixed(2)} PLN`}</span>
-                <span>{`Participants: ${numberOfChildrenInClass ?? '?'}`}</span>
-                <span>{`Total cost: ${totalCost} PLN`}</span>
-              </div>
-            </>
-          )}
-          <div className={styles['form__actions']}>
-            <button
-              type="button"
-              onClick={onClose}
-              className={styles['actions__cancel']}
-              disabled={busy}
-            >
-              Cancel
-            </button>
-            <button className={styles['actions__confirm']} disabled={busy}>
-              Confirm
-            </button>
+                <div className={styles['form__payment-info']}>
+                  <h5 className={styles['payment-info__label']}>
+                    Payment info
+                  </h5>
+                  <span>{`Cost per child: ${trueCostPerChild.toFixed(2)} PLN`}</span>
+                  <span>{`Participants: ${numberOfChildrenInClass ?? '?'}`}</span>
+                  <span>{`Total cost: ${totalCost} PLN`}</span>
+                </div>
+              </>
+            )}
+            <div className={styles['form__actions']}>
+              <button
+                type="button"
+                onClick={onClose}
+                className={styles['actions__cancel']}
+                disabled={busy}
+              >
+                Cancel
+              </button>
+              <button className={styles['actions__confirm']} disabled={busy}>
+                Confirm
+              </button>
+            </div>
           </div>
         </form>
       </FormProvider>

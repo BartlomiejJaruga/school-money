@@ -6,7 +6,7 @@
   border-radius: 1rem;
   background-color: $color-modal-background;
   padding: 2rem 2.75rem;
-  width: 500px;
+  width: 900px;
 
   &__top {
     display: flex;
@@ -34,10 +34,20 @@
 
   &__form {
     display: flex;
-    flex-direction: column;
-    gap: 0.3rem;
+    gap: 2rem;
     margin-top: 2rem;
     width: 100%;
+
+    .form__left-side {
+      width: 45%;
+    }
+
+    .form__right-side {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      width: 55%;
+    }
 
     .form__dates {
       display: flex;
